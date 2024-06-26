@@ -4,6 +4,7 @@ const cors = require("cors");
 const volleyball = require("volleyball");
 const clc = require("cli-color");
 const responseHandler = require("./src/helpers/responseHandler");
+const { swaggerUi, swaggerSpec, swaggerOptions } = require("./src/swagger/swagger");
 const app = express();
 app.use(volleyball);
 
@@ -17,6 +18,13 @@ app.use(express.json());
 const BASE_PATH = `/api/${API_VERSION}`;
 //* Import database connection module
 require("./src/helpers/connection");
+
+//* Swagger setup
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, swaggerOptions)
+);
 
 //? Define a route for the API root
 app.get(BASE_PATH, (req, res) => {
