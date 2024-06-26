@@ -4,7 +4,12 @@ const cors = require("cors");
 const volleyball = require("volleyball");
 const clc = require("cli-color");
 const responseHandler = require("./src/helpers/responseHandler");
-const { swaggerUi, swaggerSpec, swaggerOptions } = require("./src/swagger/swagger");
+const {
+  swaggerUi,
+  swaggerSpec,
+  swaggerOptions,
+} = require("./src/swagger/swagger");
+const adminRoute = require("./src/routes/admin");
 const app = express();
 app.use(volleyball);
 
@@ -25,6 +30,9 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(swaggerSpec, swaggerOptions)
 );
+
+//* Configure routes for user API
+app.use(`${BASE_PATH}/admin`, adminRoute);
 
 //? Define a route for the API root
 app.get(BASE_PATH, (req, res) => {

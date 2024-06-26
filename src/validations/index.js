@@ -6,6 +6,12 @@ exports.createAdminSchema = Joi.object({
   password: Joi.string().required(),
 });
 
+exports.editAdminSchema = Joi.object({
+  name: Joi.string(),
+  email: Joi.string(),
+  password: Joi.string(),
+});
+
 exports.createCounsellorSchema = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),
