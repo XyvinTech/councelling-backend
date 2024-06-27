@@ -11,7 +11,7 @@ exports.loginAdmin = async (req, res) => {
       return responseHandler(res, 400, "Email and password are required");
     }
 
-    const findAdmin = await Admin.findOne({ email });
+    const findAdmin = await Admin.findByEmail(email);
     if (!findAdmin) {
       return responseHandler(res, 404, "Admin not found");
     }
@@ -24,7 +24,7 @@ exports.loginAdmin = async (req, res) => {
       return responseHandler(res, 401, "Invalid password");
     }
 
-    const token = generateToken(findAdmin._id);
+    const token = generateToken(findAdmin.id);
 
     return responseHandler(res, 200, "Login successfull", token);
   } catch (error) {
@@ -53,7 +53,7 @@ exports.createAdmin = async (req, res) => {
       );
     }
 
-    const findAdmin = await Admin.findOne({ email: req.body.email });
+    const findAdmin = await Admin.findByEmail(req.body.email);
     if (findAdmin)
       return responseHandler(res, 409, `Admin with this email already exists`);
 
@@ -116,7 +116,7 @@ exports.editAdmin = async (req, res) => {
       );
     }
 
-    const updateAdmin = await Admin.findByIdAndUpdate(id, req.body, {
+    const updateAdmin = await Admin.update(id, req.body, {
       new: true,
     });
     if (updateAdmin) {
@@ -146,7 +146,7 @@ exports.deleteAdmin = async (req, res) => {
       return responseHandler(res, 404, "Admin not found");
     }
 
-    const deleteAdmin = await Admin.findByIdAndDelete(id);
+    const deleteAdmin = await Admin.delete(id);
     if (deleteAdmin) {
       return responseHandler(res, 200, `Admin deleted successfully..!`);
     } else {

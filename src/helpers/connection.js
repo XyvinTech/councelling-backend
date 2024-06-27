@@ -1,13 +1,34 @@
-const mongoose = require("mongoose");
+const postgres = require("postgres");
 const clc = require("cli-color");
 
-const { MONGO_URL } = process.env;
+const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
 
-mongoose
-  .connect(MONGO_URL)
-  .then(() => {
-    console.log(clc.blueBright("✓ Mongoose connection established..!"));
-  })
-  .catch((error) => {
-    console.log(clc.bgCyanBright(error));
-  });
+const sql = postgres({
+  host: PGHOST,
+  database: PGDATABASE,
+  username: PGUSER,
+  password: PGPASSWORD,
+  port: 5432,
+  ssl: "require",
+  connection: {
+    options: `project=${ENDPOINT_ID}`,
+  },
+});
+
+async function getPgVersion() {
+  try {
+    const result = await sql`select version()`;
+    if (result[0].version)
+      console.log(
+        clc.blueBright(
+          `✓ Postgres connection established..! Version: ${result[0].version}`
+        )
+      );
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+getPgVersion();
+
+module.exports = sql;

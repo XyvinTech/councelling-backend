@@ -10,6 +10,7 @@ exports.editAdminSchema = Joi.object({
   name: Joi.string(),
   email: Joi.string(),
   password: Joi.string(),
+  status: Joi.boolean(),
 });
 
 exports.createCounsellorSchema = Joi.object({

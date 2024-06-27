@@ -82,13 +82,6 @@
  *     description: API endpoint for getting admin details
  *     tags:
  *       - Admin
- *     parameters:
- *       - in: query
- *         name: userId
- *         schema:
- *           type: string
- *         required: true
- *         description: ID of the admin
  *     responses:
  *       200:
  *         description: Admin found
