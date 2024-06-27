@@ -17,9 +17,11 @@ exports.createCounsellorSchema = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),
   password: Joi.string().required(),
+  mobile: Joi.string().required(),
   counsellorType: Joi.string().required(),
   experience: Joi.number().required(),
   userType: Joi.string().required(),
+  designation: Joi.string().required(),
 });
 
 exports.createTeacherSchema = Joi.object({

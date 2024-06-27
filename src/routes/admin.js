@@ -23,5 +23,6 @@ adminRoute
   .delete(authVerify, adminController.deleteAdmin);
 
 adminRoute.post("/login", adminController.loginAdmin);
+adminRoute.post("/counsellor", authVerify, adminController.createCounsellor);
 
 module.exports = adminRoute;

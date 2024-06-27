@@ -10,6 +10,7 @@ const {
   swaggerOptions,
 } = require("./src/swagger/swagger");
 const adminRoute = require("./src/routes/admin");
+const counsellorRoute = require("./src/routes/counsellor");
 const app = express();
 app.use(volleyball);
 
@@ -33,6 +34,7 @@ app.use(
 
 //* Configure routes for user API
 app.use(`${BASE_PATH}/admin`, adminRoute);
+app.use(`${BASE_PATH}/counsellor`, counsellorRoute);
 
 //? Define a route for the API root
 app.get(BASE_PATH, (req, res) => {

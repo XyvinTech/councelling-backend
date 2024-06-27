@@ -1,5 +1,6 @@
 const responseHandler = require("../helpers/responseHandler");
 const Admin = require("../models/adminModel");
+const User = require("../models/userModel");
 const { comparePasswords, hashPassword } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/generateToken");
 const validations = require("../validations");
@@ -154,5 +155,38 @@ exports.deleteAdmin = async (req, res) => {
     }
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.createCounsellor = async (req, res) => {
+  try {
+    const createCounsellorValidator =
+      validations.createCounsellorSchema.validate(req.body, {
+        abortEarly: true,
+      });
+    if (createCounsellorValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${createCounsellorValidator.error}`
+      );
+    }
+
+    const findCounsellor = await User.findByEmail(req.body.email);
+    if (findCounsellor) {
+      return responseHandler(res, 409, "Counsellor already exists");
+    }
+
+    const hashedPassword = await hashPassword(req.body.password);
+    req.body.password = hashedPassword;
+    const user = await User.createCounsellor(req.body);
+    return responseHandler(res, 201, "Counsellor created", user);
+  } catch (error) {
+    return responseHandler(
+      res,
+      500,
+      `Internal Server Error ${error.message}`,
+      null
+    );
   }
 };

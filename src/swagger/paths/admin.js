@@ -160,3 +160,53 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /admin/counsellor:
+ *   post:
+ *     summary: Create new Counsellor
+ *     description: API endpoint for creating a new Counsellor
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Counsellor Name"
+ *               email:
+ *                 type: string
+ *                 example: "counsellor@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "password123"
+ *               experience:
+ *                 type: number
+ *                 example: 5
+ *               mobile:
+ *                 type: string
+ *                 example: "9876543210"
+ *               designation:
+ *                 type: string
+ *                 example: "Dermatologist"
+ *               userType:
+ *                 type: string
+ *                 example: "counsellor"
+ *               counsellorType:
+ *                 type: string
+ *                 example: "career, behavioral, special needs"
+ *     responses:
+ *       201:
+ *         description: New Counsellor created successfully
+ *       400:
+ *         description: Invalid input
+ *       409:
+ *         description: Counsellor with this email already exists
+ *       500:
+ *         description: Internal Server Error
+ */
