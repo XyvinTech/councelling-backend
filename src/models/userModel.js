@@ -27,37 +27,32 @@ class User {
     `;
   }
 
-  static async createStudent({
+  static async create({
     name,
     email,
     password,
     mobile,
     userType,
-    parentContact,
-  }) {
-    const [user] = await sql`
-    INSERT INTO Users (name, email, password, mobile, userType, parentContact)
-    VALUES (${name}, ${email}, ${password}, ${mobile}, ${userType}, ${parentContact})
-    RETURNING *
-  `;
-    return user;
-  }
-
-  static async createCounsellor({
-    name,
-    email,
-    password,
-    mobile,
-    userType,
-    counsellorType,
-    experience,
     designation,
+    parentContact = null,
+    counsellorType = null,
+    experience = null,
   }) {
     const [user] = await sql`
-    INSERT INTO Users (name, email, password, mobile, userType, counsellorType, experience, designation)
-    VALUES (${name}, ${email}, ${password}, ${mobile}, ${userType}, ${counsellorType}, ${experience}, ${designation})
-    RETURNING *
-  `;
+      INSERT INTO Users (name, email, password, mobile, userType, parentContact, counsellorType, experience, designation)
+      VALUES (
+        ${name}, 
+        ${email}, 
+        ${password}, 
+        ${mobile}, 
+        ${userType}, 
+        ${parentContact}, 
+        ${counsellorType}, 
+        ${experience}, 
+        ${designation}
+      )
+      RETURNING *
+    `;
     return user;
   }
 

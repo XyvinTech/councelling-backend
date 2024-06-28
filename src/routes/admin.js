@@ -11,7 +11,6 @@ const authVerify = require("../middlewares/authVerify");
 //   console.error('Error creating Admin table:', error);
 // });
 
-
 adminRoute
   .route("/")
   .post(adminController.createAdmin)
@@ -24,5 +23,10 @@ adminRoute
 
 adminRoute.post("/login", adminController.loginAdmin);
 adminRoute.post("/counsellor", authVerify, adminController.createCounsellor);
+adminRoute.post("/student", authVerify, adminController.createStudent);
+adminRoute
+  .route("/student/:id")
+  .put(authVerify, adminController.updateStudent)
+  .delete(authVerify, adminController.deleteStudent);
 
 module.exports = adminRoute;

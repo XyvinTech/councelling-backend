@@ -39,8 +39,19 @@ exports.createStudentSchema = Joi.object({
   email: Joi.string().required(),
   password: Joi.string().required(),
   mobile: Joi.string().required(),
+  designation: Joi.string().required(),
   userType: Joi.string().required(),
   parentContact: Joi.string().required(),
+});
+
+exports.editStudentSchema = Joi.object({
+  name: Joi.string(),
+  email: Joi.string(),
+  password: Joi.string(),
+  mobile: Joi.string(),
+  designation: Joi.string(),
+  parentContact: Joi.string(),
+  status: Joi.boolean(),
 });
 
 exports.createEventSchema = Joi.object({
@@ -48,7 +59,6 @@ exports.createEventSchema = Joi.object({
   description: Joi.string().required(),
   date: Joi.date().required(),
   time: Joi.date().required(),
-  description: Joi.string().required(),
   duration: Joi.string().required(),
   venue: Joi.string().required(),
   guest: Joi.string().required(),

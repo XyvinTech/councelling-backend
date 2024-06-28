@@ -210,3 +210,130 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /admin/student:
+ *   post:
+ *     summary: Create new Student
+ *     description: API endpoint for creating a new Student
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Student Name"
+ *               email:
+ *                 type: string
+ *                 example: "student@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "password123"
+ *               mobile:
+ *                 type: string
+ *                 example: "9876543210"
+ *               designation:
+ *                 type: string
+ *                 example: "BCA"
+ *               userType:
+ *                 type: string
+ *                 example: "student"
+ *               parentContact:
+ *                 type: string
+ *                 example: "8765432109"
+ *     responses:
+ *       201:
+ *         description: New Student created successfully
+ *       400:
+ *         description: Invalid input
+ *       409:
+ *         description: Student with this email already exists
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /admin/student/{id}:
+ *   delete:
+ *     summary: Delete Student
+ *     description: API endpoint for deleting an student
+ *     tags:
+ *       - Admin
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the student
+ *     responses:
+ *       200:
+ *         description: Student deleted successfully
+ *       400:
+ *         description: Student ID is required
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /admin/student/{id}:
+ *   put:
+ *     summary: Edit Student details
+ *     description: API endpoint for updating student details
+ *     tags:
+ *       - Admin
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the student
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "New Student Name"
+ *               email:
+ *                 type: string
+ *                 example: "student@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "newpassword123"
+ *               mobile:
+ *                 type: string
+ *                 example: "9876543210"
+ *               designation:
+ *                 type: string
+ *                 example: "BCA"
+ *               status:
+ *                 type: boolean
+ *                 example: true
+ *               parentContact:
+ *                 type: string
+ *                 example: "8765432109"
+ *     responses:
+ *       200:
+ *         description: Admin updated successfully
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Internal Server Error
+ */

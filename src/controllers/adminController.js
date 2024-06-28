@@ -1,5 +1,6 @@
 const responseHandler = require("../helpers/responseHandler");
 const Admin = require("../models/adminModel");
+const Event = require("../models/eventModel");
 const User = require("../models/userModel");
 const { comparePasswords, hashPassword } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/generateToken");
@@ -179,7 +180,7 @@ exports.createCounsellor = async (req, res) => {
 
     const hashedPassword = await hashPassword(req.body.password);
     req.body.password = hashedPassword;
-    const user = await User.createCounsellor(req.body);
+    const user = await User.create(req.body);
     return responseHandler(res, 201, "Counsellor created", user);
   } catch (error) {
     return responseHandler(
@@ -188,5 +189,143 @@ exports.createCounsellor = async (req, res) => {
       `Internal Server Error ${error.message}`,
       null
     );
+  }
+};
+
+exports.createEvent = async (req, res) => {
+  try {
+    const createEventValidator = validations.createEventSchema.validate(
+      req.body,
+      {
+        abortEarly: true,
+      }
+    );
+    if (createEventValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${createEventValidator.error}`
+      );
+    }
+
+    const findEvent = await Event.findOne({ title: req.body.title });
+    if (findEvent) {
+      return responseHandler(res, 409, "Event already exists");
+    }
+
+    const event = await Event.create(req.body);
+    return responseHandler(res, 201, "Event created", event);
+  } catch (error) {
+    return responseHandler(
+      res,
+      500,
+      `Internal Server Error ${error.message}`,
+      null
+    );
+  }
+};
+
+exports.createStudent = async (req, res) => {
+  try {
+    const createStudentValidator = validations.createStudentSchema.validate(
+      req.body,
+      {
+        abortEarly: true,
+      }
+    );
+    if (createStudentValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${createStudentValidator.error}`
+      );
+    }
+
+    const findStudent = await User.findOne({ email: req.body.email });
+    if (findStudent) {
+      return responseHandler(res, 409, "Student already exists");
+    }
+
+    const hashedPassword = await hashPassword(req.body.password);
+    req.body.password = hashedPassword;
+    const user = await User.create(req.body);
+    return responseHandler(res, 201, "Student created", user);
+  } catch (error) {
+    return responseHandler(
+      res,
+      500,
+      `Internal Server Error ${error.message}`,
+      null
+    );
+  }
+};
+
+exports.updateStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return responseHandler(res, 400, "Student ID is required");
+    }
+
+    const editStudentValidator = validations.editStudentSchema.validate(
+      req.body,
+      {
+        abortEarly: true,
+      }
+    );
+    if (editStudentValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${editStudentValidator.error}`
+      );
+    }
+
+    const findStudent = await User.findById(id);
+    if (!findStudent) {
+      return responseHandler(res, 404, "Student not found");
+    }
+
+    const updateStudent = await User.update(id, req.body);
+    if (updateStudent) {
+      return responseHandler(
+        res,
+        200,
+        `Student updated successfully..!`,
+        updateStudent
+      );
+    } else {
+      return responseHandler(res, 400, `Student update failed...!`);
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.deleteStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return responseHandler(res, 400, "Student ID is required");
+    }
+
+    const findStudent = await User.findById(id);
+    if (!findStudent) {
+      return responseHandler(res, 404, "Student not found");
+    }
+
+    const deleteStudent = await User.delete(id);
+    if (deleteStudent) {
+      return responseHandler(
+        res,
+        200,
+        `Student deleted successfully..!`,
+        deleteStudent
+      );
+    } else {
+      return responseHandler(res, 400, `Student deletion failed...!`);
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
