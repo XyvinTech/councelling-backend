@@ -27,62 +27,80 @@ class User {
     `;
   }
 
-static async createStudent({ name, email, password, mobile, userType, parentContact }) {
-  const [user] = await sql`
+  static async createStudent({
+    name,
+    email,
+    password,
+    mobile,
+    userType,
+    parentContact,
+  }) {
+    const [user] = await sql`
     INSERT INTO Users (name, email, password, mobile, userType, parentContact)
     VALUES (${name}, ${email}, ${password}, ${mobile}, ${userType}, ${parentContact})
     RETURNING *
   `;
-  return user;
-}
+    return user;
+  }
 
-static async createCounsellor({ name, email, password, mobile, userType, counsellorType, experience, designation }) {
-  const [user] = await sql`
+  static async createCounsellor({
+    name,
+    email,
+    password,
+    mobile,
+    userType,
+    counsellorType,
+    experience,
+    designation,
+  }) {
+    const [user] = await sql`
     INSERT INTO Users (name, email, password, mobile, userType, counsellorType, experience, designation)
     VALUES (${name}, ${email}, ${password}, ${mobile}, ${userType}, ${counsellorType}, ${experience}, ${designation})
     RETURNING *
   `;
-  return user;
-}
-
-static async findAll({ page = 1, limit = 10, searchQuery = '' } = {}) {
-  const offset = (page - 1) * limit;
-  let filterCondition = sql``;
-
-  if (searchQuery) {
-    filterCondition = sql`
-      WHERE name ILIKE ${'%' + searchQuery + '%'}
-      OR email ILIKE ${'%' + searchQuery + '%'}
-    `;
+    return user;
   }
 
-  return await sql`
+  static async findAll({ page = 1, limit = 10, searchQuery = "" } = {}) {
+    const offset = (page - 1) * limit;
+    let filterCondition = sql``;
+
+    if (searchQuery) {
+      filterCondition = sql`
+      WHERE name ILIKE ${"%" + searchQuery + "%"}
+      OR email ILIKE ${"%" + searchQuery + "%"}
+    `;
+    }
+
+    return await sql`
     SELECT id, name, email, status, "createdAt", "updatedAt"
     FROM Users
     ${filterCondition}
     OFFSET ${offset} LIMIT ${limit}
   `;
-}
+  }
 
-static async findById(id) {
-  const [user] = await sql`
+  static async findById(id) {
+    const [user] = await sql`
     SELECT * FROM Users WHERE id = ${id}
   `;
-  if (user) {
-    delete user.password;
+    if (user) {
+      delete user.password;
+    }
+    return user;
   }
-  return user;
-}
 
-static async findByEmail(email) {
-  const [user] = await sql`
-    SELECT * FROM Users WHERE email = ${email}
+  static async findOne(criteria) {
+    const key = Object.keys(criteria)[0];
+    const value = criteria[key];
+    const [user] = await sql`
+    SELECT * FROM Users WHERE ${sql(key)} = ${value}
   `;
-  return user;
-}
+    return user;
+  }
 
-static async update(id, { name, email, status }) {
-  const [user] = await sql`
+  static async update(id, { name, email, status }) {
+    const [user] = await sql`
     UPDATE Users SET
       name = ${name},
       email = ${email},
@@ -91,15 +109,15 @@ static async update(id, { name, email, status }) {
     WHERE id = ${id}
     RETURNING *
   `;
-  return user;
-}
+    return user;
+  }
 
-static async delete(id) {
-  await sql`
+  static async delete(id) {
+    await sql`
     DELETE FROM Users WHERE id = ${id}
   `;
-  return true;
-}
+    return true;
+  }
 }
 
 module.exports = User;

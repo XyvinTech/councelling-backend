@@ -56,12 +56,15 @@ class Admin {
     return admin;
   }
 
-  static async findByEmail(email) {
+  static async findOne(criteria) {
+    const key = Object.keys(criteria)[0];
+    const value = criteria[key];
     const [admin] = await sql`
-      SELECT * FROM Admins WHERE email = ${email}
+      SELECT * FROM Admins WHERE ${sql(key)} = ${value}
     `;
     return admin;
   }
+  
 
   static async update(id, { name, email, status }) {
     const [admin] = await sql`

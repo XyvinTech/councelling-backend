@@ -11,15 +11,12 @@ exports.loginCounsellor = async (req, res) => {
       return responseHandler(res, 400, "Email and password are required");
     }
 
-    const findUser = await User.findByEmail(email);
+    const findUser = await User.findOne({ email: email });
     if (!findUser) {
       return responseHandler(res, 404, "Counsellor not found");
     }
 
-    const comparePassword = await comparePasswords(
-      password,
-      findUser.password
-    );
+    const comparePassword = await comparePasswords(password, findUser.password);
     if (!comparePassword) {
       return responseHandler(res, 401, "Invalid password");
     }

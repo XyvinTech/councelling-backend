@@ -12,7 +12,7 @@ exports.loginAdmin = async (req, res) => {
       return responseHandler(res, 400, "Email and password are required");
     }
 
-    const findAdmin = await Admin.findByEmail(email);
+    const findAdmin = await Admin.findOne({ email: email });
     if (!findAdmin) {
       return responseHandler(res, 404, "Admin not found");
     }
@@ -54,7 +54,7 @@ exports.createAdmin = async (req, res) => {
       );
     }
 
-    const findAdmin = await Admin.findByEmail(req.body.email);
+    const findAdmin = await Admin.findOne({ email: req.body.email });
     if (findAdmin)
       return responseHandler(res, 409, `Admin with this email already exists`);
 
@@ -172,7 +172,7 @@ exports.createCounsellor = async (req, res) => {
       );
     }
 
-    const findCounsellor = await User.findByEmail(req.body.email);
+    const findCounsellor = await User.findOne({ email: req.body.email });
     if (findCounsellor) {
       return responseHandler(res, 409, "Counsellor already exists");
     }
