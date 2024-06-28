@@ -23,6 +23,10 @@ adminRoute
 
 adminRoute.post("/login", adminController.loginAdmin);
 adminRoute.post("/counsellor", authVerify, adminController.createCounsellor);
+adminRoute
+  .route("/counsellor/:id")
+  .put(authVerify, adminController.updateCounsellor)
+  .delete(authVerify, adminController.deleteCounsellor);
 adminRoute.post("/student", authVerify, adminController.createStudent);
 adminRoute
   .route("/student/:id")

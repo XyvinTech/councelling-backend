@@ -24,6 +24,17 @@ exports.createCounsellorSchema = Joi.object({
   designation: Joi.string().required(),
 });
 
+exports.editCounsellorSchema = Joi.object({
+  name: Joi.string(),
+  email: Joi.string(),
+  password: Joi.string(),
+  mobile: Joi.string(),
+  counsellorType: Joi.string(),
+  experience: Joi.number(),
+  status: Joi.boolean(),
+  designation: Joi.string(),
+});
+
 exports.createTeacherSchema = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),
