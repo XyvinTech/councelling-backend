@@ -94,10 +94,10 @@ class Event {
   }
 
   static async delete(id) {
-    const [event] = await sql`
+    await sql`
       DELETE FROM Events WHERE id = ${id}
     `;
-    return event;
+    return true;
   }
 }
 

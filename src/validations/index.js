@@ -77,8 +77,8 @@ exports.createEventSchema = Joi.object({
 });
 
 exports.createSessionSchema = Joi.object({
-  sessionDate: Joi.date().required(),
-  sessionTime: Joi.date().required(),
+  session_date: Joi.date().required(),
+  session_time: Joi.string().regex(/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/).required(),
   type: Joi.string().required(),
   counsellor: Joi.string().required(),
   description: Joi.string(),

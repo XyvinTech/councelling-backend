@@ -30,12 +30,7 @@ exports.loginAdmin = async (req, res) => {
 
     return responseHandler(res, 200, "Login successfull", token);
   } catch (error) {
-    return responseHandler(
-      res,
-      500,
-      `Internal Server Error ${error.message}`,
-      null
-    );
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
 
@@ -183,12 +178,7 @@ exports.createCounsellor = async (req, res) => {
     const user = await User.create(req.body);
     return responseHandler(res, 201, "Counsellor created", user);
   } catch (error) {
-    return responseHandler(
-      res,
-      500,
-      `Internal Server Error ${error.message}`,
-      null
-    );
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
 
@@ -280,12 +270,7 @@ exports.createEvent = async (req, res) => {
     const event = await Event.create(req.body);
     return responseHandler(res, 201, "Event created", event);
   } catch (error) {
-    return responseHandler(
-      res,
-      500,
-      `Internal Server Error ${error.message}`,
-      null
-    );
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
 
@@ -315,12 +300,7 @@ exports.createStudent = async (req, res) => {
     const user = await User.create(req.body);
     return responseHandler(res, 201, "Student created", user);
   } catch (error) {
-    return responseHandler(
-      res,
-      500,
-      `Internal Server Error ${error.message}`,
-      null
-    );
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
 

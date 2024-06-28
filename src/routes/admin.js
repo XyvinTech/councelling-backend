@@ -11,6 +11,14 @@ const authVerify = require("../middlewares/authVerify");
 //   console.error('Error creating Admin table:', error);
 // });
 
+//! Uncomment this if you don't have a event table
+// const { createTable } = require("../models/eventModel");
+// createTable().then(() => {
+//   console.log('Event table created or already exists.');
+// }).catch((error) => {
+//   console.error('Error creating Event table:', error);
+// });
+
 adminRoute
   .route("/")
   .post(adminController.createAdmin)
