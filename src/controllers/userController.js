@@ -62,6 +62,35 @@ exports.createSession = async (req, res) => {
   }
 };
 
+exports.rescheduleSession = async (req, res) => {
+  try {
+    const { session_date, session_time } = req.body;
+    const { id } = req.params;
+    if (!session_date && !session_time)
+      return responseHandler(res, 400, `Session date & time is required`);
+    const session = await Session.findById(id);
+    if (!session) return responseHandler(res, 404, "Session not found");
+    if (session.status !== "pending")
+      return responseHandler(res, 400, "You can't reschedule this session");
+    const updatedSession = {
+      ...session,
+      session_date,
+      session_time,
+    };
+    const rescheduleSession = await Session.update(id, updatedSession);
+    if (!rescheduleSession)
+      return responseHandler(res, 400, "Session reschedule failed");
+    return responseHandler(
+      res,
+      200,
+      "Session rescheduled successfully",
+      rescheduleSession
+    );
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
 exports.listController = async (req, res) => {
   try {
     const { type, page, searchQuery } = req.query;

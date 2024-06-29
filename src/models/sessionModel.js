@@ -132,7 +132,7 @@ class Session {
       SELECT 
         Sessions.*,
         Users.name as user_name,
-        Counsellors.name as counsellor_name,
+        Counsellors.name as counsellor_name
       FROM Sessions
       LEFT JOIN Users ON Sessions.user = Users.id
       LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
@@ -144,8 +144,6 @@ class Session {
   static async update(
     id,
     {
-      user,
-      case_id,
       session_date,
       session_time,
       type,
@@ -157,10 +155,8 @@ class Session {
   ) {
     const [session] = await sql`
       UPDATE Sessions SET
-        user = ${user},
-        caseID = ${case_id},
-        sessionDate = ${session_date},
-        sessionTime = ${session_time},
+        session_date = ${session_date},
+        session_time = ${session_time},
         type = ${type},
         status = ${status},
         counsellor = ${counsellor},

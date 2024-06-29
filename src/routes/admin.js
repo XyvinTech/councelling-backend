@@ -3,22 +3,6 @@ const adminRoute = express.Router();
 const adminController = require("../controllers/adminController");
 const authVerify = require("../middlewares/authVerify");
 
-//! Uncomment this if you don't have a admin table
-// const { createTable } = require("../models/adminModel");
-// createTable().then(() => {
-//   console.log('Admin table created or already exists.');
-// }).catch((error) => {
-//   console.error('Error creating Admin table:', error);
-// });
-
-//! Uncomment this if you don't have a event table
-// const { createTable } = require("../models/eventModel");
-// createTable().then(() => {
-//   console.log('Event table created or already exists.');
-// }).catch((error) => {
-//   console.error('Error creating Event table:', error);
-// });
-
 adminRoute
   .route("/")
   .post(adminController.createAdmin)

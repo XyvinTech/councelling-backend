@@ -39,7 +39,6 @@
  *         description: Internal Server Error
  */
 
-
 /**
  * @swagger
  * /counsellor:
@@ -55,6 +54,55 @@
  *         description: Counsellor ID is required
  *       404:
  *         description: Counsellor not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /counsellor/times:
+ *   post:
+ *     summary: Add new times
+ *     description: API endpoint for adding new times
+ *     tags:
+ *       - Counsellor
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               day:
+ *                 type: string
+ *                 example: "Monday"
+ *               times:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   example: "10:00"
+ *     responses:
+ *       201:
+ *         description: Time created successfully
+ *       400:
+ *         description: Invalid input or Time creation failed
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /counsellor/times:
+ *   get:
+ *     summary: Get times
+ *     description: API endpoint for retrieving times
+ *     tags:
+ *       - Counsellor
+ *     responses:
+ *       200:
+ *         description: Times found
+ *       404:
+ *         description: No times found
  *       500:
  *         description: Internal Server Error
  */

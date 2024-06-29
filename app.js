@@ -12,6 +12,7 @@ const {
 const adminRoute = require("./src/routes/admin");
 const counsellorRoute = require("./src/routes/counsellor");
 const userRoute = require("./src/routes/user");
+const initializeTables = require("./src/helpers/tableInitialization");
 const app = express();
 app.use(volleyball);
 
@@ -25,6 +26,16 @@ app.use(express.json());
 const BASE_PATH = `/api/${API_VERSION}`;
 //* Import database connection module
 require("./src/helpers/connection");
+// //! Uncomment this if you don't have a tables created
+// initializeTables()
+//   .then(() => {
+//     console.log(
+//       clc.magentaBright("Table initialization completed successfully.")
+//     );
+//   })
+//   .catch((error) => {
+//     console.error("Error initializing tables:", error);
+//   });
 
 //* Swagger setup
 app.use(
