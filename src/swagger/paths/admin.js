@@ -95,7 +95,7 @@
 
 /**
  * @swagger
- * /admin/{id}:
+ * /admin/admin/{id}:
  *   put:
  *     summary: Edit Admin details
  *     description: API endpoint for editing admin details
@@ -137,7 +137,7 @@
 
 /**
  * @swagger
- * /admin/{id}:
+ * /admin/admin/{id}:
  *   delete:
  *     summary: Delete Admin
  *     description: API endpoint for deleting an admin

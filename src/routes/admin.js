@@ -3,26 +3,30 @@ const adminRoute = express.Router();
 const adminController = require("../controllers/adminController");
 const authVerify = require("../middlewares/authVerify");
 
+adminRoute.post("/login", adminController.loginAdmin);
+
+adminRoute.use(authVerify);
+
 adminRoute
   .route("/")
   .post(adminController.createAdmin)
-  .get(authVerify, adminController.getAdmin);
+  .get(adminController.getAdmin);
 
 adminRoute
-  .route("/:id")
-  .put(authVerify, adminController.editAdmin)
-  .delete(authVerify, adminController.deleteAdmin);
+  .route("/admin/:id")
+  .put(adminController.editAdmin)
+  .delete(adminController.deleteAdmin);
 
-adminRoute.post("/login", adminController.loginAdmin);
-adminRoute.post("/counsellor", authVerify, adminController.createCounsellor);
+adminRoute.post("/counsellor", adminController.createCounsellor);
 adminRoute
   .route("/counsellor/:id")
-  .put(authVerify, adminController.updateCounsellor)
-  .delete(authVerify, adminController.deleteCounsellor);
-adminRoute.post("/student", authVerify, adminController.createStudent);
+  .put(adminController.updateCounsellor)
+  .delete(adminController.deleteCounsellor);
+
+adminRoute.post("/student", adminController.createStudent);
 adminRoute
   .route("/student/:id")
-  .put(authVerify, adminController.updateStudent)
-  .delete(authVerify, adminController.deleteStudent);
+  .put(adminController.updateStudent)
+  .delete(adminController.deleteStudent);
 
 module.exports = adminRoute;

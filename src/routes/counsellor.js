@@ -4,12 +4,15 @@ const counsellorController = require("../controllers/counsellorController");
 const authVerify = require("../middlewares/authVerify");
 
 counsellorRoute.post("/login", counsellorController.loginCounsellor);
-counsellorRoute.route("/").get(authVerify, counsellorController.getCounsellor);
-counsellorRoute
-  .route("/times")
-  .post(authVerify, counsellorController.addTimes)
-  .get(authVerify, counsellorController.getTimes);
 
-counsellorRoute.get("/list", authVerify, counsellorController.listController);
+counsellorRoute.use(authVerify);
+
+counsellorRoute.route("/").get(counsellorController.getCounsellor);
+
+counsellorRoute.route("/times")
+  .post(counsellorController.addTimes)
+  .get(counsellorController.getTimes);
+
+counsellorRoute.get("/list", counsellorController.listController);
 
 module.exports = counsellorRoute;
