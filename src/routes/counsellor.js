@@ -10,4 +10,6 @@ counsellorRoute
   .post(authVerify, counsellorController.addTimes)
   .get(authVerify, counsellorController.getTimes);
 
+counsellorRoute.get("/list", authVerify, counsellorController.listController);
+
 module.exports = counsellorRoute;

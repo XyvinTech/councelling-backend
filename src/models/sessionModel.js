@@ -104,6 +104,43 @@ class Session {
     return await query;
   }
 
+  static async findAllByCounsellorId({
+    userId,
+    page = 1,
+    limit = 10,
+    searchQuery = "",
+    status = null,
+  } = {}) {
+    const offset = (page - 1) * limit;
+    let filterCondition = sql` WHERE Sessions.counsellor = ${userId} `;
+
+    if (status)
+      filterCondition = sql` ${filterCondition} AND Sessions.status = ${status}`;
+
+    if (searchQuery) {
+      filterCondition = sql`
+        ${filterCondition} AND Sessions.description ILIKE ${
+        "%" + searchQuery + "%"
+      }
+      `;
+    }
+
+    const query = sql`
+      SELECT 
+        Sessions.*,
+        Users.name as user_name,
+        Counsellors.name as counsellor_name
+      FROM Sessions
+      LEFT JOIN Users ON Sessions."user" = Users.id
+      LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
+      ${filterCondition}
+      ORDER BY Sessions."createdAt" DESC
+      OFFSET ${offset} LIMIT ${limit}
+    `;
+
+    return await query;
+  }
+
   static async find() {
     const [session] = await sql`
       SELECT * FROM Sessions 

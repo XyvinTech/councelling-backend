@@ -106,3 +106,45 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counsellor/list:
+ *   get:
+ *     summary: List sessions or reports
+ *     description: API endpoint for listing sessions or reports based on type
+ *     tags:
+ *       - List
+ *     parameters:
+ *       - name: type
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [sessions]
+ *         description: Type of data to list (currently only supports "sessions")
+ *       - name: page
+ *         in: query
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number for pagination
+ *       - name: searchQuery
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: Optional search query to filter results
+ *       - name: status
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: Optional status query to filter results
+ *     responses:
+ *       200:
+ *         description: Sessions found
+ *       404:
+ *         description: No sessions found or invalid type
+ *       500:
+ *         description: Internal Server Error
+ */

@@ -1,4 +1,5 @@
 const responseHandler = require("../helpers/responseHandler");
+const Session = require("../models/sessionModel");
 const Time = require("../models/timeModel");
 const User = require("../models/userModel");
 const { comparePasswords } = require("../utils/bcrypt");
@@ -77,6 +78,36 @@ exports.getTimes = async (req, res) => {
     const times = await Time.findByUserId(req.userId);
     if (!times) return responseHandler(res, 404, "No times found");
     return responseHandler(res, 200, "Times found", times);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.listController = async (req, res) => {
+  try {
+    const { type, page, searchQuery, status } = req.query;
+    const { userId } = req;
+    if (type === "sessions") {
+      const sessions = await Session.findAllByCounsellorId({
+        userId,
+        page,
+        searchQuery,
+        status
+      });
+      if (sessions.length > 0) {
+        const totalCount = await Session.count();
+        return responseHandler(
+          res,
+          200,
+          "Reports found",
+          sessions,
+          totalCount.count
+        );
+      }
+      return responseHandler(res, 404, "No reports found");
+    } else {
+      return responseHandler(res, 404, "Invalid type..!");
+    }
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
