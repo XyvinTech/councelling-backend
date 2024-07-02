@@ -70,10 +70,14 @@ exports.createEventSchema = Joi.object({
   description: Joi.string().required(),
   date: Joi.date().required(),
   time: Joi.date().required(),
-  duration: Joi.string().required(),
-  venue: Joi.string().required(),
-  guest: Joi.string().required(),
+  venue: Joi.string(),
+  platform: Joi.string(),
+  link: Joi.string(),
+  guest_name: Joi.string().required(),
+  guest_image: Joi.string(),
   doc: Joi.string(),
+  event_image: Joi.string(),
+  status: Joi.boolean(),
 });
 
 exports.createSessionSchema = Joi.object({
