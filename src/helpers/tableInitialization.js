@@ -3,10 +3,12 @@ const { createTable: createUserTable } = require("../models/userModel");
 const { createTable: createTimeTable } = require("../models/timeModel");
 const { createTable: createAdminTable } = require("../models/adminModel");
 const { createTable: createEventTable } = require("../models/eventModel");
+const { createTable: createCaseTable } = require("../models/caseModel");
 
 async function initializeTables() {
   try {
     await createSessionTable();
+    await createCaseTable();
     await createUserTable();
     await createTimeTable();
     await createAdminTable();

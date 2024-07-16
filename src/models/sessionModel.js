@@ -12,7 +12,6 @@ class Session {
       CREATE TABLE IF NOT EXISTS Sessions (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         "user" UUID REFERENCES Users(id),
-        case_id VARCHAR(255),
         session_date DATE,
         session_time TIME,
         type VARCHAR(255),
@@ -28,7 +27,6 @@ class Session {
 
   static async create({
     user,
-    case_id,
     session_date,
     session_time,
     type,
@@ -39,9 +37,9 @@ class Session {
   }) {
     const [session] = await sql`
       INSERT INTO Sessions (
-        "user", case_id, session_date, session_time, type, status, counsellor, description, report
+        "user", session_date, session_time, type, status, counsellor, description, report
       ) VALUES (
-        ${user}, ${case_id}, ${session_date}, ${session_time}, ${type}, ${status}, ${counsellor}, ${description}, ${report}
+        ${user}, ${session_date}, ${session_time}, ${type}, ${status}, ${counsellor}, ${description}, ${report}
       )
       RETURNING *
     `;
