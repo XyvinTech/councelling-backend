@@ -1,5 +1,7 @@
 const responseHandler = require("../helpers/responseHandler");
+const Case = require("../models/caseModel");
 const Session = require("../models/sessionModel");
+const Time = require("../models/timeModel");
 const User = require("../models/userModel");
 const { comparePasswords } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/generateToken");
@@ -51,11 +53,28 @@ exports.createSession = async (req, res) => {
     if (checkSession.length > 0) {
       return responseHandler(res, 400, "Session already requested");
     }
-    const sessionCount = await Session.count();
-    req.body.case_id = `CASE_ID#${sessionCount.count + 1}`;
+
     req.body.user = req.userId;
     const session = await Session.create(req.body);
-    if (!session) return responseHandler(res, 400, `Session creation failed`);
+    const checkCase = await Case.findByUserId(req.userId);
+
+    if (checkCase.length > 0) {
+      const existingSessionIds = checkCase[0].session_ids ? checkCase[0].session_ids.split(',') : [];
+      const updatedSessionIds = [...existingSessionIds, session.id];
+      await Case.update(checkCase[0].id, {
+        sessions: updatedSessionIds,
+      });
+    } else {
+      const sessions = [session.id];
+      await Case.create({
+        user: req.userId,
+        sessions,
+      });
+    }
+
+    if (!session) {
+      return responseHandler(res, 400, `Session creation failed`);
+    }
     return responseHandler(res, 201, "Session created successfully", session);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
@@ -115,6 +134,18 @@ exports.listController = async (req, res) => {
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.getAvailableTimes = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { day } = req.query;
+    const times = await Time.findTimes(id, day);
+    if (!times) return responseHandler(res, 404, "No times found");
+    return responseHandler(res, 200, "Times found", times);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }

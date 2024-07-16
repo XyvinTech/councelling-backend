@@ -1,4 +1,5 @@
 const responseHandler = require("../helpers/responseHandler");
+const Case = require("../models/caseModel");
 const Session = require("../models/sessionModel");
 const Time = require("../models/timeModel");
 const User = require("../models/userModel");
@@ -92,7 +93,7 @@ exports.listController = async (req, res) => {
         userId,
         page,
         searchQuery,
-        status
+        status,
       });
       if (sessions.length > 0) {
         const totalCount = await Session.count();
@@ -105,6 +106,24 @@ exports.listController = async (req, res) => {
         );
       }
       return responseHandler(res, 404, "No reports found");
+    }
+    if (type === "cases") {
+      const cases = await Case.findAll({
+        userId,
+        page,
+        searchQuery,
+      });
+      if (cases.length > 0) {
+        const totalCount = await Case.count();
+        return responseHandler(
+          res,
+          200,
+          "Cases found",
+          cases,
+          totalCount.count
+        );
+      }
+      return responseHandler(res, 404, "No cases found");
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }

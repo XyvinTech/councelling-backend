@@ -10,5 +10,6 @@ userRoute.use(authVerify);
 userRoute.post("/session", userController.createSession);
 userRoute.put("/reschedule/:id", userController.rescheduleSession);
 userRoute.get("/list", userController.listController);
+userRoute.get("/counseller/:id/times", userController.getAvailableTimes);
 
 module.exports = userRoute;

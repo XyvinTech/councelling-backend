@@ -58,6 +58,9 @@
  *           schema:
  *             type: object
  *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "For Career Counselling"
  *               session_date:
  *                 type: string
  *                 format: date
@@ -163,6 +166,39 @@
  *         description: Session date & time is required or You can't reschedule this session or Session reschedule failed
  *       404:
  *         description: Session not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+
+/**
+ * @swagger
+ * /user/counseller/{id}/times:
+ *   get:
+ *     summary: Counsellor available times
+ *     description: API endpoint for getting available times for a specific day
+ *     tags:
+ *       - Counsellor
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the counsellor
+ *       - name: day
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "Monday"
+ *         description: Day of the week to find available times
+ *     responses:
+ *       200:
+ *         description: Times found
+ *       404:
+ *         description: No times found
  *       500:
  *         description: Internal Server Error
  */

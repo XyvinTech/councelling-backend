@@ -121,8 +121,8 @@
  *         required: true
  *         schema:
  *           type: string
- *           enum: [sessions]
- *         description: Type of data to list (currently only supports "sessions")
+ *           enum: [sessions, cases]
+ *         description: Type of data to list (currently only supports "sessions", "cases")
  *       - name: page
  *         in: query
  *         schema:

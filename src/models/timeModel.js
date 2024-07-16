@@ -41,6 +41,17 @@ class Time {
     return timeEntries;
   }
 
+  static async findTimes(userId, day) {
+    const timeEntries = await sql`
+        SELECT times, day,
+        Users.name AS user_name
+        FROM Times
+        LEFT JOIN Users ON Times."user" = Users.id
+        WHERE Times."user" = ${userId} AND Times.day = ${day}
+    `;
+    return timeEntries;
+  }
+
   static async update(id, { day, times }) {
     const [updatedTimeEntry] = await sql`
       UPDATE Times

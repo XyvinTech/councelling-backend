@@ -11,11 +11,13 @@ class Session {
     await sql`
       CREATE TABLE IF NOT EXISTS Sessions (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        name VARCHAR(255),
         "user" UUID REFERENCES Users(id),
+        case_id UUID REFERENCES Cases(id),
         session_date DATE,
         session_time TIME,
         type VARCHAR(255),
-        status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed')),
+        status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed', 'rescheduled')),
         counsellor UUID REFERENCES Users(id),
         description TEXT,
         report TEXT,
@@ -27,6 +29,7 @@ class Session {
 
   static async create({
     user,
+    name,
     session_date,
     session_time,
     type,
@@ -37,9 +40,9 @@ class Session {
   }) {
     const [session] = await sql`
       INSERT INTO Sessions (
-        "user", session_date, session_time, type, status, counsellor, description, report
+        "user", name, session_date, session_time, type, status, counsellor, description, report
       ) VALUES (
-        ${user}, ${session_date}, ${session_time}, ${type}, ${status}, ${counsellor}, ${description}, ${report}
+        ${user}, ${name}, ${session_date}, ${session_time}, ${type}, ${status}, ${counsellor}, ${description}, ${report}
       )
       RETURNING *
     `;
