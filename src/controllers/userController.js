@@ -56,21 +56,12 @@ exports.createSession = async (req, res) => {
 
     req.body.user = req.userId;
     const session = await Session.create(req.body);
-    const checkCase = await Case.findByUserId(req.userId);
 
-    if (checkCase.length > 0) {
-      const existingSessionIds = checkCase[0].session_ids ? checkCase[0].session_ids.split(',') : [];
-      const updatedSessionIds = [...existingSessionIds, session.id];
-      await Case.update(checkCase[0].id, {
-        sessions: updatedSessionIds,
-      });
-    } else {
-      const sessions = [session.id];
-      await Case.create({
-        user: req.userId,
-        sessions,
-      });
-    }
+    const sessions = [session.id];
+    await Case.create({
+      user: req.userId,
+      sessions,
+    });
 
     if (!session) {
       return responseHandler(res, 400, `Session creation failed`);

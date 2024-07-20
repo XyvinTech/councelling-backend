@@ -12,6 +12,8 @@ class Case {
       CREATE TABLE IF NOT EXISTS Cases (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         "user" UUID REFERENCES Users(id),
+        grade VARCHAR(255),
+        details TEXT,
         status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed')),
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -118,6 +120,20 @@ class Case {
     }
 
     return updatedCase;
+  }
+
+  static async close(id, { grade, delails }) {
+    const [closeCase] = await sql`
+      UPDATE Cases SET
+        grade = ${grade},
+        details = ${delails},
+        status = completed,
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    return closeCase;
   }
 
   static async count() {

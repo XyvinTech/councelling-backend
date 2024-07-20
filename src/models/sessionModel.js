@@ -17,6 +17,8 @@ class Session {
         session_date DATE,
         session_time TIME,
         type VARCHAR(255),
+        platform VARCHAR(255),
+        link VARCHAR(255),
         status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed', 'rescheduled')),
         counsellor UUID REFERENCES Users(id),
         description TEXT,
@@ -206,6 +208,41 @@ class Session {
     `;
     return session;
   }
+
+  static async close(id) {
+    const [session] = await sql`
+      UPDATE Sessions SET
+        status = completed,
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return session;
+  }
+
+  static async accept(id, { status, platform, link }) {
+    const [session] = await sql`
+      UPDATE Sessions SET
+        status = ${status},
+        platform = ${platform},
+        link = ${link},
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return session;
+  }
+
+  static async countSessionsById(userid, counsellorid) {
+    const [result] = await sql`
+      SELECT 
+        COUNT(*) as session_count
+      FROM Sessions
+      WHERE user = ${userid} AND counsellor = ${counsellorid}
+    `;
+    return result.session_count;
+  }
+  
 
   static async delete(id) {
     await sql`

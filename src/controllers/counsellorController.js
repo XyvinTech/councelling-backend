@@ -131,3 +131,122 @@ exports.listController = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+exports.acceptSession = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { platform, link } = req.body;
+    const data = {
+      platform,
+      link,
+      status: "accepted",
+    };
+    const updatedSession = await Session.accept(id, data);
+    if (!updatedSession)
+      return responseHandler(res, 400, "Session Accepted failed");
+    return responseHandler(
+      res,
+      200,
+      "Session Accepted successfully",
+      updatedSession
+    );
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.addEntry = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      grade,
+      details,
+      close,
+      refer,
+      date,
+      time,
+      remarks,
+      session_id,
+      user_id,
+    } = req.body;
+
+    const createSessionValidator =
+      validations.createSessionEntrySchema.validate(req.body, {
+        abortEarly: true,
+      });
+    if (createSessionValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${createSessionValidator.error}`
+      );
+    }
+
+    //? Attempt to close the session
+    await Session.close(session_id);
+    const checkSession = await Session.findById(session_id);
+
+    //? Handle case closure
+    if (close) {
+      const closeCase = await Case.close(id, { grade, details });
+      if (!closeCase) return responseHandler(res, 400, "Case close failed");
+      return responseHandler(res, 200, "Case closed successfully", closeCase);
+    }
+
+    //? Handle referral
+    if (refer) {
+      await Case.close(id, { grade, details });
+      if (!checkSession) return responseHandler(res, 404, "Session not found");
+
+      const data = {
+        user: user_id,
+        name: `Referred Session by ${checkSession.counsellor_name}`,
+        session_date: date,
+        session_time: time,
+        description: remarks,
+        counsellor: refer,
+      };
+
+      const session = await Session.create(data);
+      if (!session) return responseHandler(res, 400, "Session creation failed");
+
+      await Case.create({
+        user: req.userId,
+        sessions: [session.id],
+      });
+
+      return responseHandler(res, 201, "Session created successfully", session);
+    }
+
+    //? Default case: create a new session
+    const count = await Session.countSessionsById(user_id, req.userId);
+    const sessionData = {
+      user: user_id,
+      name: `${count} Session${count > 1 ? "s" : ""} for ${checkSession.name}`,
+      session_date: date,
+      session_time: time,
+      description: remarks,
+      counsellor: req.userId,
+    };
+
+    const newSession = await Session.create(sessionData);
+    if (!newSession)
+      return responseHandler(res, 400, "Session creation failed");
+
+    const fetchCase = await Case.findById(id);
+    if (!fetchCase) return responseHandler(res, 404, "Case not found");
+
+    await Case.update(id, {
+      session_ids: [...fetchCase.session_ids, newSession.id],
+    });
+
+    return responseHandler(
+      res,
+      201,
+      "Session created successfully",
+      newSession
+    );
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
+  }
+};

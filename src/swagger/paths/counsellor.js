@@ -148,3 +148,41 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counsellor/accept-session/{id}:
+ *   put:
+ *     summary: Accept a session
+ *     description: API endpoint to accept a session and update its status
+ *     tags:
+ *       - Session
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the session to accept
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               platform:
+ *                 type: string
+ *                 example: "Zoom"
+ *               link:
+ *                 type: string
+ *                 example: "https://zoom.us/j/123456789"
+ *     responses:
+ *       200:
+ *         description: Session accepted successfully
+ *       400:
+ *         description: Session acceptance failed
+ *       500:
+ *         description: Internal Server Error
+ */
