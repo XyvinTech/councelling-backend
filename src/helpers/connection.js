@@ -1,3 +1,4 @@
+require("dotenv").config();
 const postgres = require("postgres");
 const clc = require("cli-color");
 
