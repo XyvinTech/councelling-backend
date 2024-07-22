@@ -16,6 +16,7 @@ const initializeTables = require("./src/helpers/tableInitialization");
 const loadSecrets = require("./src/config/env.config");
 const app = express();
 app.use(volleyball);
+const initializeConnection = require("./src/helpers/connection");
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -34,7 +35,7 @@ const startServer = async () => {
     //* Set the base path for API routes
     const BASE_PATH = `/api/${API_VERSION}`;
     //* Import database connection module
-    require("./src/helpers/connection");
+    await initializeConnection();
     // //! Uncomment this if you don't have a tables created
     // initializeTables()
     //   .then(() => {

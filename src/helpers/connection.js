@@ -1,21 +1,22 @@
+require('dotenv').config();
 const postgres = require("postgres");
 const clc = require("cli-color");
 
-const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
+async function initializeConnection() {
+  const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
 
-const sql = postgres({
-  host: PGHOST,
-  database: PGDATABASE,
-  username: PGUSER,
-  password: PGPASSWORD,
-  port: 5432,
-  ssl: "require",
-  connection: {
-    options: `project=${ENDPOINT_ID}`,
-  },
-});
+  const sql = postgres({
+    host: PGHOST,
+    database: PGDATABASE,
+    username: PGUSER,
+    password: PGPASSWORD,
+    port: 5432,
+    ssl: "require",
+    connection: {
+      options: `project=${ENDPOINT_ID}`,
+    },
+  });
 
-async function getPgVersion() {
   try {
     const result = await sql`select version()`;
     if (result[0].version)
@@ -25,10 +26,10 @@ async function getPgVersion() {
         )
       );
   } catch (error) {
-    console.error(error);
+    console.error("Failed to connect to Postgres:", error);
   }
+
+  return sql;
 }
 
-getPgVersion();
-
-module.exports = sql;
+module.exports = initializeConnection;
