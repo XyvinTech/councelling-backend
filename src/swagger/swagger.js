@@ -11,7 +11,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: `http://52.66.173.34:${3000}/api/${v1}`,
+      url: `http://52.66.173.34:3000/api/v1`,
     },
     {
       url: `http://localhost:${PORT}/api/${API_VERSION}`,
