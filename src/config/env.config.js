@@ -6,7 +6,6 @@ const region = "ap-south-1";
 
 // Create a Secrets Manager client
 const client = new AWS.SecretsManager({ region });
-
 /**
  * Loads secrets from AWS Secrets Manager and sets them as environment variables.
  */
