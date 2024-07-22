@@ -12,6 +12,8 @@ const swaggerDefinition = {
   servers: [
     {
       url: `http://52.66.173.34:${3000}/api/${v1}`,
+    },
+    {
       url: `http://localhost:${PORT}/api/${API_VERSION}`,
     },
   ],
@@ -38,11 +40,11 @@ const options = {
 
 const swaggerOptions = {
   swaggerOptions: {
-    docExpansion: "none", 
-    filter: true, 
-    tagsSorter: "alpha", 
-    operationsSorter: "alpha" 
-  }
+    docExpansion: "none",
+    filter: true,
+    tagsSorter: "alpha",
+    operationsSorter: "alpha",
+  },
 };
 
 const swaggerSpec = swaggerJSDoc(options);
