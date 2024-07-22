@@ -1,8 +1,7 @@
-const initializeConnection = require("../helpers/connection");
+const sql = require("../helpers/sql");
 
 class Session {
   static async createTable() {
-    const sql = await initializeConnection();
     // Ensure the UUID extension is enabled
     await sql`
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
