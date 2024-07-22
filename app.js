@@ -25,8 +25,6 @@ const startServer = async () => {
     if (NODE_ENV === "production") {
       await loadSecrets();
     }
-    //* Import database connection module
-    require("./src/helpers/connection");
     //* Define the PORT & API version based on environment variable
     const { PORT, API_VERSION } = process.env;
     //* Enable Cross-Origin Resource Sharing (CORS) middleware
@@ -35,7 +33,8 @@ const startServer = async () => {
     app.use(express.json());
     //* Set the base path for API routes
     const BASE_PATH = `/api/${API_VERSION}`;
-
+    //* Import database connection module
+    require("./src/helpers/connection");
     // //! Uncomment this if you don't have a tables created
     // initializeTables()
     //   .then(() => {
