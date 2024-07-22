@@ -29,6 +29,7 @@ const startServer = async () => {
     require("./src/helpers/connection");
     //* Define the PORT & API version based on environment variable
     const { PORT, API_VERSION } = process.env;
+    console.log("🚀 ~ startServer ~ PORT:", PORT)
     console.log("🚀 ~ startServer ~ API_VERSION:", API_VERSION)
     //* Enable Cross-Origin Resource Sharing (CORS) middleware
     app.use(cors());
