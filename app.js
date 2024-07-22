@@ -34,7 +34,7 @@ const startServer = async () => {
     //* Set the base path for API routes
     const BASE_PATH = `/api/${API_VERSION}`;
     //* Import database connection module
-    // require("./src/helpers/connection");
+    require("./src/helpers/connection");
     // //! Uncomment this if you don't have a tables created
     // initializeTables()
     //   .then(() => {
