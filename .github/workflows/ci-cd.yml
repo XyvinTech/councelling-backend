@@ -58,7 +58,7 @@ jobs:
           EC2_INSTANCE_IP: ${{ secrets.EC2_INSTANCE_IP }}
           SSH_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
           USERNAME: ec2-user
-          PORT: 3300
+          PORT: 3000
           CONTAINER_NAME: COUNSELLING_BACKEND
 
         uses: appleboy/ssh-action@master
