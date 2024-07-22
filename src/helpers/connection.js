@@ -2,6 +2,9 @@ const postgres = require("postgres");
 const clc = require("cli-color");
 
 const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
+console.log("🚀 ~ PGUSER:", PGUSER)
+console.log("🚀 ~ PGDATABASE:", PGDATABASE)
+console.log("🚀 ~ PGHOST:", PGHOST)
 
 const sql = postgres({
   host: PGHOST,
