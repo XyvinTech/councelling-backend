@@ -460,3 +460,33 @@ exports.getUser = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+exports.getCounsellorSessions = async (req, res) => {
+  try {
+    const userId = req.params.counsellorId;
+    const { page, searchQuery } = req.query;
+    const sessions = await Session.findAllByCounsellorId({
+      userId,
+      page,
+      searchQuery,
+    });
+    const mappedData = sessions.map((session) => {
+      return {
+        id: session.id,
+        session_date: moment(session.session_date).format("Do MMMM YYYY"),
+        session_time: moment(session.session_time, "HH:mm:ss").format("h:mm A"),
+        student_name: session.user_name,
+        counsellor_type: session.type,
+        grade: session.grade,
+        status: session.status,
+      };
+    });
+    if (sessions.length > 0) {
+      const totalCount = await Session.counsellor_count({ id: userId });
+      return responseHandler(res, 200, "Sessions found", mappedData, totalCount);
+    }
+    return responseHandler(res, 404, "No Sessions found", mappedData);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};

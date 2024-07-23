@@ -478,3 +478,39 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /admin/counsellor/sessions/{counsellorId}:
+ *   get:
+ *     summary: Get counsellor sessions
+ *     description: API endpoint to retrieve all sessions for a specific counsellor
+ *     tags:
+ *       - Session
+ *     parameters:
+ *       - name: counsellorId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the counsellor whose sessions are to be retrieved
+ *       - name: page
+ *         in: query
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - name: searchQuery
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: Optional search query to filter sessions
+ *     responses:
+ *       200:
+ *         description: Sessions found
+ *       404:
+ *         description: No Sessions found
+ *       500:
+ *         description: Internal Server Error
+ */

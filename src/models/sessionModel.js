@@ -132,9 +132,11 @@ class Session {
       SELECT 
         Sessions.*,
         Users.name as user_name,
-        Counsellors.name as counsellor_name
+        Counsellors.name as counsellor_name,
+        Cases.grade as grade
       FROM Sessions
       LEFT JOIN Users ON Sessions."user" = Users.id
+      LEFT JOIN Cases ON Sessions."case_id" = Cases.id
       LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
       ${filterCondition}
       ORDER BY Sessions."createdAt" DESC
@@ -157,6 +159,24 @@ class Session {
     if (id) {
       filterCondition = sql`
         WHERE "user" = ${id}
+      `;
+    }
+
+    const [result] = await sql`
+      SELECT COUNT(*) AS count
+      FROM Sessions
+      ${filterCondition}
+    `;
+
+    return result.count;
+  }
+
+  static async counsellor_count({ id }) {
+    let filterCondition = sql``;
+
+    if (id) {
+      filterCondition = sql`
+        WHERE "counsellor" = ${id}
       `;
     }
 
