@@ -4,6 +4,7 @@ const clc = require("cli-color");
 
 async function initializeConnection() {
   const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
+  console.log("🚀 ~ initializeConnection ~ PGDATABASE:", PGDATABASE)
 
   const sql = postgres({
     host: PGHOST,
