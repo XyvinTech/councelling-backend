@@ -384,7 +384,7 @@
  * @swagger
  * /admin/list:
  *   get:
- *     summary: List sessions or reports
+ *     summary: List students or counsellers
  *     description: API endpoint for listing data
  *     tags:
  *       - List
