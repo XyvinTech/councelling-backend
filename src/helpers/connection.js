@@ -12,9 +12,9 @@ async function initializeConnection() {
     password: PGPASSWORD,
     port: 5432,
     ssl: "require",
-    connection: {
-      options: `project=${ENDPOINT_ID}`,
-    },
+    // connection: {
+    //   options: `project=${ENDPOINT_ID}`,
+    // },
   });
 
   try {
