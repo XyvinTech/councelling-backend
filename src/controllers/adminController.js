@@ -7,6 +7,7 @@ const User = require("../models/userModel");
 const { comparePasswords, hashPassword } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/generateToken");
 const validations = require("../validations");
+const Case = require("../models/caseModel");
 
 exports.loginAdmin = async (req, res) => {
   try {
@@ -483,9 +484,43 @@ exports.getCounsellorSessions = async (req, res) => {
     });
     if (sessions.length > 0) {
       const totalCount = await Session.counsellor_count({ id: userId });
-      return responseHandler(res, 200, "Sessions found", mappedData, totalCount);
+      return responseHandler(
+        res,
+        200,
+        "Sessions found",
+        mappedData,
+        totalCount
+      );
     }
     return responseHandler(res, 404, "No Sessions found", mappedData);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.getCounsellorCases = async (req, res) => {
+  try {
+    const userId = req.params.counsellorId;
+    const { page, searchQuery } = req.query;
+    const cases = await Case.findAllByCounsellorId({
+      userId,
+      page,
+      searchQuery,
+    });
+    const mappedData = cases.map((case_) => {
+      return {
+        id: case_.id,
+        case_date: moment(case_.createdAt).format("Do MMMM YYYY"),
+        case_time: moment(case_.createdAt, "HH:mm:ss").format("h:mm A"),
+        student_name: case_.user_name,
+        status: case_.status,
+      };
+    });
+    if (cases.length > 0) {
+      const totalCount = await Case.counsellor_count({ id: userId });
+      return responseHandler(res, 200, "Cases found", mappedData, totalCount);
+    }
+    return responseHandler(res, 404, "No Cases found", mappedData);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }

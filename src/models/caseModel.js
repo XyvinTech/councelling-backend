@@ -100,6 +100,54 @@ class Case {
     return session;
   }
 
+  static async findAllByCounsellorId({
+    userId,
+    page = 1,
+    limit = 10,
+    searchQuery = "",
+  } = {}) {
+    const offset = (page - 1) * limit;
+    let filterCondition = sql`WHERE Sessions.counsellor = ${userId}`;
+
+    if (searchQuery) {
+      filterCondition = sql`
+        ${filterCondition} AND Cases.status ILIKE ${"%" + searchQuery + "%"}
+      `;
+    }
+
+    const query = sql`
+      SELECT 
+      Cases.*,
+      Users.name as user_name,
+      Counsellors.name as counsellor_name,
+      Cases.grade as grade
+    FROM Cases
+    LEFT JOIN Sessions ON Cases.id = Sessions.case_id
+    LEFT JOIN Users ON Cases."user" = Users.id
+    LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
+    ${filterCondition}
+    ORDER BY Sessions."createdAt" DESC
+    OFFSET ${offset} LIMIT ${limit}
+    `;
+
+    return await query;
+  }
+
+  static async counsellor_count({id}) {
+    const result = await sql`
+      SELECT COUNT(*) AS count 
+      FROM Cases 
+      WHERE id IN (
+        SELECT case_id 
+        FROM Sessions 
+        WHERE counsellor = ${id}
+      )
+    `;
+  
+    return result[0].count;
+  }
+  
+
   static async update(id, { sessions }) {
     const sessionIdsString = sessions.join(",");
 

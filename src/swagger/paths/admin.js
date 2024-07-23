@@ -514,3 +514,39 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /admin/counsellor/cases/{counsellorId}:
+ *   get:
+ *     summary: Get counsellor cases
+ *     description: API endpoint to retrieve all cases for a specific counsellor
+ *     tags:
+ *       - Case
+ *     parameters:
+ *       - name: counsellorId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the counsellor whose cases are to be retrieved
+ *       - name: page
+ *         in: query
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - name: searchQuery
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: Optional search query to filter cases
+ *     responses:
+ *       200:
+ *         description: Cases found
+ *       404:
+ *         description: No Cases found
+ *       500:
+ *         description: Internal Server Error
+ */
