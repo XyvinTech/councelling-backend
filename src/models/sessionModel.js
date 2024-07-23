@@ -151,11 +151,22 @@ class Session {
     return session;
   }
 
-  static async count() {
-    const [session] = await sql`
-      SELECT COUNT(*) FROM Sessions
+  static async count({ id }) {
+    let filterCondition = sql``;
+
+    if (id) {
+      filterCondition = sql`
+        WHERE "user" = ${id}
+      `;
+    }
+
+    const [result] = await sql`
+      SELECT COUNT(*) AS count
+      FROM Sessions
+      ${filterCondition}
     `;
-    return session;
+
+    return result.count;
   }
 
   static async findByUserId(id) {
@@ -242,7 +253,6 @@ class Session {
     `;
     return result.session_count;
   }
-  
 
   static async delete(id) {
     await sql`

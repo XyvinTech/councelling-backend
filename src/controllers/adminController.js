@@ -1,6 +1,8 @@
+const moment = require("moment-timezone");
 const responseHandler = require("../helpers/responseHandler");
 const Admin = require("../models/adminModel");
 const Event = require("../models/eventModel");
+const Session = require("../models/sessionModel");
 const User = require("../models/userModel");
 const { comparePasswords, hashPassword } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/generateToken");
@@ -380,13 +382,7 @@ exports.listController = async (req, res) => {
       });
       if (student.length > 0) {
         const totalCount = await User.count({ userType: "student" });
-        return responseHandler(
-          res,
-          200,
-          "Students found",
-          student,
-          totalCount
-        );
+        return responseHandler(res, 200, "Students found", student, totalCount);
       }
       return responseHandler(res, 404, "No Students found");
     } else if (type === "counsellers") {
@@ -409,6 +405,41 @@ exports.listController = async (req, res) => {
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.getUserSessions = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { page, searchQuery } = req.query;
+    const sessions = await Session.findAllByUserId({
+      userId,
+      page,
+      searchQuery,
+    });
+    const mappedData = sessions.map((session) => {
+      return {
+        id: session.id,
+        session_date: moment(session.session_date).format('Do MMMM YYYY'),
+        session_time: moment(session.session_time, 'HH:mm:ss').format('h:mm A'),
+        name: session.name,
+        counsellor_name: session.counsellor_name,
+        counsellor_type: session.type,
+      };
+    })
+    if (sessions.length > 0) {
+      const totalCount = await Session.count({ id: userId });
+      return responseHandler(
+        res,
+        200,
+        "Sessions found",
+        mappedData,
+        totalCount
+      );
+    }
+    return responseHandler(res, 404, "No Sessions found", mappedData);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }

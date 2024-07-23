@@ -26,10 +26,10 @@
  *             properties:
  *               email:
  *                 type: string
- *                 example: "user@example.com"
+ *                 example: "philip@gmail.com"
  *               password:
  *                 type: string
- *                 example: "password123"
+ *                 example: "12345"
  *     responses:
  *       200:
  *         description: Login successful

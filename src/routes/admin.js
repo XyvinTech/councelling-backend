@@ -30,5 +30,6 @@ adminRoute
   .delete(adminController.deleteStudent);
 
 adminRoute.get("/list", adminController.listController);
+adminRoute.get("/sessions/:userId", adminController.getUserSessions);
 
 module.exports = adminRoute;
