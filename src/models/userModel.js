@@ -9,7 +9,7 @@ class User {
 
     // Create the Admins table with UUID primary key
     await sql`
-      CREATE TABLE IF NOT EXISTS Users (
+      CREATE TABLE IF NOT EXISTS Members (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
@@ -39,7 +39,7 @@ class User {
     experience = null,
   }) {
     const [user] = await sql`
-      INSERT INTO Users (name, email, password, mobile, userType, parentContact, counsellorType, experience, designation)
+      INSERT INTO Members (name, email, password, mobile, userType, parentContact, counsellorType, experience, designation)
       VALUES (
         ${name}, 
         ${email}, 
@@ -69,7 +69,7 @@ class User {
 
     return await sql`
     SELECT id, name, email, status, "createdAt", "updatedAt"
-    FROM Users
+    FROM Members
     ${filterCondition}
     OFFSET ${offset} LIMIT ${limit}
   `;
@@ -77,7 +77,7 @@ class User {
 
   static async findById(id) {
     const [user] = await sql`
-    SELECT * FROM Users WHERE id = ${id}
+    SELECT * FROM Members WHERE id = ${id}
   `;
     if (user) {
       delete user.password;
@@ -89,14 +89,14 @@ class User {
     const key = Object.keys(criteria)[0];
     const value = criteria[key];
     const [user] = await sql`
-    SELECT * FROM Users WHERE ${sql(key)} = ${value}
+    SELECT * FROM Members WHERE ${sql(key)} = ${value}
   `;
     return user;
   }
 
   static async update(id, { name, email, status }) {
     const [user] = await sql`
-    UPDATE Users SET
+    UPDATE Members SET
       name = ${name},
       email = ${email},
       status = ${status},
@@ -109,7 +109,7 @@ class User {
 
   static async delete(id) {
     await sql`
-    DELETE FROM Users WHERE id = ${id}
+    DELETE FROM Members WHERE id = ${id}
   `;
     return true;
   }
