@@ -422,13 +422,13 @@ exports.getUserSessions = async (req, res) => {
     const mappedData = sessions.map((session) => {
       return {
         id: session.id,
-        session_date: moment(session.session_date).format('Do MMMM YYYY'),
-        session_time: moment(session.session_time, 'HH:mm:ss').format('h:mm A'),
+        session_date: moment(session.session_date).format("Do MMMM YYYY"),
+        session_time: moment(session.session_time, "HH:mm:ss").format("h:mm A"),
         name: session.name,
         counsellor_name: session.counsellor_name,
         counsellor_type: session.type,
       };
-    })
+    });
     if (sessions.length > 0) {
       const totalCount = await Session.count({ id: userId });
       return responseHandler(
@@ -440,6 +440,22 @@ exports.getUserSessions = async (req, res) => {
       );
     }
     return responseHandler(res, 404, "No Sessions found", mappedData);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.getUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return responseHandler(res, 400, "User ID is required");
+    }
+    const user = await User.findById(id);
+    if (!user) {
+      return responseHandler(res, 404, "User not found");
+    }
+    return responseHandler(res, 200, "User found", user);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }

@@ -451,3 +451,30 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /admin/user/{id}:
+ *   get:
+ *     summary: Get user details
+ *     description: API endpoint to retrieve user details by ID
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the user to retrieve
+ *     responses:
+ *       200:
+ *         description: User found
+ *       404:
+ *         description: User not found
+ *       400:
+ *         description: User ID is required
+ *       500:
+ *         description: Internal Server Error
+ */
