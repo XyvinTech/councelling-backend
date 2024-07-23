@@ -8,9 +8,9 @@ const { createTable: createCaseTable } = require("../models/caseModel");
 async function initializeTables() {
   try {
     await createAdminTable();
+    await createUserTable();
     await createCaseTable();
     await createSessionTable();
-    await createUserTable();
     await createTimeTable();
     await createEventTable();
   } catch (error) {
