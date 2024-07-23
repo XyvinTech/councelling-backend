@@ -7,11 +7,11 @@ const { createTable: createCaseTable } = require("../models/caseModel");
 
 async function initializeTables() {
   try {
+    await createAdminTable();
     await createCaseTable();
     await createSessionTable();
     await createUserTable();
     await createTimeTable();
-    await createAdminTable();
     await createEventTable();
   } catch (error) {
     console.error("Error creating tables:", error);
