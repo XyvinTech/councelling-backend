@@ -3,6 +3,8 @@
  * tags:
  *   - name: Admin
  *     description: Admin related endpoints
+ *   - name: Case
+ *     description: Case related endpoints
  */
 
 /**
