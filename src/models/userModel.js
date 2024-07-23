@@ -56,24 +56,32 @@ class User {
     return user;
   }
 
-  static async findAll({ page = 1, limit = 10, searchQuery = "" } = {}) {
+  static async findAll({ page = 1, limit = 10, userType, searchQuery = "" } = {}) {
     const offset = (page - 1) * limit;
     let filterCondition = sql``;
-
+  
     if (searchQuery) {
       filterCondition = sql`
-      WHERE name ILIKE ${"%" + searchQuery + "%"}
-      OR email ILIKE ${"%" + searchQuery + "%"}
-    `;
+        WHERE (name ILIKE ${"%" + searchQuery + "%"}
+        OR email ILIKE ${"%" + searchQuery + "%"})
+  
+      `;
     }
-
+  
+    if (userType) {
+      filterCondition = sql`
+        ${filterCondition}
+        ${filterCondition.text ? 'AND' : 'WHERE'} userType = ${userType}
+      `;
+    }
+  
     return await sql`
-    SELECT id, name, email, status, "createdAt", "updatedAt"
-    FROM Users
-    ${filterCondition}
-    OFFSET ${offset} LIMIT ${limit}
-  `;
-  }
+      SELECT id, name, email, status, "createdAt", "updatedAt"
+      FROM Users
+      ${filterCondition}
+      OFFSET ${offset} LIMIT ${limit}
+    `;
+  }  
 
   static async findById(id) {
     const [user] = await sql`
@@ -104,6 +112,13 @@ class User {
     WHERE id = ${id}
     RETURNING *
   `;
+    return user;
+  }
+
+  static async count() {
+    const [user] = await sql`
+      SELECT COUNT(*) FROM Users
+    `;
     return user;
   }
 

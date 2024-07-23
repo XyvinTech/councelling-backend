@@ -4,18 +4,13 @@ const clc = require("cli-color");
 
 async function initializeConnection() {
   const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
-  console.log("🚀 ~ initializeConnection ~ PGDATABASE:", PGDATABASE)
 
   const sql = postgres({
     host: PGHOST,
     database: PGDATABASE,
     username: PGUSER,
     password: PGPASSWORD,
-    port: 5432,
-    // ssl: "require",
-    // connection: {
-    //   options: `project=${ENDPOINT_ID}`,
-    // },
+    port: 5432
   });
 
   try {

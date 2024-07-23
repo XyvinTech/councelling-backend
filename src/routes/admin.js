@@ -29,4 +29,6 @@ adminRoute
   .put(adminController.updateStudent)
   .delete(adminController.deleteStudent);
 
+adminRoute.get("/list", adminController.listController);
+
 module.exports = adminRoute;

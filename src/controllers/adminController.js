@@ -368,3 +368,31 @@ exports.deleteStudent = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+exports.listController = async (req, res) => {
+  try {
+    const { type, page, searchQuery } = req.query;
+    if (type === "students") {
+      const student = await User.findAll({
+        page,
+        searchQuery,
+        userType: "student",
+      });
+      if (student.length > 0) {
+        const totalCount = await User.count();
+        return responseHandler(
+          res,
+          200,
+          "Users found",
+          student,
+          totalCount.count
+        );
+      }
+      return responseHandler(res, 404, "No users found");
+    } else {
+      return responseHandler(res, 404, "Invalid type..!");
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};

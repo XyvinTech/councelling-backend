@@ -22,10 +22,10 @@
  *             properties:
  *               email:
  *                 type: string
- *                 example: "admin@example.com"
+ *                 example: "ttj@duck.com"
  *               password:
  *                 type: string
- *                 example: "password123"
+ *                 example: "12345"
  *     responses:
  *       200:
  *         description: Login successful
@@ -376,6 +376,43 @@
  *         description: Invalid input
  *       404:
  *         description: Counsellor not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /admin/list:
+ *   get:
+ *     summary: List sessions or reports
+ *     description: API endpoint for listing users or reports based on type
+ *     tags:
+ *       - List
+ *     parameters:
+ *       - name: type
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [students]
+ *         description: Type of data to list (currently only supports "students")
+ *       - name: page
+ *         in: query
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number for pagination
+ *       - name: searchQuery
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: Optional search query to filter results
+ *     responses:
+ *       200:
+ *         description: Data found
+ *       404:
+ *         description: No Data found or invalid type
  *       500:
  *         description: Internal Server Error
  */
