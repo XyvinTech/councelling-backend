@@ -11,7 +11,7 @@ class Case {
     await sql`
       CREATE TABLE IF NOT EXISTS Cases (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        "user" UUID REFERENCES Users(id),
+        "user" UUID REFERENCES Members(id),
         grade VARCHAR(255),
         details TEXT,
         status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed')),
@@ -66,7 +66,7 @@ class Case {
         Users.name AS user_name,
         json_agg(Sessions.*) AS sessions
       FROM Cases
-      LEFT JOIN Users ON Cases."user" = Users.id
+      LEFT JOIN Members ON Cases."user" = Users.id
       LEFT JOIN Sessions ON Sessions.case_id = Cases.id
       WHERE Sessions.counsellor = ${userId}
       ${filterCondition}
