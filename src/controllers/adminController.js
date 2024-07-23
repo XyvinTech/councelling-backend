@@ -389,6 +389,23 @@ exports.listController = async (req, res) => {
         );
       }
       return responseHandler(res, 404, "No users found");
+    } else if (type === "counsellers") {
+      const student = await User.findAll({
+        page,
+        searchQuery,
+        userType: "counseller",
+      });
+      if (student.length > 0) {
+        const totalCount = await User.count();
+        return responseHandler(
+          res,
+          200,
+          "Users found",
+          student,
+          totalCount.count
+        );
+      }
+      return responseHandler(res, 404, "No users found");
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }

@@ -385,7 +385,7 @@
  * /admin/list:
  *   get:
  *     summary: List sessions or reports
- *     description: API endpoint for listing users or reports based on type
+ *     description: API endpoint for listing data
  *     tags:
  *       - List
  *     parameters:
@@ -394,8 +394,7 @@
  *         required: true
  *         schema:
  *           type: string
- *           enum: [students]
- *         description: Type of data to list (currently only supports "students")
+ *           enum: [students, counsellers]
  *       - name: page
  *         in: query
  *         schema:
