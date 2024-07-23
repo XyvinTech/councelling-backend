@@ -4,7 +4,7 @@ require("dotenv").config();
 const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
 
 const sql = postgres({
-  host: ' 52.66.173.34',
+  host: 'postgres-db',
   database: 'counselling_db',
   username: 'admin',
   password: 'admin',
