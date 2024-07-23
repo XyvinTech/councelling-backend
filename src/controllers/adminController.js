@@ -379,33 +379,33 @@ exports.listController = async (req, res) => {
         userType: "student",
       });
       if (student.length > 0) {
-        const totalCount = await User.count();
+        const totalCount = await User.count({ userType: "student" });
         return responseHandler(
           res,
           200,
-          "Users found",
+          "Students found",
           student,
-          totalCount.count
+          totalCount
         );
       }
-      return responseHandler(res, 404, "No users found");
+      return responseHandler(res, 404, "No Students found");
     } else if (type === "counsellers") {
       const student = await User.findAll({
         page,
         searchQuery,
-        userType: "counseller",
+        userType: "counsellor",
       });
       if (student.length > 0) {
-        const totalCount = await User.count();
+        const totalCount = await User.count({ userType: "counsellor" });
         return responseHandler(
           res,
           200,
-          "Users found",
+          "Counsellers found",
           student,
-          totalCount.count
+          totalCount
         );
       }
-      return responseHandler(res, 404, "No users found");
+      return responseHandler(res, 404, "No counsellers found");
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }

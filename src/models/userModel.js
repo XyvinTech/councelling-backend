@@ -58,30 +58,30 @@ class User {
 
   static async findAll({ page = 1, limit = 10, userType, searchQuery = "" } = {}) {
     const offset = (page - 1) * limit;
-    let filterCondition = sql``;
-  
-    if (searchQuery) {
-      filterCondition = sql`
-        WHERE (name ILIKE ${"%" + searchQuery + "%"}
-        OR email ILIKE ${"%" + searchQuery + "%"})
-  
-      `;
-    }
-  
+    let filterCondition = sql``; 
+    
     if (userType) {
       filterCondition = sql`
-        ${filterCondition}
-        ${filterCondition.text ? 'AND' : 'WHERE'} userType = ${userType}
+        WHERE "usertype" = ${userType}
       `;
     }
-  
+    
+    if (searchQuery) {
+      filterCondition = sql`
+        ${filterCondition.length > 0 ? sql` AND` : sql` WHERE`}
+        (name ILIKE ${"%" + searchQuery + "%"}
+        OR email ILIKE ${"%" + searchQuery + "%"})
+      `;
+    }
+    
     return await sql`
       SELECT id, name, email, status, "createdAt", "updatedAt"
       FROM Users
       ${filterCondition}
       OFFSET ${offset} LIMIT ${limit}
     `;
-  }  
+  }
+  
 
   static async findById(id) {
     const [user] = await sql`
@@ -115,12 +115,24 @@ class User {
     return user;
   }
 
-  static async count() {
-    const [user] = await sql`
-      SELECT COUNT(*) FROM Users
+  static async count({ userType } = {}) {
+    let filterCondition = sql``; 
+    
+    if (userType) {
+      filterCondition = sql`
+        WHERE "usertype" = ${userType}
+      `;
+    }
+    
+    const [result] = await sql`
+      SELECT COUNT(*) AS count
+      FROM Users
+      ${filterCondition}
     `;
-    return user;
+    
+    return result.count;
   }
+  
 
   static async delete(id) {
     await sql`
