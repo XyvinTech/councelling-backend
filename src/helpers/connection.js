@@ -3,7 +3,7 @@ const postgres = require("postgres");
 const clc = require("cli-color");
 
 async function initializeConnection() {
-  const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
+  const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
 
   const sql = postgres({
     host: PGHOST,
