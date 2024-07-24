@@ -19,6 +19,6 @@ counsellorRoute.post("/add-entry/:id", counsellorController.addEntry);
 counsellorRoute.get("/counsellors", counsellorController.getAllCounsellors);
 counsellorRoute.get("/sessions/:caseId", counsellorController.getCaseSessions);
 counsellorRoute.get("/session/:id", counsellorController.getSession);
-counsellorRoute.put("/reschedule/:id", userController.rescheduleSession);
+counsellorRoute.put("/reschedule/:id", counsellorController.rescheduleSession);
 
 module.exports = counsellorRoute;
