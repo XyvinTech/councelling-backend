@@ -5,6 +5,7 @@ const Time = require("../models/timeModel");
 const User = require("../models/userModel");
 const { comparePasswords } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/generateToken");
+const sendMail = require("../utils/sendMail");
 const validations = require("../validations");
 
 exports.loginCounsellor = async (req, res) => {
@@ -311,3 +312,60 @@ exports.getSession = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 }
+
+exports.rescheduleSession = async (req, res) => {
+  try {
+    const { session_date, session_time } = req.body;
+    const { id } = req.params;
+    if (!session_date && !session_time)
+      return responseHandler(res, 400, `Session date & time is required`);
+    const session = await Session.findById(id);
+    if (!session) return responseHandler(res, 404, "Session not found");
+    if (session.status !== "pending")
+      return responseHandler(res, 400, "You can't reschedule this session");
+    const updatedSession = {
+      ...session,
+      status: "accepted",
+      session_date,
+      session_time,
+    };
+    const rescheduleSession = await Session.update(id, updatedSession);
+    if (!rescheduleSession)
+      return responseHandler(res, 400, "Session reschedule failed");
+    const data = {
+      user: req.userId,
+      caseId: updatedSession.case_id,
+      session: updatedSession.id,
+      details:
+        "Your session is rescheduled.",
+    };
+    await Notification.create(data);
+    const notif_data = {
+      user: updatedSession.user,
+      caseId: updatedSession.case_id,
+      session: updatedSession.id,
+      details: "Session rescheduled.",
+    };
+    const emailData = {
+      to: session.user_email,
+      subject: "Your Session Rescheduled",
+      text: `Your session is rescheduled with Session ID: ${session.id}.`,
+    };
+    await sendMail(emailData);
+    await Notification.create(notif_data);
+    const counData = {
+      to: session.counsellor_email,
+      subject: "Session Reschedule",
+      text: `Session rescheduled for Session ID: ${session.id}.`,
+    };
+    await sendMail(counData);
+    return responseHandler(
+      res,
+      200,
+      "Session rescheduled successfully",
+      rescheduleSession
+    );
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};

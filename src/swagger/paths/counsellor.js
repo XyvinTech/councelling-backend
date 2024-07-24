@@ -318,3 +318,45 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counsellor/reschedule/{id}:
+ *   put:
+ *     summary: Reschedule a session
+ *     description: API endpoint for rescheduling a session
+ *     tags:
+ *       - Session
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the session to reschedule
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               session_date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2023-07-01"
+ *               session_time:
+ *                 type: string
+ *                 format: time
+ *                 example: "15:30:00"
+ *     responses:
+ *       200:
+ *         description: Session rescheduled successfully
+ *       400:
+ *         description: Session date & time is required or You can't reschedule this session or Session reschedule failed
+ *       404:
+ *         description: Session not found
+ *       500:
+ *         description: Internal Server Error
+ */
