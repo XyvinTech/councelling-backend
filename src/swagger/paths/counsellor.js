@@ -209,3 +209,62 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counsellor/add-entry//{id}:
+ *   post:
+ *     summary: Add an entry to a case
+ *     description: Add a session entry to a specific case and optionally close or refer the case.
+ *     tags:
+ *       - Session
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The ID of the case to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               grade:
+ *                 type: string
+ *               details:
+ *                 type: string
+ *               close:
+ *                 type: boolean
+ *               refer:
+ *                 type: string
+ *                 format: uuid
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               time:
+ *                 type: string
+ *                 format: time
+ *               remarks:
+ *                 type: string
+ *               session_id:
+ *                 type: string
+ *                 format: uuid
+ *               user_id:
+ *                 type: string
+ *                 format: uuid
+ *     responses:
+ *       200:
+ *         description: Case closed successfully
+ *       201:
+ *         description: Session created successfully
+ *       400:
+ *         description: Invalid input or operation failed
+ *       404:
+ *         description: Case or session not found
+ *       500:
+ *         description: Internal Server Error
+ */
