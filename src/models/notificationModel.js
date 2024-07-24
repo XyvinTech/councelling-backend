@@ -12,7 +12,7 @@ class Notification {
       CREATE TABLE IF NOT EXISTS Notifications (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         "user" UUID REFERENCES Users(id),
-        case UUID REFERENCES Cases(id),
+        case_id UUID REFERENCES Cases(id),
         session UUID REFERENCES Sessions(id),
         details TEXT,
         isRead BOOLEAN DEFAULT FALSE,
@@ -26,7 +26,7 @@ class Notification {
   static async create({ user, caseId, session, details, isRead = false }) {
     const [notification] = await sql`
       INSERT INTO Notifications (
-        "user", case, session, details, isRead, session_ids
+        "user", case_id, session, details, isRead, session_ids
       ) VALUES (
         ${user}, ${caseId}, ${session}, ${details}, ${isRead}
       )
