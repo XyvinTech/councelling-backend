@@ -66,20 +66,20 @@ exports.createSession = async (req, res) => {
 
     session.case_id = caseId.id;
 
-    // const data = {
-    //   user: req.userId,
-    //   caseId: caseId.id,
-    //   session: session.id,
-    //   details: "Your session has been requested. Please wait for approval",
-    // };
-    // await Notification.create(data);
-    // const notif_data = {
-    //   user: req.userId,
-    //   caseId: caseId.id,
-    //   session: session.id,
-    //   details: "New session requested",
-    // };
-    // await Notification.create(notif_data);
+    const data = {
+      user: req.userId,
+      caseId: caseId.id,
+      session: session.id,
+      details: "Your session has been requested. Please wait for approval",
+    };
+    await Notification.create(data);
+    const notif_data = {
+      user: session.counsellor,
+      caseId: caseId.id,
+      session: session.id,
+      details: "New session requested",
+    };
+    await Notification.create(notif_data);
 
     if (!session) {
       return responseHandler(res, 400, `Session creation failed`);
@@ -108,6 +108,21 @@ exports.rescheduleSession = async (req, res) => {
     const rescheduleSession = await Session.update(id, updatedSession);
     if (!rescheduleSession)
       return responseHandler(res, 400, "Session reschedule failed");
+    const data = {
+      user: req.userId,
+      caseId: updatedSession.case_id,
+      session: updatedSession.id,
+      details:
+        "Your session reschedule has been requested. Please wait for approval",
+    };
+    await Notification.create(data);
+    const notif_data = {
+      user: updatedSession.counsellor,
+      caseId: updatedSession.case_id,
+      session: updatedSession.id,
+      details: "Session reschedule requested",
+    };
+    await Notification.create(notif_data);
     return responseHandler(
       res,
       200,

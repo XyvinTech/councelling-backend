@@ -17,8 +17,7 @@ class Notification {
         details TEXT,
         isRead BOOLEAN DEFAULT FALSE,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        session_ids VARCHAR -- Comma-separated session IDs
+        "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
   }
@@ -26,7 +25,7 @@ class Notification {
   static async create({ user, caseId, session, details, isRead = false }) {
     const [notification] = await sql`
       INSERT INTO Notifications (
-        "user", case_id, session, details, isRead, session_ids
+        "user", case_id, session, details, isRead
       ) VALUES (
         ${user}, ${caseId}, ${session}, ${details}, ${isRead}
       )
