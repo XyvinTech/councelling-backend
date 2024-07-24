@@ -46,7 +46,18 @@ class Session {
       ) VALUES (
         ${user}, ${name}, ${session_date}, ${session_time}, ${type}, ${status}, ${counsellor}, ${description}, ${report}
       )
-      RETURNING *
+       RETURNING 
+      id,
+      name,
+      session_date,
+      session_time,
+      type,
+      status,
+      description,
+      counsellor,
+      report,
+      (SELECT email FROM Users WHERE id = "user") AS user_email,
+      (SELECT email FROM Users WHERE id = counsellor) AS counsellor_email
     `;
     return session;
   }
@@ -203,7 +214,9 @@ class Session {
       SELECT 
         Sessions.*,
         Users.name as user_name,
-        Counsellors.name as counsellor_name
+        Counsellors.name as counsellor_name,
+        Users.email as user_email,
+        Counsellors.email as counsellor_email
       FROM Sessions
       LEFT JOIN Users ON Sessions.user = Users.id
       LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
