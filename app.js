@@ -37,15 +37,15 @@ const startServer = async () => {
     //* Import database connection module
     await initializeConnection();
     // //! Uncomment this if you don't have a tables created
-    // initializeTables()
-    //   .then(() => {
-    //     console.log(
-    //       clc.magentaBright("Table initialization completed successfully.")
-    //     );
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error initializing tables:", error);
-    //   });
+    initializeTables()
+      .then(() => {
+        console.log(
+          clc.magentaBright("Table initialization completed successfully.")
+        );
+      })
+      .catch((error) => {
+        console.error("Error initializing tables:", error);
+      });
 
     //* Swagger setup
     app.use(
