@@ -91,7 +91,7 @@ class User {
     let filterCondition = sql`WHERE userType = 'counsellor' AND status = true`;
 
     if (counsellorType) {
-      filterCondition = sql`${filterCondition} AND counsellorType = ${counsellorType}`;
+      filterCondition = sql`${filterCondition} AND counsellortype = ${counsellorType}`;
     }
 
     const counsellors = await sql`

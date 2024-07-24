@@ -3,6 +3,7 @@ const Case = require("../models/caseModel");
 const Session = require("../models/sessionModel");
 const Time = require("../models/timeModel");
 const User = require("../models/userModel");
+const Notification = require("../models/notificationModel");
 const { comparePasswords } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/generateToken");
 const validations = require("../validations");
@@ -65,6 +66,21 @@ exports.createSession = async (req, res) => {
 
     session.case_id = caseId.id;
 
+    // const data = {
+    //   user: req.userId,
+    //   caseId: caseId.id,
+    //   session: session.id,
+    //   details: "Your session has been requested. Please wait for approval",
+    // };
+    // await Notification.create(data);
+    // const notif_data = {
+    //   user: req.userId,
+    //   caseId: caseId.id,
+    //   session: session.id,
+    //   details: "New session requested",
+    // };
+    // await Notification.create(notif_data);
+
     if (!session) {
       return responseHandler(res, 400, `Session creation failed`);
     }
@@ -115,13 +131,7 @@ exports.listController = async (req, res) => {
       });
       if (sessions.length > 0) {
         const totalCount = await Session.count({ id: userId });
-        return responseHandler(
-          res,
-          200,
-          "Reports found",
-          sessions,
-          totalCount
-        );
+        return responseHandler(res, 200, "Reports found", sessions, totalCount);
       }
       return responseHandler(res, 404, "No reports found");
     } else {
@@ -136,7 +146,7 @@ exports.getAvailableTimes = async (req, res) => {
   try {
     const { id } = req.params;
     const { day } = req.query;
-    const times = await Time.findTimes({userId: id, day});
+    const times = await Time.findTimes({ userId: id, day });
     if (!times) return responseHandler(res, 404, "No times found");
     return responseHandler(res, 200, "Times found", times);
   } catch (error) {
