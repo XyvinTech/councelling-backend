@@ -58,10 +58,12 @@ exports.createSession = async (req, res) => {
     const session = await Session.create(req.body);
 
     const sessions = [session.id];
-    await Case.create({
+    const caseId = await Case.create({
       user: req.userId,
       sessions,
     });
+
+    session.case_id = caseId.id;
 
     if (!session) {
       return responseHandler(res, 400, `Session creation failed`);
@@ -134,7 +136,7 @@ exports.getAvailableTimes = async (req, res) => {
   try {
     const { id } = req.params;
     const { day } = req.query;
-    const times = await Time.findTimes(id, day);
+    const times = await Time.findTimes({userId: id, day});
     if (!times) return responseHandler(res, 404, "No times found");
     return responseHandler(res, 200, "Times found", times);
   } catch (error) {
