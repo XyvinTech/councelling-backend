@@ -249,3 +249,28 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /user/session/{id}:
+ *   get:
+ *     summary: Get a session by ID
+ *     description: Retrieve details of a specific session using its ID.
+ *     tags:
+ *       - Session
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The ID of the session to retrieve
+ *     responses:
+ *       200:
+ *         description: Session found
+ *       404:
+ *         description: Session not found
+ *       500:
+ *         description: Internal Server Error
+ */

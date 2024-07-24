@@ -13,5 +13,6 @@ userRoute.get("/list", userController.listController);
 userRoute.get("/counseller/:id/times", userController.getAvailableTimes);
 userRoute.get("/counsellors", userController.getAllCounsellors);
 userRoute.get("/sessions/:caseId", userController.getCaseSessions);
+userRoute.get("/session/:id", userController.getSession);
 
 module.exports = userRoute;

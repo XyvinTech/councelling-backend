@@ -224,10 +224,14 @@ class Session {
         Users.name as user_name,
         Counsellors.name as counsellor_name,
         Users.email as user_email,
-        Counsellors.email as counsellor_email
+        Counsellors.email as counsellor_email,
+        Cases.grade as grade,
+        Cases.details as case_details,
+        Cases.status as case_status
       FROM Sessions
       LEFT JOIN Users ON Sessions.user = Users.id
       LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
+      LEFT JOIN Cases ON Sessions.case_id = Cases.id
       WHERE Sessions.id = ${id}
     `;
     return session;
