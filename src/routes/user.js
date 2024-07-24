@@ -11,5 +11,6 @@ userRoute.post("/session", userController.createSession);
 userRoute.put("/reschedule/:id", userController.rescheduleSession);
 userRoute.get("/list", userController.listController);
 userRoute.get("/counseller/:id/times", userController.getAvailableTimes);
+userRoute.get("/counsellors", userController.getAllCounsellors);
 
 module.exports = userRoute;

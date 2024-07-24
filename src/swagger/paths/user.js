@@ -202,3 +202,26 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /user/counsellors:
+ *   get:
+ *     summary: Get all counsellors
+ *     description: API endpoint to retrieve all counsellors, optionally filtered by type
+ *     tags:
+ *       - Counsellor
+ *     parameters:
+ *       - name: counsellorType
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: Filter counsellors by type
+ *     responses:
+ *       200:
+ *         description: Counsellors found
+ *       404:
+ *         description: No counsellors found
+ *       500:
+ *         description: Internal Server Error
+ */
