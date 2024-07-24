@@ -66,6 +66,19 @@ exports.addTimes = async (req, res) => {
       );
     }
     req.body.user = req.userId;
+    const isAdded = await Time.findTimes({
+      userId: req.userId,
+      day: req.body.day,
+    });
+    if (isAdded) {
+      const id = isAdded.id;
+      const updateTime = await Time.update(id, {
+        day: req.body.day,
+        times: req.body.times,
+      });
+      if (!updateTime) return responseHandler(res, 400, `Time creation failed`);
+      return responseHandler(res, 201, "Time created successfully", updateTime);
+    }
     const times = await Time.create(req.body);
     if (!times) return responseHandler(res, 400, `Time creation failed`);
     return responseHandler(res, 201, "Time created successfully", times);
