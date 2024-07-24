@@ -220,3 +220,16 @@ exports.getAllCounsellors = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+exports.getCaseSessions = async (req, res) => {
+  try {
+    const { caseId } = req.params;
+    const sessions = await Session.findAllByCaseId(caseId);
+    if (sessions.length > 0) {
+      return responseHandler(res, 200, "Sessions found", sessions);
+    }
+    return responseHandler(res, 404, "No sessions found");
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};

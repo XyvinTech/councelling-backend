@@ -209,6 +209,14 @@ class Session {
     return session;
   }
 
+  static async findAllByCaseId(id) {
+    const session = await sql`
+      SELECT * FROM Sessions 
+      WHERE "case_id" = ${id}
+    `;
+    return session;
+  }
+
   static async findById(id) {
     const [session] = await sql`
       SELECT 

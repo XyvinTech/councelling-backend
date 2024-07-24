@@ -224,3 +224,28 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /user/sessions/{caseId}:
+ *   get:
+ *     summary: Get sessions by case ID
+ *     description: Retrieve all sessions associated with a specific case ID.
+ *     tags:
+ *       - Session
+ *     parameters:
+ *       - name: caseId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The ID of the case to retrieve sessions for
+ *     responses:
+ *       200:
+ *         description: Sessions found
+ *       404:
+ *         description: No sessions found
+ *       500:
+ *         description: Internal Server Error
+ */
