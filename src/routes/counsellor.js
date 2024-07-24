@@ -16,6 +16,6 @@ counsellorRoute.route("/times")
 counsellorRoute.get("/list", counsellorController.listController);
 counsellorRoute.put("/accept-session/:id", counsellorController.acceptSession);
 counsellorRoute.post("/add-entry/:id", counsellorController.addEntry);
-userRoute.get("/counsellors", counsellorController.getAllCounsellors);
+counsellorRoute.get("/counsellors", counsellorController.getAllCounsellors);
 
 module.exports = counsellorRoute;
