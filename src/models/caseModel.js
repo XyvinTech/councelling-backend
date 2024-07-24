@@ -100,6 +100,34 @@ class Case {
     return session;
   }
 
+  static async findByUser({
+    userId,
+    page = 1,
+    limit = 10,
+    searchQuery = "",
+  } = {}) {
+    const offset = (page - 1) * limit;
+    let filterCondition = sql`WHERE Cases."user" = ${userId}`;
+
+    if (searchQuery) {
+      filterCondition = sql`
+        ${filterCondition} AND Cases.status ILIKE ${"%" + searchQuery + "%"}
+      `;
+    }
+
+    const cases = await sql`
+      SELECT Cases.*, 
+      Counsellors.name AS counsellor_name
+      FROM Cases
+      LEFT JOIN Sessions ON Cases.id = Sessions.case_id
+      LEFT JOIN Users AS Counsellors ON Sessions.counsellor = Counsellors.id
+      ${filterCondition}
+      GROUP BY Cases.id, Counsellors.name
+      OFFSET ${offset} LIMIT ${limit}
+    `;
+    return cases;
+  }
+
   static async findAllByCounsellorId({
     userId,
     page = 1,
@@ -133,7 +161,7 @@ class Case {
     return await query;
   }
 
-  static async counsellor_count({id}) {
+  static async counsellor_count({ id }) {
     const result = await sql`
       SELECT COUNT(*) AS count 
       FROM Cases 
@@ -143,10 +171,19 @@ class Case {
         WHERE counsellor = ${id}
       )
     `;
-  
+
     return result[0].count;
   }
-  
+
+  static async user_count({ id }) {
+    const result = await sql`
+      SELECT COUNT(*) AS count 
+      FROM Cases 
+      WHERE "user" = ${id} 
+    `;
+
+    return result[0].count;
+  }
 
   static async update(id, { sessions }) {
     const sessionIdsString = sessions.join(",");

@@ -69,9 +69,9 @@ exports.createSession = async (req, res) => {
     const emailData = {
       to: session.user_email,
       subject: "Session Requested",
-      text: `Your session has been requested with Session ID: ${session.id} and Case ID: ${caseId.id}. Please wait for approval`
-    }
-    await sendMail(emailData)
+      text: `Your session has been requested with Session ID: ${session.id} and Case ID: ${caseId.id}. Please wait for approval`,
+    };
+    await sendMail(emailData);
     const data = {
       user: req.userId,
       caseId: caseId.id,
@@ -88,9 +88,9 @@ exports.createSession = async (req, res) => {
     const counData = {
       to: session.counsellor_email,
       subject: "New Session Request",
-      text: `You have a new session has been requested with Session ID: ${session.id} and Case ID: ${caseId.id}.`
-    }
-    await sendMail(counData)
+      text: `You have a new session has been requested with Session ID: ${session.id} and Case ID: ${caseId.id}.`,
+    };
+    await sendMail(counData);
     await Notification.create(notif_data);
 
     if (!session) {
@@ -137,16 +137,16 @@ exports.rescheduleSession = async (req, res) => {
     const emailData = {
       to: session.user_email,
       subject: "Session Reschedule has been Requested",
-      text: `Your session reschedule has been requested with Session ID: ${session.id}. Please wait for approval`
-    }
-    await sendMail(emailData)
+      text: `Your session reschedule has been requested with Session ID: ${session.id}. Please wait for approval`,
+    };
+    await sendMail(emailData);
     await Notification.create(notif_data);
     const counData = {
       to: session.counsellor_email,
       subject: "Session Reschedule Request",
-      text: `Session reschedule has been requested with Session ID: ${session.id}.`
-    }
-    await sendMail(counData)
+      text: `Session reschedule has been requested with Session ID: ${session.id}.`,
+    };
+    await sendMail(counData);
     return responseHandler(
       res,
       200,
@@ -171,6 +171,13 @@ exports.listController = async (req, res) => {
       if (sessions.length > 0) {
         const totalCount = await Session.count({ id: userId });
         return responseHandler(res, 200, "Reports found", sessions, totalCount);
+      }
+      return responseHandler(res, 404, "No reports found");
+    } else if (type === "cases") {
+      const cases = await Case.findByUser({ userId, page, searchQuery });
+      if (cases.length > 0) {
+        const totalCount = await Case.user_count({ id: userId });
+        return responseHandler(res, 200, "Cases found", cases, totalCount);
       }
       return responseHandler(res, 404, "No reports found");
     } else {
