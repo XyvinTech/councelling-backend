@@ -212,7 +212,12 @@ class Session {
 
   static async findAllByCaseId(id) {
     const session = await sql`
-      SELECT * FROM Sessions 
+      SELECT Sessions.*, 
+      Users.name as user_name,
+      Counsellors.name as counsellor_name
+      FROM Sessions
+      LEFT JOIN Users ON Sessions.user = Users.id
+      LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
       WHERE "case_id" = ${id}
     `;
     return session;
@@ -223,7 +228,9 @@ class Session {
       SELECT 
         Sessions.*,
         Users.name as user_name,
+        Users.mobile as user_mobile,
         Counsellors.name as counsellor_name,
+        Counsellors.mobile as counsellor_mobile,
         Users.email as user_email,
         Counsellors.email as counsellor_email,
         Cases.grade as grade,

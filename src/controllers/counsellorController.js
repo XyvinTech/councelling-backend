@@ -111,13 +111,7 @@ exports.listController = async (req, res) => {
       });
       if (sessions.length > 0) {
         const totalCount = await Session.counsellor_count({ id: userId });
-        return responseHandler(
-          res,
-          200,
-          "Reports found",
-          sessions,
-          totalCount
-        );
+        return responseHandler(res, 200, "Reports found", sessions, totalCount);
       }
       return responseHandler(res, 404, "No reports found");
     }
@@ -128,14 +122,19 @@ exports.listController = async (req, res) => {
         searchQuery,
       });
       if (cases.length > 0) {
-        const totalCount = await Case.count();
-        return responseHandler(
-          res,
-          200,
-          "Cases found",
-          cases,
-          totalCount.count
-        );
+        const mappedData = cases.map((item) => {
+          return {
+            ...item,
+            session_time: item.sessions.length
+              ? item.sessions[item.sessions.length - 1].session_time
+              : null,
+            type: item.sessions.length
+              ? item.sessions[item.sessions.length - 1].type
+              : null,
+          };
+        });
+        const totalCount = await Case.counsellor_count({ id: userId });
+        return responseHandler(res, 200, "Cases found", mappedData, totalCount);
       }
       return responseHandler(res, 404, "No cases found");
     } else {
