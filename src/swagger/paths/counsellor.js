@@ -363,7 +363,7 @@
 
 /**
  * @swagger
- * /counseller/counsellers/{id}/times:
+ * /counsellor/counsellors/{id}/times:
  *   get:
  *     summary: Counsellor available times
  *     description: API endpoint for getting available times for a specific day
