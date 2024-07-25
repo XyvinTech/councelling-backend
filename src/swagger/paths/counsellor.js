@@ -360,3 +360,35 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counseller/counsellers/{id}/times:
+ *   get:
+ *     summary: Counsellor available times
+ *     description: API endpoint for getting available times for a specific day
+ *     tags:
+ *       - Counsellor
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the counsellor
+ *       - name: day
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "Monday"
+ *         description: Day of the week to find available times
+ *     responses:
+ *       200:
+ *         description: Times found
+ *       404:
+ *         description: No times found
+ *       500:
+ *         description: Internal Server Error
+ */

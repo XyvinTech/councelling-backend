@@ -265,7 +265,6 @@ exports.addEntry = async (req, res) => {
   }
 };
 
-
 exports.getAllCounsellors = async (req, res) => {
   try {
     const { counsellorType } = req.query;
@@ -311,7 +310,7 @@ exports.getSession = async (req, res) => {
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
-}
+};
 
 exports.rescheduleSession = async (req, res) => {
   try {
@@ -336,8 +335,7 @@ exports.rescheduleSession = async (req, res) => {
       user: req.userId,
       caseId: updatedSession.case_id,
       session: updatedSession.id,
-      details:
-        "Your session is rescheduled.",
+      details: "Your session is rescheduled.",
     };
     await Notification.create(data);
     const notif_data = {
@@ -365,6 +363,18 @@ exports.rescheduleSession = async (req, res) => {
       "Session rescheduled successfully",
       rescheduleSession
     );
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.getAvailableTimes = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { day } = req.query;
+    const times = await Time.findTimes({ userId: id, day });
+    if (!times) return responseHandler(res, 404, "No times found");
+    return responseHandler(res, 200, "Times found", times);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
