@@ -21,5 +21,6 @@ counsellorRoute.get("/sessions/:caseId", counsellorController.getCaseSessions);
 counsellorRoute.get("/session/:id", counsellorController.getSession);
 counsellorRoute.put("/reschedule/:id", counsellorController.rescheduleSession);
 counsellorRoute.get("/counsellors/:id/times", counsellorController.getAvailableTimes);
+counsellorRoute.put("/cancel-session/:id", counsellorController.cancelSession);
 
 module.exports = counsellorRoute;

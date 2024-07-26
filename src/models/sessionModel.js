@@ -284,6 +284,17 @@ class Session {
     return session;
   }
 
+  static async cancel(id) {
+    const [session] = await sql`
+      UPDATE Sessions SET
+        status = cancelled,
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return session;
+  }
+
   static async accept(id, { status, platform, link }) {
     const [session] = await sql`
       UPDATE Sessions SET

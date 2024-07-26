@@ -392,3 +392,28 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counsellor/cancel-session/{id}/cancel:
+ *   put:
+ *     summary: Cancel a session
+ *     description: Cancels a session by its ID.
+ *     tags:
+ *       - Session
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The ID of the session to cancel
+ *     responses:
+ *       200:
+ *         description: Session cancelled successfully
+ *       404:
+ *         description: Session not found
+ *       500:
+ *         description: Internal Server Error
+ */

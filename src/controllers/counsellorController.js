@@ -378,3 +378,16 @@ exports.getAvailableTimes = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+exports.cancelSession = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const session = await Session.cancel(id);
+    if (session) {
+      return responseHandler(res, 200, "Session cancelled successfully");
+    }
+    return responseHandler(res, 404, "Session not found");
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
