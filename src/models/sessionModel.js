@@ -276,7 +276,7 @@ class Session {
   static async close(id) {
     const [session] = await sql`
       UPDATE Sessions SET
-        status = completed,
+        status = 'completed',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
@@ -287,7 +287,7 @@ class Session {
   static async cancel(id) {
     const [session] = await sql`
       UPDATE Sessions SET
-        status = cancelled,
+        status = 'cancelled',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
