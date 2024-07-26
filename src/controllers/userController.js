@@ -34,6 +34,22 @@ exports.loginUser = async (req, res) => {
   }
 };
 
+exports.getUser = async (req, res) => {
+  try {
+    const id = req.userId;
+    if (!id) {
+      return responseHandler(res, 400, "User ID is required");
+    }
+    const findStudent = await User.findById(id);
+    if (!findStudent) {
+      return responseHandler(res, 404, "User not found");
+    }
+    return responseHandler(res, 200, "User found", findStudent);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
 exports.createSession = async (req, res) => {
   try {
     const createSessionValidator = validations.createSessionSchema.validate(
@@ -245,4 +261,4 @@ exports.getSession = async (req, res) => {
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
-}
+};

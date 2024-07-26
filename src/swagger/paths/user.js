@@ -45,6 +45,25 @@
 
 /**
  * @swagger
+ * /user:
+ *   get:
+ *     summary: Get Student details
+ *     description: API endpoint for getting student details
+ *     tags:
+ *       - User
+ *     responses:
+ *       200:
+ *         description: User found
+ *       400:
+ *         description: User ID is required
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
  * /user/session:
  *   post:
  *     summary: Create new Session
