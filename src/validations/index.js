@@ -98,7 +98,7 @@ exports.addTimeSchema = Joi.object({
 });
 
 exports.createSessionEntrySchema = Joi.object({
-  date: Joi.date().required(),
+  date: Joi.date(),
   time: Joi.string()
     .regex(/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/)
     .required(),
