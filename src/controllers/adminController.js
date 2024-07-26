@@ -546,3 +546,21 @@ exports.getAllCounsellors = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+exports.getDashboard = async (req, res) => {
+  try {
+    const student_count = await User.count({ userType: "student" });
+    const counsellor_count = await User.count({ userType: "counsellor" });
+    const case_count = await Case.count();
+    const session_count = await Session.count({});
+    const dashboard = {
+      student_count,
+      counsellor_count,
+      case_count,
+      session_count,
+    };
+    return responseHandler(res, 200, "Dashboard found", dashboard);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};

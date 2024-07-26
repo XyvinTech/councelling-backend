@@ -5,6 +5,8 @@
  *     description: Admin related endpoints
  *   - name: Case
  *     description: Case related endpoints
+ *   - name: Dashboard
+ *     description: Dashboard related endpoints
  */
 
 /**
@@ -573,6 +575,21 @@
  *         description: Counsellors found
  *       404:
  *         description: No counsellors found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /admin/dashboard:
+ *   get:
+ *     summary: Get dashboard statistics
+ *     description: Retrieves counts of students, counsellors, cases, and sessions.
+ *     tags:
+ *       - Dashboard
+ *     responses:
+ *       200:
+ *         description: Dashboard found
  *       500:
  *         description: Internal Server Error
  */

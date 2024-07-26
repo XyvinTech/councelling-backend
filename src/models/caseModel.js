@@ -225,7 +225,7 @@ class Case {
     const [cases] = await sql`
       SELECT COUNT(*) FROM Cases
     `;
-    return cases;
+    return cases.count;
   }
 
   static async delete(id) {

@@ -35,5 +35,6 @@ adminRoute.get("/user/:id", adminController.getUser);
 adminRoute.get("/counsellor/sessions/:counsellorId", adminController.getCounsellorSessions);
 adminRoute.get("/counsellor/cases/:counsellorId", adminController.getCounsellorCases);
 adminRoute.get("/counsellors", adminController.getAllCounsellors);
+adminRoute.get("/dashboard", adminController.getDashboard);
 
 module.exports = adminRoute;
