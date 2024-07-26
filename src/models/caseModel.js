@@ -209,12 +209,12 @@ class Case {
     return updatedCase;
   }
 
-  static async close(id, { grade, delails }) {
+  static async close(id, { grade, details }) {
     const [closeCase] = await sql`
       UPDATE Cases SET
         grade = ${grade},
-        details = ${delails},
-        status = completed,
+        details = ${details},
+        status = 'completed',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
