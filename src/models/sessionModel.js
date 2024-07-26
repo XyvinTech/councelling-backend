@@ -143,7 +143,6 @@ class Session {
       SELECT 
         Sessions.*,
         Users.name as user_name,
-        Users.id as user_id,
         Counsellors.name as counsellor_name,
         Cases.grade as grade,
         Cases.id as case_id
