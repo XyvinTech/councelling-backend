@@ -23,7 +23,8 @@ class Case {
   }
 
   static async create({ user, sessions }) {
-    const sessionIdsString = sessions.join(",");
+    const sessionIds = sessions.map(session => typeof session === 'object' ? session.id : session);
+    const sessionIdsString = sessionIds.filter(Boolean).join(",");
 
     const [newCase] = await sql`
               INSERT INTO Cases (
@@ -186,8 +187,6 @@ class Case {
   }
 
   static async update(id, { sessions }) {
-    console.log("🚀 ~ Case ~ update ~ sessions:", sessions)
-    // Ensure each session is a UUID
     const sessionIds = sessions.map(session => typeof session === 'object' ? session.id : session);
     const sessionIdsString = sessionIds.filter(Boolean).join(",");
   
