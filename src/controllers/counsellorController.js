@@ -238,7 +238,7 @@ exports.addEntry = async (req, res) => {
       name: `${count} Session${count > 1 ? "s" : ""} for ${checkSession.name}`,
       session_date: date,
       session_time: time,
-      description: remarks,
+      description: details,
       counsellor: req.userId,
     };
 
