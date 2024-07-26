@@ -313,7 +313,7 @@ class Session {
       SELECT 
         COUNT(*) as session_count
       FROM Sessions
-      WHERE user = ${userid} AND counsellor = ${counsellorid}
+      WHERE "user" = ${userid} AND counsellor = ${counsellorid}
     `;
     return result.session_count;
   }

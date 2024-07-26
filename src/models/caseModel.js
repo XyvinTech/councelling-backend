@@ -87,7 +87,7 @@ class Case {
       WHERE Cases.id = ${id}
       GROUP BY Cases.id
     `;
-
+  
     return caseRow;
   }
 
@@ -186,8 +186,11 @@ class Case {
   }
 
   static async update(id, { sessions }) {
-    const sessionIdsString = sessions.join(",");
-
+    console.log("🚀 ~ Case ~ update ~ sessions:", sessions)
+    // Ensure each session is a UUID
+    const sessionIds = sessions.map(session => typeof session === 'object' ? session.id : session);
+    const sessionIdsString = sessionIds.filter(Boolean).join(",");
+  
     const [updatedCase] = await sql`
       UPDATE Cases SET
         session_ids = ${sessionIdsString},
@@ -195,15 +198,15 @@ class Case {
       WHERE id = ${id}
       RETURNING *
     `;
-
-    for (const session of sessions) {
+  
+    for (const sessionId of sessionIds) {
       await sql`
         UPDATE Sessions SET
           case_id = ${id}
-        WHERE id = ${session}
+        WHERE id = ${sessionId}
       `;
     }
-
+  
     return updatedCase;
   }
 

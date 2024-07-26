@@ -232,11 +232,12 @@ exports.addEntry = async (req, res) => {
     }
 
     //? Default case: create a new session
-    const count = await Session.countSessionsById(user_id, req.userId);
+    const  count = await Session.countSessionsById(user_id, req.userId);
     const sessionData = {
       user: user_id,
       name: `${count} Session${count > 1 ? "s" : ""} for ${checkSession.name}`,
       session_date: date,
+      type: checkSession.type,
       session_time: time,
       description: details,
       counsellor: req.userId,
@@ -250,8 +251,8 @@ exports.addEntry = async (req, res) => {
     if (!fetchCase) return responseHandler(res, 404, "Case not found");
 
     await Case.update(id, {
-      session_ids: [...fetchCase.session_ids, newSession.id],
-    });
+      sessions: [...fetchCase.sessions.map(session => session), newSession.id],
+    });    
 
     return responseHandler(
       res,

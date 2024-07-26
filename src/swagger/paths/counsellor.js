@@ -212,7 +212,7 @@
 
 /**
  * @swagger
- * /counsellor/add-entry//{id}:
+ * /counsellor/add-entry/{id}:
  *   post:
  *     summary: Add an entry to a case
  *     description: Add a session entry to a specific case and optionally close or refer the case.
