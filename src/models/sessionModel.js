@@ -90,9 +90,14 @@ class Session {
     page = 1,
     limit = 10,
     searchQuery = "",
+    status = null,
   } = {}) {
     const offset = (page - 1) * limit;
     let filterCondition = sql` WHERE Sessions."user" = ${userId} `;
+
+    if (status)
+      filterCondition = sql` ${filterCondition} AND Sessions.status = ${status}`;
+
 
     if (searchQuery) {
       filterCondition = sql`

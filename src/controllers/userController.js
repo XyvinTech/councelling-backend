@@ -177,13 +177,14 @@ exports.rescheduleSession = async (req, res) => {
 
 exports.listController = async (req, res) => {
   try {
-    const { type, page, searchQuery } = req.query;
+    const { type, page, searchQuery, status } = req.query;
     const { userId } = req;
     if (type === "sessions") {
       const sessions = await Session.findAllByUserId({
         userId,
         page,
         searchQuery,
+        status,
       });
       if (sessions.length > 0) {
         const totalCount = await Session.count({ id: userId });
