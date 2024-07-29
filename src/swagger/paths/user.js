@@ -211,6 +211,13 @@
  *         schema:
  *           type: string
  *           example: "Monday"
+ *       - name: date
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: "2023-06-28"
  *         description: Day of the week to find available times
  *     responses:
  *       200:
