@@ -23,7 +23,9 @@ class Case {
   }
 
   static async create({ user, sessions }) {
-    const sessionIds = sessions.map(session => typeof session === 'object' ? session.id : session);
+    const sessionIds = sessions.map((session) =>
+      typeof session === "object" ? session.id : session
+    );
     const sessionIdsString = sessionIds.filter(Boolean).join(",");
 
     const [newCase] = await sql`
@@ -88,7 +90,7 @@ class Case {
       WHERE Cases.id = ${id}
       GROUP BY Cases.id
     `;
-  
+
     return caseRow;
   }
 
@@ -118,12 +120,13 @@ class Case {
 
     const cases = await sql`
       SELECT Cases.*, 
+      Counsellors.counsellorType AS session_type,
       Counsellors.name AS counsellor_name
       FROM Cases
       LEFT JOIN Sessions ON Cases.id = Sessions.case_id
       LEFT JOIN Users AS Counsellors ON Sessions.counsellor = Counsellors.id
       ${filterCondition}
-      GROUP BY Cases.id, Counsellors.name
+      GROUP BY Cases.id, Counsellors.name, Counsellors.counsellorType
       OFFSET ${offset} LIMIT ${limit}
     `;
     return cases;
@@ -187,9 +190,11 @@ class Case {
   }
 
   static async update(id, { sessions }) {
-    const sessionIds = sessions.map(session => typeof session === 'object' ? session.id : session);
+    const sessionIds = sessions.map((session) =>
+      typeof session === "object" ? session.id : session
+    );
     const sessionIdsString = sessionIds.filter(Boolean).join(",");
-  
+
     const [updatedCase] = await sql`
       UPDATE Cases SET
         session_ids = ${sessionIdsString},
@@ -197,7 +202,7 @@ class Case {
       WHERE id = ${id}
       RETURNING *
     `;
-  
+
     for (const sessionId of sessionIds) {
       await sql`
         UPDATE Sessions SET
@@ -205,7 +210,7 @@ class Case {
         WHERE id = ${sessionId}
       `;
     }
-  
+
     return updatedCase;
   }
 
