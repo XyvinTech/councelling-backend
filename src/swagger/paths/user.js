@@ -303,7 +303,7 @@
 
 /**
  * @swagger
- * /user/cancel-session/{id}/cancel:
+ * /user/cancel-session/{id}:
  *   put:
  *     summary: Cancel a session
  *     description: Cancels a session by its ID.

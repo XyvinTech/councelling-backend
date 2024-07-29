@@ -228,6 +228,17 @@ class Case {
     return closeCase;
   }
 
+  static async cancel(id) {
+    const [session] = await sql`
+      UPDATE Cases SET
+        status = 'cancelled',
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return session;
+  }
+
   static async count() {
     const [cases] = await sql`
       SELECT COUNT(*) FROM Cases

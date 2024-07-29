@@ -282,6 +282,7 @@ exports.cancelSession = async (req, res) => {
   try {
     const { id } = req.params;
     const session = await Session.cancel(id);
+    await Case.cancel(session.case_id);
     if (session) {
       return responseHandler(res, 200, "Session cancelled successfully");
     }
