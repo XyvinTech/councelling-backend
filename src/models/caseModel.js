@@ -58,9 +58,11 @@ class Case {
     let filterCondition = sql``;
 
     if (searchQuery) {
-      filterCondition = sql`AND Cases."user"::text ILIKE ${
+      filterCondition = sql`
+        ${filterCondition} AND Users.name ILIKE ${
         "%" + searchQuery + "%"
-      }`;
+      }
+      `;
     }
 
     const cases = await sql`
