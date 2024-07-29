@@ -637,7 +637,7 @@
 
 /**
  * @swagger
- * /admin/sessions/{caseId}:
+ * /admin/sessions/{caseId}/case:
  *   get:
  *     summary: Get sessions by case ID
  *     description: Retrieve all sessions associated with a specific case ID.
