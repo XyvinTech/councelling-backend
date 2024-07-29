@@ -69,15 +69,10 @@ exports.createEventSchema = Joi.object({
   title: Joi.string().required(),
   description: Joi.string().required(),
   date: Joi.date().required(),
-  time: Joi.date().required(),
-  venue: Joi.string(),
-  platform: Joi.string(),
-  link: Joi.string(),
-  guest_name: Joi.string().required(),
-  guest_image: Joi.string(),
-  doc: Joi.string(),
+  time: Joi.string()
+    .regex(/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/)
+    .required(),
   event_image: Joi.string(),
-  status: Joi.boolean(),
 });
 
 exports.createSessionSchema = Joi.object({
@@ -99,8 +94,7 @@ exports.addTimeSchema = Joi.object({
 
 exports.createSessionEntrySchema = Joi.object({
   date: Joi.date(),
-  time: Joi.string()
-    .regex(/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/),
+  time: Joi.string().regex(/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/),
   user_id: Joi.string().required(),
   session_id: Joi.string().required(),
   close: Joi.boolean(),

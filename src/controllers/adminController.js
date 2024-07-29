@@ -249,34 +249,6 @@ exports.deleteCounsellor = async (req, res) => {
   }
 };
 
-exports.createEvent = async (req, res) => {
-  try {
-    const createEventValidator = validations.createEventSchema.validate(
-      req.body,
-      {
-        abortEarly: true,
-      }
-    );
-    if (createEventValidator.error) {
-      return responseHandler(
-        res,
-        400,
-        `Invalid input: ${createEventValidator.error}`
-      );
-    }
-
-    const findEvent = await Event.findOne({ title: req.body.title });
-    if (findEvent) {
-      return responseHandler(res, 409, "Event already exists");
-    }
-
-    const event = await Event.create(req.body);
-    return responseHandler(res, 201, "Event created", event);
-  } catch (error) {
-    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
-  }
-};
-
 exports.createStudent = async (req, res) => {
   try {
     const createStudentValidator = validations.createStudentSchema.validate(
@@ -403,6 +375,16 @@ exports.listController = async (req, res) => {
         );
       }
       return responseHandler(res, 404, "No counsellers found");
+    } else if (type === "events") {
+      const event = await Event.findAll({
+        page,
+        searchQuery,
+      });
+      if (event.length > 0) {
+        const totalCount = await Event.count();
+        return responseHandler(res, 200, "Events found", event, totalCount);
+      }
+      return responseHandler(res, 404, "No Events found");
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }
@@ -560,6 +542,38 @@ exports.getDashboard = async (req, res) => {
       session_count,
     };
     return responseHandler(res, 200, "Dashboard found", dashboard);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.createEvent = async (req, res) => {
+  try {
+    const createEventValidator = validations.createEventSchema.validate(
+      req.body,
+      {
+        abortEarly: true,
+      }
+    );
+    if (createEventValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${createEventValidator.error}`
+      );
+    }
+    const newEvent = await Event.create(req.body);
+
+    if (newEvent) {
+      return responseHandler(
+        res,
+        201,
+        `New Event created successfull..!`,
+        newEvent
+      );
+    } else {
+      return responseHandler(res, 400, `Event creation failed...!`);
+    }
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }

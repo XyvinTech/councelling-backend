@@ -8,6 +8,7 @@ const { comparePasswords } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/generateToken");
 const validations = require("../validations");
 const sendMail = require("../utils/sendMail");
+const Event = require("../models/eventModel");
 
 exports.loginUser = async (req, res) => {
   try {
@@ -196,6 +197,16 @@ exports.listController = async (req, res) => {
         return responseHandler(res, 200, "Cases found", cases, totalCount);
       }
       return responseHandler(res, 404, "No reports found");
+    } else if (type === "events") {
+      const event = await Event.findAll({
+        page,
+        searchQuery,
+      });
+      if (event.length > 0) {
+        const totalCount = await Event.count();
+        return responseHandler(res, 200, "Events found", event, totalCount);
+      }
+      return responseHandler(res, 404, "No Events found");
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }
@@ -274,4 +285,4 @@ exports.cancelSession = async (req, res) => {
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
-}
+};

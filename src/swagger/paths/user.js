@@ -124,7 +124,7 @@
  *         required: true
  *         schema:
  *           type: string
- *           enum: [sessions, cases]
+ *           enum: [sessions, cases, events]
  *       - name: page
  *         in: query
  *         schema:

@@ -13,38 +13,21 @@ class Event {
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         title VARCHAR(255),
         description TEXT,
-        type VARCHAR(255),
         date DATE,
         time TIME,
-        venue VARCHAR(255),
-        platform VARCHAR(255),
-        link VARCHAR(255),
-        guest_namd VARCHAR(255),
-        guest_image VARCHAR(255),
-        doc VARCHAR(255),
         event_image VARCHAR(255),
-        status BOOLEAN DEFAULT FALSE,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
   }
 
-  static async create({
-    title,
-    description,
-    date,
-    time,
-    duration,
-    venue,
-    guest,
-    doc,
-  }) {
+  static async create({ title, description, date, time, event_image }) {
     const [event] = await sql`
       INSERT INTO Events (
-        title, description, date, time, duration, venue, guest, doc
+        title, description, date, time, event_image
       ) VALUES (
-        ${title}, ${description}, ${date}, ${time}, ${duration}, ${venue}, ${guest}, ${doc}
+        ${title}, ${description}, ${date}, ${time}, ${event_image}
       )
       RETURNING *
     `;
@@ -63,7 +46,7 @@ class Event {
     }
 
     return await sql`
-      SELECT id, title, description, date, time, duration, venue, guest, doc, "createdAt", "updatedAt"
+      SELECT id, title, description, date, time, event_image, "createdAt", "updatedAt"
       FROM Events
       ${filterCondition}
       OFFSET ${offset} LIMIT ${limit}
@@ -77,25 +60,26 @@ class Event {
     return event;
   }
 
-  static async update(
-    id,
-    { title, description, date, time, duration, venue, guest, doc }
-  ) {
+  static async update(id, { title, description, date, time, event_image }) {
     const [event] = await sql`
       UPDATE Events SET
         title = ${title},
         description = ${description},
         date = ${date},
         time = ${time},
-        duration = ${duration},
-        venue = ${venue},
-        guest = ${guest},
-        doc = ${doc},
+        durevent_imageation = ${event_image},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
     `;
     return event;
+  }
+
+  static async count() {
+    const [event] = await sql`
+      SELECT COUNT(*) FROM Events
+    `;
+    return event.count;
   }
 
   static async delete(id) {

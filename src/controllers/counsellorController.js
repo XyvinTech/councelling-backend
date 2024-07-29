@@ -1,5 +1,6 @@
 const responseHandler = require("../helpers/responseHandler");
 const Case = require("../models/caseModel");
+const Event = require("../models/eventModel");
 const Session = require("../models/sessionModel");
 const Time = require("../models/timeModel");
 const User = require("../models/userModel");
@@ -137,6 +138,16 @@ exports.listController = async (req, res) => {
         return responseHandler(res, 200, "Cases found", mappedData, totalCount);
       }
       return responseHandler(res, 404, "No cases found");
+    } else if (type === "events") {
+      const event = await Event.findAll({
+        page,
+        searchQuery,
+      });
+      if (event.length > 0) {
+        const totalCount = await Event.count();
+        return responseHandler(res, 200, "Events found", event, totalCount);
+      }
+      return responseHandler(res, 404, "No Events found");
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }

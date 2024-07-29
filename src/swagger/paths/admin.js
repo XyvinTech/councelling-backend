@@ -7,6 +7,8 @@
  *     description: Case related endpoints
  *   - name: Dashboard
  *     description: Dashboard related endpoints
+ *   - name: Event
+ *     description: Event related endpoints
  */
 
 /**
@@ -398,7 +400,7 @@
  *         required: true
  *         schema:
  *           type: string
- *           enum: [students, counsellers]
+ *           enum: [students, counsellers, events]
  *       - name: page
  *         in: query
  *         schema:
@@ -590,6 +592,46 @@
  *     responses:
  *       200:
  *         description: Dashboard found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /admin/event:
+ *   post:
+ *     summary: Create a new event
+ *     description: This endpoint creates a new event with the provided details.
+ *     tags:
+ *       - Event
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2023-06-28"
+ *               time:
+ *                 type: string
+ *                 format: time
+ *                 example: "15:30:00"
+ *               description:
+ *                 type: string
+ *               event_image:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: New Event created successfully
+ *       400:
+ *         description: Invalid input
  *       500:
  *         description: Internal Server Error
  */
