@@ -355,7 +355,7 @@ exports.deleteStudent = async (req, res) => {
 
 exports.listController = async (req, res) => {
   try {
-    const { type, page, searchQuery } = req.query;
+    const { type, page, searchQuery, limit } = req.query;
     if (type === "students") {
       const student = await User.findAll({
         page,
@@ -394,6 +394,28 @@ exports.listController = async (req, res) => {
         return responseHandler(res, 200, "Events found", event, totalCount);
       }
       return responseHandler(res, 404, "No Events found");
+    } else if (type === "sessions") {
+      const sessions = await Session.findAll({
+        page,
+        limit,
+        searchQuery,
+      });
+      if (sessions.length > 0) {
+        const totalCount = await Session.count({});
+        return responseHandler(res, 200, "Reports found", sessions, totalCount);
+      }
+      return responseHandler(res, 404, "No reports found");
+    } else if (type === "cases") {
+      const sessions = await Case.find({
+        page,
+        limit,
+        searchQuery,
+      });
+      if (sessions.length > 0) {
+        const totalCount = await Session.count({});
+        return responseHandler(res, 200, "Reports found", sessions, totalCount);
+      }
+      return responseHandler(res, 404, "No reports found");
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }

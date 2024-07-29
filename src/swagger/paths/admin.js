@@ -400,7 +400,7 @@
  *         required: true
  *         schema:
  *           type: string
- *           enum: [students, counsellers, events]
+ *           enum: [students, counsellers, events, sessions, cases]
  *       - name: page
  *         in: query
  *         schema:

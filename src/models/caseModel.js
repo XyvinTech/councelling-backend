@@ -48,6 +48,35 @@ class Case {
     return newCase;
   }
 
+  static async find({ page = 1, limit = 10, searchQuery = "" } = {}) {
+    const offset = (page - 1) * limit;
+    let filterCondition = sql``;
+
+    if (searchQuery) {
+      filterCondition = sql`
+        WHERE Users.name ILIKE ${"%" + searchQuery + "%"}
+        OR Counsellors.name ILIKE ${"%" + searchQuery + "%"}
+      `;
+    }
+
+    const cases = await sql`
+    SELECT 
+      Cases.*,
+      Users.name AS user_name,
+      Counsellors.name AS counsellor_name,
+      json_agg(Sessions.*) AS sessions
+    FROM Cases
+    LEFT JOIN Users ON Cases."user" = Users.id
+    LEFT JOIN Sessions ON Sessions.case_id = Cases.id
+    LEFT JOIN Users AS Counsellors ON Sessions.counsellor = Counsellors.id
+    ${filterCondition}
+    GROUP BY Cases.id, Users.name, Counsellors.name
+    OFFSET ${offset} LIMIT ${limit}
+  `;
+
+    return cases;
+  }
+
   static async findAll({
     userId,
     page = 1,
@@ -59,9 +88,7 @@ class Case {
 
     if (searchQuery) {
       filterCondition = sql`
-        ${filterCondition} AND Users.name ILIKE ${
-        "%" + searchQuery + "%"
-      }
+        ${filterCondition} AND Users.name ILIKE ${"%" + searchQuery + "%"}
       `;
     }
 

@@ -68,15 +68,17 @@ class Session {
 
     if (searchQuery) {
       filterCondition = sql`
-        WHERE Sessions.description ILIKE ${"%" + searchQuery + "%"}
+        WHERE Users.name ILIKE ${"%" + searchQuery + "%"}
+        OR Counsellors.name ILIKE ${"%" + searchQuery + "%"}
       `;
     }
+    
 
     return await sql`
       SELECT 
         Sessions.*,
         Users.name as user_name,
-        Counsellors.name as counsellor_name,
+        Counsellors.name as counsellor_name
       FROM Sessions
       LEFT JOIN Users ON Sessions.user = Users.id
       LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
