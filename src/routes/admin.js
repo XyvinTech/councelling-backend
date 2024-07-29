@@ -18,6 +18,7 @@ adminRoute
   .delete(adminController.deleteAdmin);
 
 adminRoute.post("/counsellor", adminController.createCounsellor);
+adminRoute.post("/counsellor/add-bulk", adminController.createCounsellorBulk);
 adminRoute
   .route("/counsellor/:id")
   .put(adminController.updateCounsellor)

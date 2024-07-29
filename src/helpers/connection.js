@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const postgres = require("postgres");
 const clc = require("cli-color");
 
@@ -10,7 +10,11 @@ async function initializeConnection() {
     database: PGDATABASE,
     username: PGUSER,
     password: PGPASSWORD,
-    port: 5432
+    port: 5432,
+    // ssl: "require",
+    // connection: {
+    //   options: `project=${ENDPOINT_ID}`,
+    // },
   });
 
   try {

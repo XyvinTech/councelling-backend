@@ -185,6 +185,15 @@ exports.createCounsellor = async (req, res) => {
   }
 };
 
+exports.createCounsellorBulk = async (req, res) => {
+  try {
+    const user = await User.createMany(req.body);
+    return responseHandler(res, 201, "Counsellor created", user);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
 exports.updateCounsellor = async (req, res) => {
   try {
     const { id } = req.params;

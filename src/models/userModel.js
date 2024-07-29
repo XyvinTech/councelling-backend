@@ -56,6 +56,65 @@ class User {
     return user;
   }
 
+  static async createMany(users) {
+    const values = users.map((user) => [
+      user.name,
+      user.email,
+      user.password,
+      user.mobile,
+      user.userType,
+      user.parentContact || null,
+      user.counsellorType || null,
+      user.experience || null,
+      user.designation,
+    ]);
+
+    const insertedUsers = await sql`
+      INSERT INTO Users (name, email, password, mobile, userType, parentContact, counsellorType, experience, designation)
+      SELECT * FROM UNNEST(
+        ${sql.array(
+          values.map((value) => value[0]),
+          "text"
+        )},
+        ${sql.array(
+          values.map((value) => value[1]),
+          "text"
+        )},
+        ${sql.array(
+          values.map((value) => value[2]),
+          "text"
+        )},
+        ${sql.array(
+          values.map((value) => value[3]),
+          "text"
+        )},
+        ${sql.array(
+          values.map((value) => value[4]),
+          "text"
+        )},
+        ${sql.array(
+          values.map((value) => value[5]),
+          "text"
+        )},
+        ${sql.array(
+          values.map((value) => value[6]),
+          "text"
+        )},
+        ${sql.array(
+          values.map((value) => value[7]),
+          "int"
+        )},
+        ${sql.array(
+          values.map((value) => value[8]),
+          "text"
+        )}
+      )
+      RETURNING *
+    `;
+
+    return insertedUsers;
+  }
+
   static async findAll({
     page = 1,
     limit = 10,
