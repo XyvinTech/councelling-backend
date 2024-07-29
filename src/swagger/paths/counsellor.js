@@ -395,7 +395,7 @@
 
 /**
  * @swagger
- * /counsellor/cancel-session/{id}/cancel:
+ * /counsellor/cancel-session/{id}:
  *   put:
  *     summary: Cancel a session
  *     description: Cancels a session by its ID.
