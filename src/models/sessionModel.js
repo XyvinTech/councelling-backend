@@ -96,7 +96,7 @@ class Session {
 
     if (searchQuery) {
       filterCondition = sql`
-        ${filterCondition} AND Sessions.description ILIKE ${
+        ${filterCondition} AND Counsellors.name ILIKE ${
         "%" + searchQuery + "%"
       }
       `;

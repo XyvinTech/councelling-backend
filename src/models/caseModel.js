@@ -116,7 +116,7 @@ class Case {
 
     if (searchQuery) {
       filterCondition = sql`
-        ${filterCondition} AND Cases.status ILIKE ${"%" + searchQuery + "%"}
+        ${filterCondition} AND Counsellors.name ILIKE ${"%" + searchQuery + "%"}
       `;
     }
 
