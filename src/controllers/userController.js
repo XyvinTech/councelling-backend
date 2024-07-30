@@ -292,3 +292,14 @@ exports.cancelSession = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+exports.getFullTimes = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const times = await Time.findByUserId(id);
+    if (!times) return responseHandler(res, 404, "No times found");
+    return responseHandler(res, 200, "Times found", times);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};

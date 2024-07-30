@@ -188,7 +188,6 @@
  *         description: Internal Server Error
  */
 
-
 /**
  * @swagger
  * /user/counseller/{id}/times:
@@ -322,6 +321,31 @@
  *         description: Session cancelled successfully
  *       404:
  *         description: Session not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /user/counseller/full-times/{id}:
+ *   get:
+ *     summary: Counsellor full times
+ *     description: API endpoint for getting full times
+ *     tags:
+ *       - Counsellor
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the counsellor
+ *     responses:
+ *       200:
+ *         description: Times found
+ *       404:
+ *         description: No times found
  *       500:
  *         description: Internal Server Error
  */

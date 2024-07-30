@@ -408,3 +408,11 @@ exports.cancelSession = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+// exports.createReport = async (req, res) => {
+//   try {
+    
+//   } catch (error) {
+//     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+//   }
+// }

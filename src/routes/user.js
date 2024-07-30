@@ -15,5 +15,6 @@ userRoute.get("/counsellors", userController.getAllCounsellors);
 userRoute.get("/sessions/:caseId", userController.getCaseSessions);
 userRoute.get("/session/:id", userController.getSession);
 userRoute.put("/cancel-session/:id", userController.cancelSession);
+userRoute.get("/counseller/full-times/:id/", userController.getFullTimes);
 
 module.exports = userRoute;
