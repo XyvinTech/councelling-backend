@@ -727,3 +727,29 @@ exports.getSession = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+exports.deleteManyEvent = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return responseHandler(
+        res,
+        400,
+        "A non-empty array of Event IDs is required"
+      );
+    }
+    const deletionResults = await Promise.all(
+      ids.map(async (id) => {
+        return await Event.delete(id);
+      })
+    );
+
+    if (deletionResults) {
+      return responseHandler(res, 200, "Event deleted successfully!");
+    } else {
+      return responseHandler(res, 400, "Some Event deletions failed.");
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
+  }
+};

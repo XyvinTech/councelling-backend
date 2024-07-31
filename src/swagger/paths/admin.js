@@ -719,6 +719,39 @@
 
 /**
  * @swagger
+ * /admin/event/delete-many:
+ *   post:
+ *     summary: Delete multiple event
+ *     description: This endpoint deletes multiple event based on the provided array of event IDs.
+ *     tags:
+ *       - Event
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ids:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: uuid
+ *                 example: ["event-id", "event-id"]
+ *             required:
+ *               - ids
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       400:
+ *         description: Bad Request
+ *       500:
+ *         description: Internal Server Error
+ */
+
+
+/**
+ * @swagger
  * /admin/event/{id}:
  *   put:
  *     summary: Edit an event
