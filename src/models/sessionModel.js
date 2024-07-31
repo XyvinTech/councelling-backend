@@ -237,6 +237,15 @@ class Session {
     return session;
   }
 
+  static async findAllByCounsellerId(id) {
+    const session = await sql`
+      SELECT * FROM Sessions 
+      WHERE "counsellor" = ${id} 
+      AND status = 'pending'
+    `;
+    return session;
+  }
+
   static async findAllByCaseId(id) {
     const session = await sql`
       SELECT Sessions.*, 

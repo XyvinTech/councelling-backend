@@ -1,3 +1,4 @@
+const moment = require("moment-timezone");
 const responseHandler = require("../helpers/responseHandler");
 const Case = require("../models/caseModel");
 const Event = require("../models/eventModel");
@@ -423,11 +424,22 @@ exports.createReport = async (req, res) => {
   }
 };
 
-// exports.getBigCalender = async (req, res) => {
-//   try {
-//     const { userId } = req;
-//     const sessions = await Session.
-//   } catch (error) {
-//     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
-//   }
-// };
+exports.getBigCalender = async (req, res) => {
+  try {
+    const { userId } = req;
+    const sessions = await Session.findAllByCounsellerId(userId);
+    if (sessions.length > 0) {
+      const mappedData = sessions.map((session) => {
+        return {
+          title: session.name,
+          start: moment(session.session_date).format("DD-MM-YYYY"),
+          end: moment(session.session_date).format("DD-MM-YYYY"),
+        };
+      });
+      return responseHandler(res, 200, "Sessions found", mappedData);
+    }
+    return responseHandler(res, 404, "No sessions found");
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};

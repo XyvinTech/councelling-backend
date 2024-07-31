@@ -62,6 +62,23 @@
 
 /**
  * @swagger
+ * /counsellor/big-calendar:
+ *   get:
+ *     summary: Get Counsellor details
+ *     description: API endpoint for getting counsellor calendar
+ *     tags:
+ *       - Counsellor
+ *     responses:
+ *       200:
+ *         description: Counsellor calendar
+ *       404:
+ *         description: Counsellor not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
  * /counsellor/times:
  *   post:
  *     summary: Add new times
