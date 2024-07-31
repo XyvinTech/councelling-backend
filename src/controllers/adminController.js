@@ -16,24 +16,30 @@ exports.loginAdmin = async (req, res) => {
       return responseHandler(res, 400, "Email and password are required");
     }
 
-    const findAdmin = await Admin.findOne({ email: email });
-    if (!findAdmin) {
-      return responseHandler(res, 404, "Admin not found");
+    let user = await Admin.findOne({ email });
+    let userType = "admin";
+
+    if (!user) {
+      user = await User.findOne({ email });
+      userType = user ? user.usertype : null;
     }
 
-    const comparePassword = await comparePasswords(
-      password,
-      findAdmin.password
-    );
-    if (!comparePassword) {
+    if (!user) {
+      return responseHandler(res, 404, "User not found");
+    }
+
+    const isPasswordValid = await comparePasswords(password, user.password);
+    if (!isPasswordValid) {
       return responseHandler(res, 401, "Invalid password");
     }
 
-    const token = generateToken(findAdmin.id);
-
-    return responseHandler(res, 200, "Login successfull", token);
+    const token = generateToken(user.id);
+    return responseHandler(res, 200, "Login successful", {
+      token,
+      userType,
+    });
   } catch (error) {
-    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+    return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
   }
 };
 
