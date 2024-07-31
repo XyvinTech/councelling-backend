@@ -264,6 +264,32 @@ exports.deleteCounsellor = async (req, res) => {
   }
 };
 
+exports.deleteManyUser = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return responseHandler(
+        res,
+        400,
+        "A non-empty array of Counsellor IDs is required"
+      );
+    }
+    const deletionResults = await Promise.all(
+      ids.map(async (id) => {
+        return await User.delete(id);
+      })
+    );
+
+    if (deletionResults) {
+      return responseHandler(res, 200, "Counsellors deleted successfully!");
+    } else {
+      return responseHandler(res, 400, "Some counsellor deletions failed.");
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
+  }
+};
+
 exports.createStudent = async (req, res) => {
   try {
     const createStudentValidator = validations.createStudentSchema.validate(
@@ -610,6 +636,66 @@ exports.createEvent = async (req, res) => {
       );
     } else {
       return responseHandler(res, 400, `Event creation failed...!`);
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.editEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const createEventValidator = validations.editEventSchema.validate(
+      req.body,
+      {
+        abortEarly: true,
+      }
+    );
+    if (createEventValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${createEventValidator.error}`
+      );
+    }
+    const findEvent = await Event.findById(id);
+    if (!findEvent) {
+      return responseHandler(res, 404, "Event not found");
+    }
+
+    const updateEvent = await Event.update(id, req.body);
+    if (updateEvent) {
+      return responseHandler(
+        res,
+        200,
+        `Event updated successfully..!`,
+        updateEvent
+      );
+    } else {
+      return responseHandler(res, 400, `Event update failed...!`);
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.deleteEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return responseHandler(res, 400, "Event ID is required");
+    }
+
+    const findEvent = await Event.findById(id);
+    if (!findEvent) {
+      return responseHandler(res, 404, "Event not found");
+    }
+
+    const deleteEvent = await Event.delete(id);
+    if (deleteEvent) {
+      return responseHandler(res, 200, `Event deleted successfully..!`);
+    } else {
+      return responseHandler(res, 400, `Event deletion failed...!`);
     }
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);

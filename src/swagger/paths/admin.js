@@ -684,3 +684,117 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /admin/user/delete-many:
+ *   delete:
+ *     summary: Delete multiple user
+ *     description: This endpoint deletes multiple user based on the provided array of user IDs.
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ids:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: uuid
+ *                 example: ["user-id", "user-id"]
+ *             required:
+ *               - ids
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       400:
+ *         description: Bad Request
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /admin/event/{id}:
+ *   put:
+ *     summary: Edit an event
+ *     description: This endpoint allows you to edit an existing event by providing the event ID and updated data.
+ *     tags:
+ *       - Event
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the event to be edited
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               time:
+ *                 type: string
+ *                 format: time
+ *               event_image:
+ *                 type: string
+ *               status:
+ *                 type: boolean
+ *             example:
+ *               title: "Annual Meeting"
+ *               description: "A meeting to discuss the annual targets and achievements."
+ *               date: "2024-07-20"
+ *               time: "14:00:00"
+ *               event_image: "https://example.com/image.png"
+ *               status: true
+ *     responses:
+ *       200:
+ *         description: Event updated successfully
+ *       400:
+ *         description: Invalid input or Event update failed
+ *       404:
+ *         description: Event not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /admin/event/{id}:
+ *   delete:
+ *     summary: Delete an event
+ *     description: This endpoint deletes an event by its ID.
+ *     tags:
+ *       - Event
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the event to be deleted
+ *     responses:
+ *       200:
+ *         description: Event deleted successfully
+ *       400:
+ *         description: Event deletion failed
+ *       404:
+ *         description: Event not found
+ *       500:
+ *         description: Internal Server Error
+ */

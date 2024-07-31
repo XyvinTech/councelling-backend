@@ -75,6 +75,15 @@ exports.createEventSchema = Joi.object({
   event_image: Joi.string(),
 });
 
+exports.editEventSchema = Joi.object({
+  title: Joi.string(),
+  description: Joi.string(),
+  date: Joi.date(),
+  time: Joi.string().regex(/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/),
+  event_image: Joi.string(),
+  status: Joi.boolean(),
+});
+
 exports.createSessionSchema = Joi.object({
   name: Joi.string().required(),
   session_date: Joi.date().required(),

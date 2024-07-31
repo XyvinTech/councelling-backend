@@ -24,6 +24,8 @@ adminRoute
   .put(adminController.updateCounsellor)
   .delete(adminController.deleteCounsellor);
 
+adminRoute.delete("/user/delete-many", adminController.deleteManyUser);
+
 adminRoute.post("/student", adminController.createStudent);
 adminRoute
   .route("/student/:id")
@@ -33,11 +35,18 @@ adminRoute
 adminRoute.get("/list", adminController.listController);
 adminRoute.get("/sessions/:userId", adminController.getUserSessions);
 adminRoute.get("/user/:id", adminController.getUser);
-adminRoute.get("/counsellor/sessions/:counsellorId", adminController.getCounsellorSessions);
-adminRoute.get("/counsellor/cases/:counsellorId", adminController.getCounsellorCases);
+adminRoute.get(
+  "/counsellor/sessions/:counsellorId",
+  adminController.getCounsellorSessions
+);
+adminRoute.get(
+  "/counsellor/cases/:counsellorId",
+  adminController.getCounsellorCases
+);
 adminRoute.get("/counsellors", adminController.getAllCounsellors);
 adminRoute.get("/dashboard", adminController.getDashboard);
 adminRoute.post("/event", adminController.createEvent);
+adminRoute.route("/event/:id").put(adminController.editEvent).delete(adminController.deleteEvent);
 adminRoute.get("/sessions/:caseId/case", adminController.getCaseSessions);
 adminRoute.get("/session/:id", adminController.getSession);
 
