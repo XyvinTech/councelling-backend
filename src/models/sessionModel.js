@@ -166,12 +166,20 @@ class Session {
     return session;
   }
 
-  static async count({ id }) {
+  static async count({ id, status }) {
     let filterCondition = sql``;
 
-    if (id) {
+    if (id && status) {
+      filterCondition = sql`
+        WHERE "user" = ${id} AND "status" = ${status}
+      `;
+    } else if (id) {
       filterCondition = sql`
         WHERE "user" = ${id}
+      `;
+    } else if (status) {
+      filterCondition = sql`
+        WHERE "status" = ${status}
       `;
     }
 
