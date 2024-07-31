@@ -24,7 +24,7 @@ adminRoute
   .put(adminController.updateCounsellor)
   .delete(adminController.deleteCounsellor);
 
-adminRoute.delete("/user/delete-many", adminController.deleteManyUser);
+adminRoute.post("/user/delete-many", adminController.deleteManyUser);
 
 adminRoute.post("/student", adminController.createStudent);
 adminRoute

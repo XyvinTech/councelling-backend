@@ -688,7 +688,7 @@
 /**
  * @swagger
  * /admin/user/delete-many:
- *   delete:
+ *   post:
  *     summary: Delete multiple user
  *     description: This endpoint deletes multiple user based on the provided array of user IDs.
  *     tags:
