@@ -181,11 +181,15 @@ class User {
     return user;
   }
 
-  static async update(id, { name, email, status }) {
+  static async update(id, { name, email, mobile, status, designation, parentContact=null, experience=null }) {
     const [user] = await sql`
     UPDATE Users SET
       name = ${name},
       email = ${email},
+      designation = ${designation},
+      experience = ${experience},
+      parentContact = ${parentContact},
+      mobile = ${mobile},
       status = ${status},
       "updatedAt" = CURRENT_TIMESTAMP
     WHERE id = ${id}
