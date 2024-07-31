@@ -3,6 +3,8 @@
  * tags:
  *   - name: Counsellor
  *     description: Counsellor related endpoints
+ *   - name: Report
+ *     description: Report related endpoints
  */
 
 /**
@@ -414,6 +416,38 @@
  *         description: Session cancelled successfully
  *       404:
  *         description: Session not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /counsellor/report:
+ *   post:
+ *     summary: Create a new report
+ *     description: This endpoint creates a new report with the provided name and date.
+ *     tags:
+ *       - Report
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "John Doe"
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-07-16"
+ *             required:
+ *               - name
+ *               - date
+ *     responses:
+ *       200:
+ *         description: Report created successfully
  *       500:
  *         description: Internal Server Error
  */

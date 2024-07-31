@@ -5,6 +5,7 @@ const Session = require("../models/sessionModel");
 const Time = require("../models/timeModel");
 const User = require("../models/userModel");
 const { comparePasswords } = require("../utils/bcrypt");
+const { createCertificate } = require("../utils/generateCertificate");
 const { generateToken } = require("../utils/generateToken");
 const sendMail = require("../utils/sendMail");
 const validations = require("../validations");
@@ -409,10 +410,12 @@ exports.cancelSession = async (req, res) => {
   }
 };
 
-// exports.createReport = async (req, res) => {
-//   try {
-    
-//   } catch (error) {
-//     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
-//   }
-// }
+exports.createReport = async (req, res) => {
+  try {
+    const { name, date } = req.body;
+    const report = await createCertificate(name, date);
+    return responseHandler(res, 200, "Report created successfully", report);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
