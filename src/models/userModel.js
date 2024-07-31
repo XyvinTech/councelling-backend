@@ -139,7 +139,7 @@ class User {
     }
 
     return await sql`
-      SELECT id, name, email, status, mobile, designation, parentcontact
+      SELECT id, name, email, status, mobile, designation, parentcontact, experience
       FROM Users
       ${filterCondition}
       OFFSET ${offset} LIMIT ${limit}
