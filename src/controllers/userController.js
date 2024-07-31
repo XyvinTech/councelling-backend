@@ -298,7 +298,9 @@ exports.getFullTimes = async (req, res) => {
     const { id } = req.params;
     const times = await Time.findByUserId(id);
     if (!times) return responseHandler(res, 404, "No times found");
-    const days = times.map((time) => time.day);
+    const days = times
+      .filter((time) => Array.isArray(time.times) && time.times.length > 0)
+      .map((time) => time.day);
     return responseHandler(res, 200, "Days found", days);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);

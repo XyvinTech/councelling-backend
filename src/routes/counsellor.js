@@ -23,5 +23,6 @@ counsellorRoute.put("/reschedule/:id", counsellorController.rescheduleSession);
 counsellorRoute.get("/counsellors/:id/times", counsellorController.getAvailableTimes);
 counsellorRoute.put("/cancel-session/:id", counsellorController.cancelSession);
 counsellorRoute.post("/report", counsellorController.createReport)
+// counsellorRoute.get("/big-calender", counsellorController.getBigCalender);
 
 module.exports = counsellorRoute;

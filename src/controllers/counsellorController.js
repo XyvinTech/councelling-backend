@@ -422,3 +422,12 @@ exports.createReport = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+// exports.getBigCalender = async (req, res) => {
+//   try {
+//     const { userId } = req;
+//     const sessions = await Session.
+//   } catch (error) {
+//     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+//   }
+// };
