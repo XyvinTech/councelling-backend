@@ -112,7 +112,10 @@ exports.listController = async (req, res) => {
         status,
       });
       if (sessions.length > 0) {
-        const totalCount = await Session.counsellor_count({ id: userId });
+        const totalCount = await Session.counsellor_count({
+          id: userId,
+          status,
+        });
         return responseHandler(res, 200, "Reports found", sessions, totalCount);
       }
       return responseHandler(res, 404, "No reports found");

@@ -72,7 +72,6 @@ class Session {
         OR Counsellors.name ILIKE ${"%" + searchQuery + "%"}
       `;
     }
-    
 
     return await sql`
       SELECT 
@@ -100,12 +99,9 @@ class Session {
     if (status)
       filterCondition = sql` ${filterCondition} AND Sessions.status = ${status}`;
 
-
     if (searchQuery) {
       filterCondition = sql`
-        ${filterCondition} AND Counsellors.name ILIKE ${
-        "%" + searchQuery + "%"
-      }
+        ${filterCondition} AND Counsellors.name ILIKE ${"%" + searchQuery + "%"}
       `;
     }
 
@@ -140,9 +136,7 @@ class Session {
 
     if (searchQuery) {
       filterCondition = sql`
-        ${filterCondition} AND Users.name ILIKE ${
-        "%" + searchQuery + "%"
-      }
+        ${filterCondition} AND Users.name ILIKE ${"%" + searchQuery + "%"}
       `;
     }
 
@@ -190,12 +184,20 @@ class Session {
     return result.count;
   }
 
-  static async counsellor_count({ id }) {
+  static async counsellor_count({ id, status }) {
     let filterCondition = sql``;
 
-    if (id) {
+    if (id && status) {
+      filterCondition = sql`
+        WHERE "counsellor" = ${id} AND "status" = ${status}
+      `;
+    } else if (id) {
       filterCondition = sql`
         WHERE "counsellor" = ${id}
+      `;
+    } else if (status) {
+      filterCondition = sql`
+        WHERE "status" = ${status}
       `;
     }
 
