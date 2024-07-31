@@ -67,7 +67,7 @@ class Event {
         description = ${description},
         date = ${date},
         time = ${time},
-        durevent_imageation = ${event_image},
+        event_image = ${event_image},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
