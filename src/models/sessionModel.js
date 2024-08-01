@@ -62,9 +62,17 @@ class Session {
     return session;
   }
 
-  static async findAll({ page = 1, limit = 10, searchQuery = "" } = {}) {
+  static async findAll({
+    page = 1,
+    limit = 10,
+    searchQuery = "",
+    status = null,
+  } = {}) {
     const offset = (page - 1) * limit;
     let filterCondition = sql``;
+
+    if (status)
+      filterCondition = sql` ${filterCondition} AND Sessions.status = ${status}`;
 
     if (searchQuery) {
       filterCondition = sql`
