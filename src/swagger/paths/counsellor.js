@@ -510,3 +510,20 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counsellor/notifications:
+ *   get:
+ *     summary: Get notifications for a user
+ *     description: Retrieve all notifications associated with the authenticated user.
+ *     tags:
+ *       - Notification
+ *     responses:
+ *       200:
+ *         description: Notifications retrieved successfully
+ *       400:
+ *         description: No notifications found
+ *       500:
+ *         description: Internal Server Error
+ */

@@ -30,5 +30,6 @@ counsellorRoute.get(
 counsellorRoute.put("/cancel-session/:id", counsellorController.cancelSession);
 counsellorRoute.post("/report", counsellorController.createReport);
 counsellorRoute.get("/big-calendar", counsellorController.getBigCalender);
+counsellorRoute.get("/notifications", counsellorController.getNotifications);
 
 module.exports = counsellorRoute;

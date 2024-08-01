@@ -7,6 +7,8 @@
  *     description: Session related endpoints
  *   - name: List
  *     description: List related endpoints
+ *   - name: Notification
+ *     description: Notification related endpoints
  */
 
 /**
@@ -400,6 +402,23 @@
  *         description: Invalid input
  *       404:
  *         description: Admin not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /user/notifications:
+ *   get:
+ *     summary: Get notifications for a user
+ *     description: Retrieve all notifications associated with the authenticated user.
+ *     tags:
+ *       - Notification
+ *     responses:
+ *       200:
+ *         description: Notifications retrieved successfully
+ *       400:
+ *         description: No notifications found
  *       500:
  *         description: Internal Server Error
  */

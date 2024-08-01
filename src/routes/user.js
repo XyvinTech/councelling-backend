@@ -17,5 +17,6 @@ userRoute.get("/sessions/:caseId", userController.getCaseSessions);
 userRoute.get("/session/:id", userController.getSession);
 userRoute.put("/cancel-session/:id", userController.cancelSession);
 userRoute.get("/counseller/full-times/:id/", userController.getFullTimes);
+userRoute.get("/notifications", userController.getNotifications);
 
 module.exports = userRoute;

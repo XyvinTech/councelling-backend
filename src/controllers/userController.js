@@ -229,7 +229,7 @@ exports.listController = async (req, res) => {
         status,
       });
       if (sessions.length > 0) {
-        const totalCount = await Session.count({ id: userId , status });
+        const totalCount = await Session.count({ id: userId, status });
         return responseHandler(res, 200, "Reports found", sessions, totalCount);
       }
       return responseHandler(res, 404, "No reports found");
@@ -344,6 +344,18 @@ exports.getFullTimes = async (req, res) => {
       .filter((time) => Array.isArray(time.times) && time.times.length > 0)
       .map((time) => time.day);
     return responseHandler(res, 200, "Days found", days);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.getNotifications = async (req, res) => {
+  try {
+    const { userId } = req;
+    const notifications = await Notification.findByUserId(userId);
+    if (!notifications)
+      return responseHandler(res, 400, `No Notification found`);
+    return responseHandler(res, 200, `Notification Found`, notifications);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }

@@ -10,6 +10,7 @@ const { createCertificate } = require("../utils/generateCertificate");
 const { generateToken } = require("../utils/generateToken");
 const sendMail = require("../utils/sendMail");
 const validations = require("../validations");
+const Notification = require("../models/notificationModel");
 
 exports.loginCounsellor = async (req, res) => {
   try {
@@ -480,6 +481,18 @@ exports.updateCounsellor = async (req, res) => {
     } else {
       return responseHandler(res, 400, `Counsellor update failed...!`);
     }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.getNotifications = async (req, res) => {
+  try {
+    const { userId } = req;
+    const notifications = await Notification.findByUserId(userId);
+    if (!notifications)
+      return responseHandler(res, 400, `No Notification found`);
+    return responseHandler(res, 200, `Notification Found`, notifications);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
