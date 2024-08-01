@@ -663,17 +663,23 @@ exports.getAllCounsellors = async (req, res) => {
 
 exports.getDashboard = async (req, res) => {
   try {
+    const { page, limit, searchQuery } = req.query;
     const student_count = await User.count({ userType: "student" });
     const counsellor_count = await User.count({ userType: "counsellor" });
     const case_count = await Case.count();
     const session_count = await Session.count({});
+    const event_count = await Event.count();
+    const session_list = await Session.findAll({ page, limit, searchQuery });
+    const totalCount = await Session.count({});
     const dashboard = {
       student_count,
       counsellor_count,
       case_count,
       session_count,
+      event_count,
+      session_list,
     };
-    return responseHandler(res, 200, "Dashboard found", dashboard);
+    return responseHandler(res, 200, "Dashboard found", dashboard, totalCount);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
