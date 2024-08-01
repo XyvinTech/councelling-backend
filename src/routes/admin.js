@@ -19,6 +19,7 @@ adminRoute
 
 adminRoute.post("/counsellor", adminController.createCounsellor);
 adminRoute.post("/counsellor/add-bulk", adminController.createCounsellorBulk);
+adminRoute.post("/student/add-bulk", adminController.createStudentBulk);
 adminRoute
   .route("/counsellor/:id")
   .put(adminController.updateCounsellor)
@@ -46,7 +47,10 @@ adminRoute.get(
 adminRoute.get("/counsellors", adminController.getAllCounsellors);
 adminRoute.get("/dashboard", adminController.getDashboard);
 adminRoute.post("/event", adminController.createEvent);
-adminRoute.route("/event/:id").put(adminController.editEvent).delete(adminController.deleteEvent);
+adminRoute
+  .route("/event/:id")
+  .put(adminController.editEvent)
+  .delete(adminController.deleteEvent);
 adminRoute.post("/event/delete-many", adminController.deleteManyEvent);
 adminRoute.get("/sessions/:caseId/case", adminController.getCaseSessions);
 adminRoute.get("/session/:id", adminController.getSession);

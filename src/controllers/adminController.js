@@ -200,6 +200,15 @@ exports.createCounsellorBulk = async (req, res) => {
   }
 };
 
+exports.createStudentBulk = async (req, res) => {
+  try {
+    const user = await User.createMany(req.body);
+    return responseHandler(res, 201, "Student created", user);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
 exports.updateCounsellor = async (req, res) => {
   try {
     const { id } = req.params;

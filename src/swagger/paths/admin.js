@@ -831,3 +831,115 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /admin/counsellor/add-bulk:
+ *   post:
+ *     summary: Create multiple counsellors in bulk
+ *     description: This endpoint allows you to create multiple counsellors by providing an array of user data.
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                   format: email
+ *                 password:
+ *                   type: string
+ *                 mobile:
+ *                   type: string
+ *                 userType:
+ *                   type: string
+ *                   example: "counsellor"
+ *                 counsellorType:
+ *                   type: string
+ *                   example: "academic"
+ *                 experience:
+ *                   type: number
+ *                 designation:
+ *                   type: string
+ *             example:
+ *               - name: "John Doe"
+ *                 email: "john.doe@example.com"
+ *                 password: "securePassword123"
+ *                 mobile: "1234567890"
+ *                 userType: "counsellor"
+ *                 counsellorType: "academic"
+ *                 experience: 5
+ *                 designation: "Senior Counsellor"
+ *               - name: "Jane Smith"
+ *                 email: "jane.smith@example.com"
+ *                 password: "anotherSecurePassword"
+ *                 mobile: "0987654321"
+ *                 userType: "counsellor"
+ *                 counsellorType: "career"
+ *                 experience: 3
+ *                 designation: "Junior Counsellor"
+ *     responses:
+ *       201:
+ *         description: Counsellors created successfully
+ *       400:
+ *         description: Invalid input or Counsellor creation failed
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /admin/student/add-bulk:
+ *   post:
+ *     summary: Create multiple students in bulk
+ *     description: This endpoint allows the creation of multiple students at once by providing an array of student details.
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                   format: email
+ *                 password:
+ *                   type: string
+ *                 mobile:
+ *                   type: string
+ *                 userType:
+ *                   type: string
+ *                   example: student
+ *                 parentContact:
+ *                   type: string
+ *                 designation:
+ *                   type: string
+ *               example:
+ *                 name: "John Doe"
+ *                 email: "johndoe@example.com"
+ *                 password: "securepassword"
+ *                 mobile: "1234567890"
+ *                 userType: "student"
+ *                 parentContact: "0987654321"
+ *                 designation: "Grade 10"
+ *     responses:
+ *       201:
+ *         description: Students created successfully
+ *       400:
+ *         description: Invalid input or creation failed
+ *       500:
+ *         description: Internal Server Error
+ */
