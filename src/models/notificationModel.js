@@ -38,6 +38,7 @@ class Notification {
     const notifications = await sql`
       SELECT * FROM Notifications
       WHERE "user" = ${userId}
+      AND isRead = FALSE
       ORDER BY "createdAt" DESC
     `;
     return notifications;
