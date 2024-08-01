@@ -172,6 +172,7 @@ exports.acceptSession = async (req, res) => {
       status: "accepted",
     };
     const updatedSession = await Session.accept(id, data);
+    await Case.accept(updatedSession.case_id);
     if (!updatedSession)
       return responseHandler(res, 400, "Session Accepted failed");
     return responseHandler(

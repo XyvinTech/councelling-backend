@@ -243,6 +243,17 @@ class Case {
     return updatedCase;
   }
 
+  static async accept(id) {
+    const [session] = await sql`
+      UPDATE Cases SET
+        status = 'accepted',
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return session;
+  }
+
   static async close(id, { grade, details }) {
     const [closeCase] = await sql`
       UPDATE Cases SET
