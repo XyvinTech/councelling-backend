@@ -193,19 +193,58 @@ exports.createCounsellor = async (req, res) => {
 
 exports.createCounsellorBulk = async (req, res) => {
   try {
-    const user = await User.createMany(req.body);
-    return responseHandler(res, 201, "Counsellor created", user);
+    const { body } = req;
+    const emails = body.map((counsellor) => counsellor.email);
+    const mobiles = body.map((counsellor) => counsellor.mobile);
+
+    // Check for existing users with the same email or mobile
+    const existingUsers = await User.find({
+      $or: [{ email: { $in: emails } }, { mobile: { $in: mobiles } }],
+    });
+
+    if (existingUsers.length > 0) {
+      const duplicateEmails = existingUsers.map((user) => user.email);
+      const duplicateMobiles = existingUsers.map((user) => user.mobile);
+
+      return responseHandler(res, 400, "Duplicate email or mobile found", {
+        duplicateEmails,
+        duplicateMobiles,
+      });
+    }
+
+    const users = await User.createMany(body);
+    return responseHandler(res, 201, "Counsellors created", users);
   } catch (error) {
-    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+    return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
   }
 };
 
 exports.createStudentBulk = async (req, res) => {
   try {
-    const user = await User.createMany(req.body);
-    return responseHandler(res, 201, "Student created", user);
+    const students = req.body;
+    const emails = students.map((student) => student.email);
+    const mobiles = students.map((student) => student.mobile);
+
+    // Check for existing users with the same email or mobile
+    const existingUsers = await User.find({
+      $or: [{ email: { $in: emails } }, { mobile: { $in: mobiles } }],
+    });
+
+    if (existingUsers.length > 0) {
+      const duplicateEmails = existingUsers.map((user) => user.email);
+      const duplicateMobiles = existingUsers.map((user) => user.mobile);
+
+      return responseHandler(res, 400, "Duplicate email or mobile found", {
+        duplicateEmails,
+        duplicateMobiles,
+      });
+    }
+
+    // Proceed with creating users
+    const createdStudents = await User.createMany(students);
+    return responseHandler(res, 201, "Students created", createdStudents);
   } catch (error) {
-    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+    return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
   }
 };
 

@@ -443,3 +443,44 @@ exports.getBigCalender = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+exports.updateCounsellor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return responseHandler(res, 400, "Counsellor ID is required");
+    }
+    const findCounsellor = await User.findById(id);
+    if (!findCounsellor) {
+      return responseHandler(res, 404, "Counsellor not found");
+    }
+
+    const editCounsellorValidator = validations.editCounsellorSchema.validate(
+      req.body,
+      {
+        abortEarly: true,
+      }
+    );
+    if (editCounsellorValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${editCounsellorValidator.error}`
+      );
+    }
+
+    const updateCounsellor = await User.update(id, req.body);
+    if (updateCounsellor) {
+      return responseHandler(
+        res,
+        200,
+        `Counsellor updated successfully..!`,
+        updateCounsellor
+      );
+    } else {
+      return responseHandler(res, 400, `Counsellor update failed...!`);
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};

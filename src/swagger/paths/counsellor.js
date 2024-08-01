@@ -468,3 +468,45 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counsellor/profile/{id}:
+ *   put:
+ *     summary: Edit Counsellor details
+ *     description: API endpoint for updating counsellor details
+ *     tags:
+ *       - Counsellor
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the counsellor
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Counsellor Name"
+ *               email:
+ *                 type: string
+ *                 example: "counsellor@example.com"
+ *               status:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Counsellor updated successfully
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: Counsellor not found
+ *       500:
+ *         description: Internal Server Error
+ */

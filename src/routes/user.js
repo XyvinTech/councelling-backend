@@ -7,6 +7,7 @@ userRoute.post("/login", userController.loginUser);
 
 userRoute.use(authVerify);
 userRoute.route("/").get(userController.getUser);
+userRoute.put("/profile/:id", userController.updateStudent);
 userRoute.post("/session", userController.createSession);
 userRoute.put("/reschedule/:id", userController.rescheduleSession);
 userRoute.get("/list", userController.listController);

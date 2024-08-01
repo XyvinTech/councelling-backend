@@ -146,6 +146,28 @@ class User {
     `;
   }
 
+  static async find(criteria = {}) {
+    // Building dynamic filter conditions
+    const conditions = Object.entries(criteria).map(([key, value]) => {
+      return sql`${sql(key)} = ${value}`;
+    });
+
+    // Combining conditions with AND if there are multiple
+    const filterCondition =
+      conditions.length > 0
+        ? sql`WHERE ${sql.join(conditions, sql` AND `)}`
+        : sql``;
+
+    // Querying the database
+    const users = await sql`
+      SELECT id, name, email, status, mobile, designation, parentContact, experience
+      FROM Users
+      ${filterCondition}
+    `;
+
+    return users;
+  }
+
   static async findAllCounsellors({ counsellorType }) {
     let filterCondition = sql`WHERE userType = 'counsellor' AND status = true`;
 
@@ -181,7 +203,18 @@ class User {
     return user;
   }
 
-  static async update(id, { name, email, mobile, status, designation, parentContact=null, experience=null }) {
+  static async update(
+    id,
+    {
+      name,
+      email,
+      mobile,
+      status,
+      designation,
+      parentContact = null,
+      experience = null,
+    }
+  ) {
     const [user] = await sql`
     UPDATE Users SET
       name = ${name},

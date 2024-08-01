@@ -51,6 +51,48 @@ exports.getUser = async (req, res) => {
   }
 };
 
+exports.updateStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return responseHandler(res, 400, "Student ID is required");
+    }
+
+    const editStudentValidator = validations.editStudentSchema.validate(
+      req.body,
+      {
+        abortEarly: true,
+      }
+    );
+    if (editStudentValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${editStudentValidator.error}`
+      );
+    }
+
+    const findStudent = await User.findById(id);
+    if (!findStudent) {
+      return responseHandler(res, 404, "Student not found");
+    }
+
+    const updateStudent = await User.update(id, req.body);
+    if (updateStudent) {
+      return responseHandler(
+        res,
+        200,
+        `Student updated successfully..!`,
+        updateStudent
+      );
+    } else {
+      return responseHandler(res, 400, `Student update failed...!`);
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
 exports.createSession = async (req, res) => {
   try {
     const createSessionValidator = validations.createSessionSchema.validate(

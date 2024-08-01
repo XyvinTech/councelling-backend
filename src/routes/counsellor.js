@@ -9,7 +9,10 @@ counsellorRoute.use(authVerify);
 
 counsellorRoute.route("/").get(counsellorController.getCounsellor);
 
-counsellorRoute.route("/times")
+counsellorRoute.put("/profile/:id", counsellorController.updateCounsellor);
+
+counsellorRoute
+  .route("/times")
   .post(counsellorController.addTimes)
   .get(counsellorController.getTimes);
 
@@ -20,9 +23,12 @@ counsellorRoute.get("/counsellors", counsellorController.getAllCounsellors);
 counsellorRoute.get("/sessions/:caseId", counsellorController.getCaseSessions);
 counsellorRoute.get("/session/:id", counsellorController.getSession);
 counsellorRoute.put("/reschedule/:id", counsellorController.rescheduleSession);
-counsellorRoute.get("/counsellors/:id/times", counsellorController.getAvailableTimes);
+counsellorRoute.get(
+  "/counsellors/:id/times",
+  counsellorController.getAvailableTimes
+);
 counsellorRoute.put("/cancel-session/:id", counsellorController.cancelSession);
-counsellorRoute.post("/report", counsellorController.createReport)
+counsellorRoute.post("/report", counsellorController.createReport);
 counsellorRoute.get("/big-calendar", counsellorController.getBigCalender);
 
 module.exports = counsellorRoute;
