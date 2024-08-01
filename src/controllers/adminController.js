@@ -663,13 +663,13 @@ exports.getAllCounsellors = async (req, res) => {
 
 exports.getDashboard = async (req, res) => {
   try {
-    const { page, limit, searchQuery } = req.query;
+    const { page, limit, searchQuery, status } = req.query;
     const student_count = await User.count({ userType: "student" });
     const counsellor_count = await User.count({ userType: "counsellor" });
     const case_count = await Case.count();
     const session_count = await Session.count({});
     const event_count = await Event.count();
-    const session_list = await Session.findAll({ page, limit, searchQuery });
+    const session_list = await Session.findAll({ page, limit, searchQuery, status });
     const totalCount = await Session.count({});
     const dashboard = {
       student_count,
