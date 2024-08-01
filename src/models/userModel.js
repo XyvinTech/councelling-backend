@@ -57,58 +57,20 @@ class User {
   }
 
   static async createMany(users) {
-    const values = users.map((user) => [
-      user.name,
-      user.email,
-      user.password,
-      user.mobile,
-      user.userType,
-      user.parentContact || null,
-      user.counsellorType || null,
-      user.experience || null,
-      user.designation,
-    ]);
+    const values = users.map((user) => ({
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      mobile: user.mobile,
+      usertype: user.userType,
+      parentcontact: user.parentContact || null,
+      counsellortype: user.counsellorType || null,
+      experience: user.experience || null,
+      designation: user.designation,
+    }));
 
     const insertedUsers = await sql`
-      INSERT INTO Users (name, email, password, mobile, userType, parentContact, counsellorType, experience, designation)
-      SELECT * FROM UNNEST(
-        ${sql.array(
-          values.map((value) => value[0]),
-          "text"
-        )},
-        ${sql.array(
-          values.map((value) => value[1]),
-          "text"
-        )},
-        ${sql.array(
-          values.map((value) => value[2]),
-          "text"
-        )},
-        ${sql.array(
-          values.map((value) => value[3]),
-          "text"
-        )},
-        ${sql.array(
-          values.map((value) => value[4]),
-          "text"
-        )},
-        ${sql.array(
-          values.map((value) => value[5]),
-          "text"
-        )},
-        ${sql.array(
-          values.map((value) => value[6]),
-          "text"
-        )},
-        ${sql.array(
-          values.map((value) => value[7]),
-          "int"
-        )},
-        ${sql.array(
-          values.map((value) => value[8]),
-          "text"
-        )}
-      )
+      INSERT INTO Users ${sql(values)}
       RETURNING *
     `;
 
@@ -146,23 +108,12 @@ class User {
     `;
   }
 
-  static async find(criteria = {}) {
-    // Building dynamic filter conditions
-    const conditions = Object.entries(criteria).map(([key, value]) => {
-      return sql`${sql(key)} = ${value}`;
-    });
-
-    // Combining conditions with AND if there are multiple
-    const filterCondition =
-      conditions.length > 0
-        ? sql`WHERE ${sql.join(conditions, sql` AND `)}`
-        : sql``;
-
-    // Querying the database
+  static async find({ email = [], mobile = [] } = {}) {
     const users = await sql`
-      SELECT id, name, email, status, mobile, designation, parentContact, experience
+      SELECT id, name, email, mobile, designation, experience
       FROM Users
-      ${filterCondition}
+      WHERE email IN (${sql.array(email, "text")})
+      OR mobile IN (${sql.array(mobile, "text")})
     `;
 
     return users;

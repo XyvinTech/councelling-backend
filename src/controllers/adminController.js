@@ -193,13 +193,14 @@ exports.createCounsellor = async (req, res) => {
 
 exports.createCounsellorBulk = async (req, res) => {
   try {
-    const { body } = req;
-    const emails = body.map((counsellor) => counsellor.email);
-    const mobiles = body.map((counsellor) => counsellor.mobile);
+    const counseller = req.body;
+    const emails = counseller.map((counseller) => counseller.email);
+    const mobiles = counseller.map((counseller) => counseller.mobile);
 
     // Check for existing users with the same email or mobile
     const existingUsers = await User.find({
-      $or: [{ email: { $in: emails } }, { mobile: { $in: mobiles } }],
+      email: emails,
+      mobile: mobiles,
     });
 
     if (existingUsers.length > 0) {
@@ -212,7 +213,17 @@ exports.createCounsellorBulk = async (req, res) => {
       });
     }
 
-    const users = await User.createMany(body);
+    const hashedUsers = await Promise.all(
+      counseller.map(async (user) => {
+        const hashedPassword = await hashPassword(user.password);
+        return {
+          ...user, // Spread the user object to retain other properties
+          password: hashedPassword, // Replace the plain password with the hashed password
+        };
+      })
+    );
+
+    const users = await User.createMany(hashedUsers);
     return responseHandler(res, 201, "Counsellors created", users);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
@@ -227,7 +238,8 @@ exports.createStudentBulk = async (req, res) => {
 
     // Check for existing users with the same email or mobile
     const existingUsers = await User.find({
-      $or: [{ email: { $in: emails } }, { mobile: { $in: mobiles } }],
+      email: emails,
+      mobile: mobiles,
     });
 
     if (existingUsers.length > 0) {
@@ -240,9 +252,18 @@ exports.createStudentBulk = async (req, res) => {
       });
     }
 
-    // Proceed with creating users
-    const createdStudents = await User.createMany(students);
-    return responseHandler(res, 201, "Students created", createdStudents);
+    const hashedUsers = await Promise.all(
+      students.map(async (user) => {
+        const hashedPassword = await hashPassword(user.password);
+        return {
+          ...user, // Spread the user object to retain other properties
+          password: hashedPassword, // Replace the plain password with the hashed password
+        };
+      })
+    );
+
+    const users = await User.createMany(hashedUsers);
+    return responseHandler(res, 201, "Students created", users);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
   }
