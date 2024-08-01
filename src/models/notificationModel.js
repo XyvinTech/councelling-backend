@@ -43,6 +43,16 @@ class Notification {
     return notifications;
   }
 
+  static async markAsRead(id) {
+    const [notification] = await sql`
+      UPDATE Notifications
+      SET isRead = TRUE, "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return notification;
+  }
+
   static async updateStatusToTrue(notificationIds) {
     await sql`
       UPDATE Notifications

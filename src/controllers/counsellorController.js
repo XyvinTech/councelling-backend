@@ -497,3 +497,15 @@ exports.getNotifications = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+exports.markAsRead = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const notification = await Notification.markAsRead(id);
+    if (!notification)
+      return responseHandler(res, 404, "Notification not found");
+    return responseHandler(res, 200, "Notification marked as read");
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};

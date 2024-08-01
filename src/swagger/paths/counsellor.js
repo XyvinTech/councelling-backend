@@ -527,3 +527,28 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counsellor/notification/{id}:
+ *   put:
+ *     summary: Mark a notification as read
+ *     description: Mark a specific notification as read using its ID.
+ *     tags:
+ *       - Notification
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the notification to be marked as read
+ *     responses:
+ *       200:
+ *         description: Notification marked as read
+ *       404:
+ *         description: Notification not found
+ *       500:
+ *         description: Internal Server Error
+ */
