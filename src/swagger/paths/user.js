@@ -357,7 +357,7 @@
  *     summary: Edit Student details
  *     description: API endpoint for updating student details
  *     tags:
- *       - Student
+ *       - User
  *     parameters:
  *       - in: path
  *         name: id
