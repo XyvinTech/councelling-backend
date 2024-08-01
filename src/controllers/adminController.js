@@ -670,7 +670,7 @@ exports.getDashboard = async (req, res) => {
     const session_count = await Session.count({});
     const event_count = await Event.count();
     const session_list = await Session.findAll({ page, limit, searchQuery, status });
-    const totalCount = await Session.count({});
+    const totalCount = await Session.count({status});
     const dashboard = {
       student_count,
       counsellor_count,

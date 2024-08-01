@@ -586,11 +586,29 @@
  *   get:
  *     summary: Get dashboard statistics
  *     description: Retrieves counts of students, counsellors, cases, and sessions.
+ *     parameters:
+ *       - name: page
+ *         in: query
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number for pagination
+ *       - name: searchQuery
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: Optional search query to filter results
+ *       - name: status
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: Optional status filter
  *     tags:
  *       - Dashboard
  *     responses:
  *       200:
- *         description: Dashboard found
+ *         description: Dashboard statistics retrieved successfully
  *       500:
  *         description: Internal Server Error
  */
@@ -748,7 +766,6 @@
  *       500:
  *         description: Internal Server Error
  */
-
 
 /**
  * @swagger

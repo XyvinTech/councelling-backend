@@ -72,11 +72,11 @@ class Session {
     let filterCondition = sql``;
 
     if (status)
-      filterCondition = sql` ${filterCondition} AND Sessions.status = ${status}`;
+      filterCondition = sql` ${filterCondition} WHERE Sessions.status = ${status}`;
 
     if (searchQuery) {
       filterCondition = sql`
-        WHERE Users.name ILIKE ${"%" + searchQuery + "%"}
+        AND Users.name ILIKE ${"%" + searchQuery + "%"}
         OR Counsellors.name ILIKE ${"%" + searchQuery + "%"}
       `;
     }
@@ -90,6 +90,7 @@ class Session {
       LEFT JOIN Users ON Sessions.user = Users.id
       LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
       ${filterCondition}
+      ORDER BY Sessions."createdAt" DESC
       OFFSET ${offset} LIMIT ${limit}
     `;
   }
