@@ -103,13 +103,7 @@ exports.createSessionSchema = Joi.object({
 
 exports.addTimeSchema = Joi.object({
   day: Joi.string().required(),
-  times: Joi.array()
-    .items(
-      Joi.object({
-        start: Joi.string(),
-        end: Joi.string()
-      })
-    )
+  times: Joi.array(),
 });
 
 exports.createSessionEntrySchema = Joi.object({
