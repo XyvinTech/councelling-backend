@@ -75,6 +75,9 @@ exports.addTimes = async (req, res) => {
       userId: req.userId,
       day: req.body.day,
     });
+    if (isAdded && req.body.times == []) {
+      await Time.delete(isAdded.id);
+    }
     if (isAdded) {
       const id = isAdded.id;
       const updateTime = await Time.update(id, {
