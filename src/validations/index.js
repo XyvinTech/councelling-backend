@@ -106,8 +106,8 @@ exports.addTimeSchema = Joi.object({
   times: Joi.array()
     .items(
       Joi.object({
-        start: Joi.string().required(),
-        end: Joi.string().required(),
+        start: Joi.string()
+        end: Joi.string()
       })
     )
 });
