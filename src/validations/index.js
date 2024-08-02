@@ -110,7 +110,6 @@ exports.addTimeSchema = Joi.object({
         end: Joi.string().required(),
       })
     )
-    .required(),
 });
 
 exports.createSessionEntrySchema = Joi.object({
