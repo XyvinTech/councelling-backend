@@ -315,7 +315,6 @@ class Session {
         Counsellors.mobile as counsellor_mobile,
         Users.email as user_email,
         Counsellors.email as counsellor_email,
-        Cases.grade as grade,
         Cases.details as case_details,
         Cases.status as case_status
       FROM Sessions
