@@ -98,8 +98,14 @@
  *               times:
  *                 type: array
  *                 items:
- *                   type: string
- *                   example: "10:00"
+ *                   type: object
+ *                   properties:
+ *                     start:
+ *                       type: string
+ *                       example: "10:00"
+ *                     end:
+ *                       type: string
+ *                       example: "11:00"
  *     responses:
  *       201:
  *         description: Time created successfully

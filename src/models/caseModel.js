@@ -7,18 +7,52 @@ class Case {
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     `;
 
-    // Create the Cases table with UUID primary key
+    // Create a sequence for case_id
+    await sql`
+      CREATE SEQUENCE IF NOT EXISTS case_id_seq START 1;
+    `;
+
+    // Create the function to generate case_id
+    await sql`
+      CREATE OR REPLACE FUNCTION generate_case_id() RETURNS TEXT AS $$
+      DECLARE
+          new_case_id TEXT;
+      BEGIN
+          SELECT 'CS_' || LPAD(nextval('case_id_seq')::TEXT, 3, '0') INTO new_case_id;
+          RETURN new_case_id;
+      END;
+      $$ LANGUAGE plpgsql;
+    `;
+
+    // Create the Cases table with UUID primary key and case_id
     await sql`
       CREATE TABLE IF NOT EXISTS Cases (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        case_id TEXT UNIQUE,
         "user" UUID REFERENCES Users(id),
-        grade VARCHAR(255),
         details TEXT,
-        status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed')),
+        status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed', 'referred')),
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         session_ids VARCHAR -- Comma-separated session IDs
       );
+    `;
+
+    // Create a trigger to automatically generate the case_id
+    await sql`
+      CREATE OR REPLACE FUNCTION set_case_id() RETURNS TRIGGER AS $$
+      BEGIN
+          NEW.case_id := generate_case_id();
+          RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql;
+    `;
+
+    await sql`
+      CREATE TRIGGER trigger_set_case_id
+      BEFORE INSERT ON Cases
+      FOR EACH ROW
+      EXECUTE FUNCTION set_case_id();
     `;
   }
 
@@ -291,6 +325,12 @@ class Case {
       DELETE FROM Cases WHERE id = ${id}
     `;
     return true;
+  }
+
+  static async dropTable() {
+    await sql`
+      DROP TABLE IF EXISTS ${sql('sessions')} CASCADE;
+    `;
   }
 }
 

@@ -7,18 +7,34 @@ class Session {
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     `;
 
-    // Create the Sessions table with UUID primary key
+    // Create a sequence for session_id
+    await sql`
+      CREATE SEQUENCE IF NOT EXISTS session_id_seq START 1;
+    `;
+
+    // Create the function to generate session_id
+    await sql`
+      CREATE OR REPLACE FUNCTION generate_session_id() RETURNS TEXT AS $$
+      DECLARE
+          new_id TEXT;
+      BEGIN
+          SELECT 'SC_' || LPAD(nextval('session_id_seq')::TEXT, 3, '0') INTO new_id;
+          RETURN new_id;
+      END;
+      $$ LANGUAGE plpgsql;
+    `;
+
+    // Create the Sessions table with UUID primary key and session_id
     await sql`
       CREATE TABLE IF NOT EXISTS Sessions (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        session_id TEXT UNIQUE,
         name VARCHAR(255),
         "user" UUID REFERENCES Users(id),
         case_id UUID REFERENCES Cases(id),
         session_date DATE,
-        session_time TIME,
+        session_time JSONB,
         type VARCHAR(255),
-        platform VARCHAR(255),
-        link VARCHAR(255),
         status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed', 'rescheduled')),
         counsellor UUID REFERENCES Users(id),
         description TEXT,
@@ -26,6 +42,23 @@ class Session {
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
+    `;
+
+    // Create a trigger to automatically generate the session_id
+    await sql`
+      CREATE OR REPLACE FUNCTION set_session_id() RETURNS TRIGGER AS $$
+      BEGIN
+          NEW.session_id := generate_session_id();
+          RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql;
+    `;
+
+    await sql`
+      CREATE TRIGGER trigger_set_session_id
+      BEFORE INSERT ON Sessions
+      FOR EACH ROW
+      EXECUTE FUNCTION set_session_id();
     `;
   }
 
@@ -41,24 +74,27 @@ class Session {
     report = null,
   }) {
     const [session] = await sql`
-      INSERT INTO Sessions (
-        "user", name, session_date, session_time, type, status, counsellor, description, report
-      ) VALUES (
-        ${user}, ${name}, ${session_date}, ${session_time}, ${type}, ${status}, ${counsellor}, ${description}, ${report}
-      )
-       RETURNING 
-      id,
-      name,
-      session_date,
-      session_time,
-      type,
-      status,
-      description,
-      counsellor,
-      report,
-      (SELECT email FROM Users WHERE id = "user") AS user_email,
-      (SELECT email FROM Users WHERE id = counsellor) AS counsellor_email
-    `;
+  INSERT INTO Sessions (
+    "user", name, session_date, session_time, type, status, counsellor, description, report
+  ) VALUES (
+    ${user}, ${name}, ${session_date}, ${sql.json(
+      session_time
+    )}, ${type}, ${status}, ${counsellor}, ${description}, ${report}
+  )
+  RETURNING 
+    id,
+    session_id,
+    name,
+    session_date,
+    session_time,
+    type,
+    status,
+    description,
+    counsellor,
+    report,
+    (SELECT email FROM Users WHERE id = "user") AS user_email,
+    (SELECT email FROM Users WHERE id = counsellor) AS counsellor_email
+`;
     return session;
   }
 
@@ -118,9 +154,11 @@ class Session {
       SELECT 
         Sessions.*,
         Users.name as user_name,
-        Counsellors.name as counsellor_name
+        Counsellors.name as counsellor_name,
+        Cases.case_id as case_id
       FROM Sessions
       LEFT JOIN Users ON Sessions."user" = Users.id
+      LEFT JOIN Cases ON Sessions.case_id = Cases.id
       LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
       ${filterCondition}
       ORDER BY Sessions."createdAt" DESC
@@ -154,8 +192,7 @@ class Session {
         Sessions.*,
         Users.name as user_name,
         Counsellors.name as counsellor_name,
-        Cases.grade as grade,
-        Cases.id as case_id
+        Cases.case_id as case_id
       FROM Sessions
       LEFT JOIN Users ON Sessions."user" = Users.id
       LEFT JOIN Cases ON Sessions."case_id" = Cases.id
@@ -368,6 +405,12 @@ class Session {
       DELETE FROM Sessions WHERE id = ${id}
     `;
     return true;
+  }
+
+  static async dropTable() {
+    await sql`
+      DROP TABLE IF EXISTS ${sql('cases')} CASCADE;
+    `;
   }
 }
 

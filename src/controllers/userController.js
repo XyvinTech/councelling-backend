@@ -109,12 +109,6 @@ exports.createSession = async (req, res) => {
       );
     }
 
-    const checkSession = await Session.findByUserId(req.userId);
-
-    if (checkSession.length > 0) {
-      return responseHandler(res, 400, "Session already requested");
-    }
-
     req.body.user = req.userId;
     const session = await Session.create(req.body);
 
@@ -128,7 +122,7 @@ exports.createSession = async (req, res) => {
     const emailData = {
       to: session.user_email,
       subject: "Session Requested",
-      text: `Your session has been requested with Session ID: ${session.id} and Case ID: ${caseId.id}. Please wait for approval`,
+      text: `Your session has been requested with Session ID: ${session.session_id} and Case ID: ${caseId.case_id}. Please wait for approval`,
     };
     await sendMail(emailData);
     const data = {
@@ -147,7 +141,7 @@ exports.createSession = async (req, res) => {
     const counData = {
       to: session.counsellor_email,
       subject: "New Session Request",
-      text: `You have a new session has been requested with Session ID: ${session.id} and Case ID: ${caseId.id}.`,
+      text: `You have a new session has been requested with Session ID: ${session.session_id} and Case ID: ${caseId.case_id}.`,
     };
     await sendMail(counData);
     await Notification.create(notif_data);

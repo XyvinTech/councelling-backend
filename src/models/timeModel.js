@@ -7,13 +7,13 @@ class Time {
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     `;
 
-    // Create the Times table with UUID primary key and times as a JSONB array
+    // Create the Times table with UUID primary key and times as a JSONB array of start and end times
     await sql`
       CREATE TABLE IF NOT EXISTS Times (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         "user" UUID REFERENCES Users(id),
         day VARCHAR(255),
-        times JSONB,
+        times JSONB, -- JSONB array storing objects with start and end times
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -41,7 +41,7 @@ class Time {
     return timeEntries;
   }
 
-  static async findTimes({userId, day}) {
+  static async findTimes({ userId, day }) {
     const [timeEntries] = await sql`
         SELECT Times.*, 
         Users.name AS user_name
@@ -55,9 +55,10 @@ class Time {
   static async update(id, { day, times }) {
     const [updatedTimeEntry] = await sql`
       UPDATE Times
-      SET day = ${day}, times = ${sql.json(
-      times
-    )}, "updatedAt" = CURRENT_TIMESTAMP
+      SET 
+        day = ${day}, 
+        times = ${sql.json(times)},  -- Ensure times are stored as JSONB
+        "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
     `;

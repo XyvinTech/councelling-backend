@@ -87,9 +87,19 @@
  *                 format: date
  *                 example: "2023-06-28"
  *               session_time:
- *                 type: string
- *                 format: time
- *                 example: "15:30:00"
+ *                 type: object
+ *                 properties:
+ *                   start:
+ *                     type: string
+ *                     format: time
+ *                     example: "10:00"
+ *                   end:
+ *                     type: string
+ *                     format: time
+ *                     example: "11:00"
+ *                 required:
+ *                   - start
+ *                   - end
  *               type:
  *                 type: string
  *                 example: "career"

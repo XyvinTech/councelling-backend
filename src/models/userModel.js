@@ -20,7 +20,6 @@ class User {
         counsellorType VARCHAR(255),
         experience INT,
         parentContact VARCHAR(255),
-        status BOOLEAN DEFAULT FALSE,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -101,7 +100,7 @@ class User {
     }
 
     return await sql`
-      SELECT id, name, email, status, mobile, designation, parentcontact, experience
+      SELECT id, name, email, mobile, designation, parentcontact, experience
       FROM Users
       ${filterCondition}
       OFFSET ${offset} LIMIT ${limit}
@@ -120,14 +119,14 @@ class User {
   }
 
   static async findAllCounsellors({ counsellorType }) {
-    let filterCondition = sql`WHERE userType = 'counsellor' AND status = true`;
+    let filterCondition = sql`WHERE userType = 'counsellor'`;
 
     if (counsellorType) {
       filterCondition = sql`${filterCondition} AND counsellortype = ${counsellorType}`;
     }
 
     const counsellors = await sql`
-      SELECT id, name, email, status, mobile, designation, experience, counsellorType
+      SELECT id, name, email, mobile, designation, experience, counsellorType
       FROM Users
       ${filterCondition}
     `;
@@ -160,7 +159,6 @@ class User {
       name,
       email,
       mobile,
-      status,
       designation,
       parentContact = null,
       experience = null,
@@ -174,7 +172,6 @@ class User {
       experience = ${experience},
       parentContact = ${parentContact},
       mobile = ${mobile},
-      status = ${status},
       "updatedAt" = CURRENT_TIMESTAMP
     WHERE id = ${id}
     RETURNING *
