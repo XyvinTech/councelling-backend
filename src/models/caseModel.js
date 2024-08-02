@@ -214,8 +214,7 @@ class Case {
       SELECT 
       Cases.*,
       Users.name as user_name,
-      Counsellors.name as counsellor_name,
-      Cases.grade as grade
+      Counsellors.name as counsellor_name
     FROM Cases
     LEFT JOIN Sessions ON Cases.id = Sessions.case_id
     LEFT JOIN Users ON Cases."user" = Users.id
@@ -288,12 +287,24 @@ class Case {
     return session;
   }
 
-  static async close(id, { grade, details }) {
+  static async close(id, { details }) {
     const [closeCase] = await sql`
       UPDATE Cases SET
-        grade = ${grade},
         details = ${details},
         status = 'completed',
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    return closeCase;
+  }
+
+  static async refer(id, { details }) {
+    const [closeCase] = await sql`
+      UPDATE Cases SET
+        details = ${details},
+        status = 'referred',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
@@ -329,7 +340,7 @@ class Case {
 
   static async dropTable() {
     await sql`
-      DROP TABLE IF EXISTS ${sql('sessions')} CASCADE;
+      DROP TABLE IF EXISTS ${sql("sessions")} CASCADE;
     `;
   }
 }

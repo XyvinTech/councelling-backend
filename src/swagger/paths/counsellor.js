@@ -245,8 +245,6 @@
  *           schema:
  *             type: object
  *             properties:
- *               grade:
- *                 type: string
  *               details:
  *                 type: string
  *               close:
