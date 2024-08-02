@@ -190,19 +190,6 @@
  *           type: string
  *           format: uuid
  *         description: ID of the session to accept
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               platform:
- *                 type: string
- *                 example: "Zoom"
- *               link:
- *                 type: string
- *                 example: "https://zoom.us/j/123456789"
  *     responses:
  *       200:
  *         description: Session accepted successfully
