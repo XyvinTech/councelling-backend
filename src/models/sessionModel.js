@@ -377,12 +377,10 @@ class Session {
     return session;
   }
 
-  static async accept(id, { status, platform, link }) {
+  static async accept(id) {
     const [session] = await sql`
       UPDATE Sessions SET
-        status = ${status},
-        platform = ${platform},
-        link = ${link},
+        status = 'accepted',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
@@ -409,7 +407,7 @@ class Session {
 
   static async dropTable() {
     await sql`
-      DROP TABLE IF EXISTS ${sql('cases')} CASCADE;
+      DROP TABLE IF EXISTS ${sql("cases")} CASCADE;
     `;
   }
 }

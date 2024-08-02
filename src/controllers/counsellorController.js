@@ -165,13 +165,7 @@ exports.listController = async (req, res) => {
 exports.acceptSession = async (req, res) => {
   try {
     const { id } = req.params;
-    const { platform, link } = req.body;
-    const data = {
-      platform,
-      link,
-      status: "accepted",
-    };
-    const updatedSession = await Session.accept(id, data);
+    const updatedSession = await Session.accept(id);
     await Case.accept(updatedSession.case_id);
     if (!updatedSession)
       return responseHandler(res, 400, "Session Accepted failed");
