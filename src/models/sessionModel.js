@@ -385,7 +385,9 @@ class Session {
         status = 'accepted',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
-      RETURNING *
+      RETURNING *,
+      (SELECT email FROM Users WHERE id = "user") AS "user_email",
+      (SELECT email FROM Users WHERE id = counsellor) AS "counsellor_email"
     `;
     return session;
   }

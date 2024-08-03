@@ -170,6 +170,32 @@ exports.acceptSession = async (req, res) => {
     const { id } = req.params;
     const updatedSession = await Session.accept(id);
     await Case.accept(updatedSession.case_id);
+    const data = {
+      user: req.userId,
+      caseId: updatedSession.case_id,
+      session: updatedSession.id,
+      details: `Session with ${updatedSession.session_id} is accepted`,
+    };
+    await Notification.create(data);
+    const notif_data = {
+      user: updatedSession.user,
+      caseId: updatedSession.case_id,
+      session: updatedSession.id,
+      details: `Your session with ${updatedSession.session_id} is accepted`,
+    };
+    const emailData = {
+      to: updatedSession.user_email,
+      subject: "Your Session Accepted",
+      text: `Your session with ${updatedSession.session_id} is accepted, Session date on ${updatedSession.session_date}`,
+    };
+    await sendMail(emailData);
+    await Notification.create(notif_data);
+    const counData = {
+      to: updatedSession.counsellor_email,
+      subject: "Session Accepted",
+      text: `Session with ${updatedSession.session_id} is accepted, Session date on ${updatedSession.session_date}`,
+    };
+    await sendMail(counData);
     if (!updatedSession)
       return responseHandler(res, 400, "Session Accepted failed");
     return responseHandler(
