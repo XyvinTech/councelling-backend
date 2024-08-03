@@ -592,7 +592,6 @@ exports.getCounsellorSessions = async (req, res) => {
         session_time: session.session_time,
         student_name: session.user_name,
         counsellor_type: session.type,
-        grade: session.grade,
         status: session.status,
       };
     });
