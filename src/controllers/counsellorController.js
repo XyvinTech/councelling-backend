@@ -141,6 +141,7 @@ exports.listController = async (req, res) => {
             type: item.sessions.length
               ? item.sessions[item.sessions.length - 1].type
               : null,
+            session_count: item.sessions.length,
           };
         });
         const totalCount = await Case.counsellor_count({ id: userId });
