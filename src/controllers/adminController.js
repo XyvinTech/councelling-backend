@@ -624,6 +624,7 @@ exports.getCounsellorCases = async (req, res) => {
     const mappedData = cases.map((case_) => {
       return {
         id: case_.id,
+        case_id: case_.case_id,
         case_date: case_.createdAt,
         case_time: case_.createdAt,
         student_name: case_.user_name,
