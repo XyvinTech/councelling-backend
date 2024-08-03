@@ -370,28 +370,28 @@ exports.rescheduleSession = async (req, res) => {
       return responseHandler(res, 400, "Session reschedule failed");
     const data = {
       user: req.userId,
-      caseId: updatedSession.case_id,
+      caseId: updatedSession.caseid,
       session: updatedSession.id,
       details: "Your session is rescheduled.",
     };
     await Notification.create(data);
     const notif_data = {
       user: updatedSession.user,
-      caseId: updatedSession.case_id,
+      caseId: updatedSession.caseid,
       session: updatedSession.id,
       details: "Session rescheduled.",
     };
     const emailData = {
       to: session.user_email,
       subject: "Your Session Rescheduled",
-      text: `Your session is rescheduled with Session ID: ${session.id}.`,
+      text: `Your session is rescheduled with Session ID: ${session.session_id}.`,
     };
     await sendMail(emailData);
     await Notification.create(notif_data);
     const counData = {
       to: session.counsellor_email,
       subject: "Session Reschedule",
-      text: `Session rescheduled for Session ID: ${session.id}.`,
+      text: `Session rescheduled for Session ID: ${session.session_id}.`,
     };
     await sendMail(counData);
     return responseHandler(
