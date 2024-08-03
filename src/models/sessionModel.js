@@ -192,7 +192,8 @@ class Session {
         Sessions.*,
         Users.name as user_name,
         Counsellors.name as counsellor_name,
-        Cases.case_id as case_id
+        Cases.case_id as case_id,
+        Cases.id as caseid
       FROM Sessions
       LEFT JOIN Users ON Sessions."user" = Users.id
       LEFT JOIN Cases ON Sessions."case_id" = Cases.id
