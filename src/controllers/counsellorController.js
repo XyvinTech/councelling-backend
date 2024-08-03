@@ -423,8 +423,8 @@ exports.getBigCalender = async (req, res) => {
       const mappedData = sessions.map((session) => {
         return {
           title: session.name,
-          start: moment(session.session_date).format("DD-MM-YYYY"),
-          end: moment(session.session_date).format("DD-MM-YYYY"),
+          start: session.session_date,
+          end: session.session_date,
         };
       });
       return responseHandler(res, 200, "Sessions found", mappedData);

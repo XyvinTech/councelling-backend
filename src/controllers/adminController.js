@@ -537,8 +537,8 @@ exports.getUserSessions = async (req, res) => {
     const mappedData = sessions.map((session) => {
       return {
         id: session.id,
-        session_date: moment(session.session_date).format("Do MMMM YYYY"),
-        session_time: moment(session.session_time, "HH:mm:ss").format("h:mm A"),
+        session_date: session.session_date,
+        session_time: session.session_time,
         name: session.name,
         counsellor_name: session.counsellor_name,
         counsellor_type: session.type,
@@ -588,8 +588,8 @@ exports.getCounsellorSessions = async (req, res) => {
     const mappedData = sessions.map((session) => {
       return {
         id: session.id,
-        session_date: moment(session.session_date).format("Do MMMM YYYY"),
-        session_time: moment(session.session_time, "HH:mm:ss").format("h:mm A"),
+        session_date: session.session_date,
+        session_time: session.session_time,
         student_name: session.user_name,
         counsellor_type: session.type,
         grade: session.grade,
@@ -624,8 +624,8 @@ exports.getCounsellorCases = async (req, res) => {
     const mappedData = cases.map((case_) => {
       return {
         id: case_.id,
-        case_date: moment(case_.createdAt).format("Do MMMM YYYY"),
-        case_time: moment(case_.createdAt, "HH:mm:ss").format("h:mm A"),
+        case_date: case_.createdAt,
+        case_time: case_.createdAt,
         student_name: case_.user_name,
         status: case_.status,
       };
@@ -669,8 +669,13 @@ exports.getDashboard = async (req, res) => {
     const case_count = await Case.count();
     const session_count = await Session.count({});
     const event_count = await Event.count();
-    const session_list = await Session.findAll({ page, limit, searchQuery, status });
-    const totalCount = await Session.count({status});
+    const session_list = await Session.findAll({
+      page,
+      limit,
+      searchQuery,
+      status,
+    });
+    const totalCount = await Session.count({ status });
     const dashboard = {
       student_count,
       counsellor_count,
