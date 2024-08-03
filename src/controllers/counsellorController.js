@@ -408,10 +408,14 @@ exports.rescheduleSession = async (req, res) => {
 exports.getAvailableTimes = async (req, res) => {
   try {
     const { id } = req.params;
-    const { day } = req.query;
+    const { day, date } = req.query;
+    const session = await Session.findByCounseller(id, date);
     const times = await Time.findTimes({ userId: id, day });
+    const availableTimes = times.times.filter(
+      (time) => !session.some((sess) => sess.session_time == `${time}:00`)
+    );
     if (!times) return responseHandler(res, 404, "No times found");
-    return responseHandler(res, 200, "Times found", times);
+    return responseHandler(res, 200, "Times found", availableTimes);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
