@@ -357,7 +357,7 @@ exports.rescheduleSession = async (req, res) => {
       return responseHandler(res, 400, `Session date & time is required`);
     const session = await Session.findById(id);
     if (!session) return responseHandler(res, 404, "Session not found");
-    if (session.status !== "pending")
+    if (session.status !== "pending" || session.status !== "rescheduled")
       return responseHandler(res, 400, "You can't reschedule this session");
     const updatedSession = {
       ...session,
