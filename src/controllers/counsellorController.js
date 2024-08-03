@@ -1,4 +1,3 @@
-const moment = require("moment-timezone");
 const responseHandler = require("../helpers/responseHandler");
 const Case = require("../models/caseModel");
 const Event = require("../models/eventModel");
