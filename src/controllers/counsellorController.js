@@ -230,10 +230,37 @@ exports.addEntry = async (req, res) => {
       const session = await Session.create(data);
       if (!session) return responseHandler(res, 400, "Session creation failed");
 
-      await Case.create({
+      const caseId = await Case.create({
         user: req.userId,
         sessions: [session.id],
       });
+
+      const emailData = {
+        to: session.user_email,
+        subject: "New Session Requested",
+        text: `Your session has been requested with Session ID: ${session.session_id} and Case ID: ${caseId.case_id}. Please wait for approval`,
+      };
+      await sendMail(emailData);
+      const notifData = {
+        user: req.userId,
+        caseId: caseId.id,
+        session: session.id,
+        details: "Your session has been requested. Please wait for approval",
+      };
+      await Notification.create(notifData);
+      const notif_data = {
+        user: session.counsellor,
+        caseId: caseId.id,
+        session: session.id,
+        details: "New session requested",
+      };
+      const counData = {
+        to: session.counsellor_email,
+        subject: "New Session Request",
+        text: `You have a new session has been requested with Session ID: ${session.session_id} and Case ID: ${caseId.case_id}.`,
+      };
+      await sendMail(counData);
+      await Notification.create(notif_data);
 
       return responseHandler(res, 201, "Session created successfully", session);
     }
