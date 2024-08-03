@@ -175,7 +175,7 @@ exports.rescheduleSession = async (req, res) => {
       return responseHandler(res, 400, "Session reschedule failed");
     const data = {
       user: req.userId,
-      caseId: updatedSession.case_id,
+      caseId: updatedSession.caseid,
       session: updatedSession.id,
       details:
         "Your session reschedule has been requested. Please wait for approval",
@@ -183,21 +183,21 @@ exports.rescheduleSession = async (req, res) => {
     await Notification.create(data);
     const notif_data = {
       user: updatedSession.counsellor,
-      caseId: updatedSession.case_id,
+      caseId: updatedSession.caseid,
       session: updatedSession.id,
       details: "Session reschedule requested",
     };
     const emailData = {
       to: session.user_email,
       subject: "Session Reschedule has been Requested",
-      text: `Your session reschedule has been requested with Session ID: ${session.id}. Please wait for approval`,
+      text: `Your session reschedule has been requested with Session ID: ${session.session_id}. Please wait for approval`,
     };
     await sendMail(emailData);
     await Notification.create(notif_data);
     const counData = {
       to: session.counsellor_email,
       subject: "Session Reschedule Request",
-      text: `Session reschedule has been requested with Session ID: ${session.id}.`,
+      text: `Session reschedule has been requested with Session ID: ${session.session_id}.`,
     };
     await sendMail(counData);
     return responseHandler(

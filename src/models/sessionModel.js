@@ -318,7 +318,8 @@ class Session {
         Counsellors.email as counsellor_email,
         Cases.details as case_details,
         Cases.status as case_status,
-        Cases.case_id as case_id
+        Cases.case_id as case_id,
+        Cases.id as caseid
       FROM Sessions
       LEFT JOIN Users ON Sessions.user = Users.id
       LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
