@@ -412,7 +412,7 @@ exports.getAvailableTimes = async (req, res) => {
     const session = await Session.findByCounseller(id, date);
     const times = await Time.findTimes({ userId: id, day });
     const availableTimes = times.times.filter(
-      (time) => !session.some((sess) => sess.session_time == `${time}:00`)
+      (time) => !session.some((sess) => sess.session_time == time)
     );
     if (!times) return responseHandler(res, 404, "No times found");
     return responseHandler(res, 200, "Times found", availableTimes);
