@@ -314,7 +314,13 @@ class Session {
     `;
     }
     const session = await sql`
-      SELECT * FROM Sessions 
+      SELECT 
+        Sessions.*,
+        Users.name as user_name,
+        Cases.case_id as caseid
+      FROM Sessions
+      LEFT JOIN Users ON Sessions."user" = Users.id
+      LEFT JOIN Cases ON Sessions."case_id" = Cases.id
       ${filterCondition}
     `;
     return session;

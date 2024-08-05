@@ -486,7 +486,28 @@ exports.getSessionsExcel = async (req, res) => {
     const { student, status } = req.query;
     const { userId } = req;
     const sessions = await Session.findForExcel({ userId, status, student });
-    return responseHandler(res, 200, "Report created successfully", sessions);
+    const headers = [
+      "Case ID",
+      "Session ID",
+      "Student Name",
+      "Session Date",
+      "Session Time",
+      "Status",
+    ];
+    const data = sessions.map((session) => {
+      return {
+        case_id: session.caseid,
+        session_id: session.session_id,
+        student_name: session.user_name,
+        session_date: session.session_date,
+        session_time: session.session_time,
+        status: session.status,
+      };
+    });
+    return responseHandler(res, 200, "Excel data created successfully", {
+      headers,
+      data,
+    });
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
