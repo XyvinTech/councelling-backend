@@ -55,8 +55,8 @@ exports.createReport = () => {
       .fontSize(12)
       .font("Helvetica")
       .text(counsellingType, { align: "left" })
-      .text(`📞 ${contact}`, { align: "left" })
-      .text(`📧 ${email}`, { align: "left" });
+      .text(contact, { align: "left" })
+      .text(email, { align: "left" });
 
     // Case and Session Info
     doc
