@@ -543,3 +543,29 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counsellor/student-report:
+ *   post:
+ *     summary: Create a student report
+ *     description: This endpoint generates a report for a student.
+ *     tags:
+ *       - Report
+ *     responses:
+ *       200:
+ *         description: Report created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Report created successfully
+ *                 report:
+ *                   type: object
+ *                   description: The created report details
+ *       500:
+ *         description: Internal Server Error
+ */

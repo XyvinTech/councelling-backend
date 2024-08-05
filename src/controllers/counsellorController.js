@@ -10,6 +10,7 @@ const { generateToken } = require("../utils/generateToken");
 const sendMail = require("../utils/sendMail");
 const validations = require("../validations");
 const Notification = require("../models/notificationModel");
+const { createReport } = require("../utils/generateReport");
 
 exports.loginCounsellor = async (req, res) => {
   try {
@@ -465,6 +466,15 @@ exports.createReport = async (req, res) => {
   try {
     const { name, date } = req.body;
     const report = await createCertificate(name, date);
+    return responseHandler(res, 200, "Report created successfully", report);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.createStudentReport = async (req, res) => {
+  try {
+    const report = await createReport();
     return responseHandler(res, 200, "Report created successfully", report);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
