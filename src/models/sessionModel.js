@@ -294,25 +294,6 @@ class Session {
   }
 
   static async findForExcel({ userId, status, student }) {
-    let filterCondition = sql``;
-
-    if (userId && status && student) {
-      filterCondition = sql`
-        WHERE "counsellor" = ${userId} AND "status" = ${status} AND "user" = ${student}
-      `;
-    } else if (userId) {
-      filterCondition = sql`
-        WHERE "counsellor" = ${userId}
-      `;
-    } else if (status) {
-      filterCondition = sql`
-        WHERE "status" = ${status}
-      `;
-    } else if (student) {
-      filterCondition = sql`
-      WHERE "user" = ${student}
-    `;
-    }
     const session = await sql`
       SELECT 
         Sessions.*,
@@ -321,7 +302,7 @@ class Session {
       FROM Sessions
       LEFT JOIN Users ON Sessions."user" = Users.id
       LEFT JOIN Cases ON Sessions."case_id" = Cases.id
-      ${filterCondition}
+      WHERE "counsellor" = ${userId}
     `;
     return session;
   }
