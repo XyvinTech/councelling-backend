@@ -11,6 +11,7 @@ const sendMail = require("../utils/sendMail");
 const validations = require("../validations");
 const Notification = require("../models/notificationModel");
 const { createReport } = require("../utils/generateReport");
+const moment = require("moment-timezone");
 
 exports.loginCounsellor = async (req, res) => {
   try {
@@ -499,7 +500,7 @@ exports.getSessionsExcel = async (req, res) => {
         case_id: session.caseid,
         session_id: session.session_id,
         student_name: session.user_name,
-        session_date: session.session_date,
+        session_date: moment(session.session_date).format("DD-MM-YYYY"),
         session_time: session.session_time,
         status: session.status,
       };
