@@ -44,9 +44,9 @@ exports.createReport = () => {
       .text("Counseling Session Report", { align: "center" });
 
     // Student Info
-    if (studentPhoto) {
-      doc.image(studentPhoto, 50, 80, { width: 100 });
-    }
+    // if (studentPhoto) {
+    //   doc.image(studentPhoto, 50, 80, { width: 100 });
+    // }
 
     doc
       .font("Helvetica-Bold")
