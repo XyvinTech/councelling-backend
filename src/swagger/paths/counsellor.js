@@ -555,17 +555,32 @@
  *     responses:
  *       200:
  *         description: Report created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Report created successfully
- *                 report:
- *                   type: object
- *                   description: The created report details
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /counsellor/sessions-excel:
+ *   get:
+ *     summary: Get sessions report in Excel format
+ *     description: This endpoint retrieves session data filtered by student and status, and returns it in a format suitable for Excel export.
+ *     tags:
+ *       - Session
+ *     parameters:
+ *       - in: query
+ *         name: student
+ *         schema:
+ *           type: string
+ *         description: The ID of the student to filter sessions by
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         description: The status of the sessions to filter by (e.g., 'completed', 'pending')
+ *     responses:
+ *       200:
+ *         description: Report created successfully
  *       500:
  *         description: Internal Server Error
  */

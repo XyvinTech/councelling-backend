@@ -481,6 +481,17 @@ exports.createStudentReport = async (req, res) => {
   }
 };
 
+exports.getSessionsExcel = async (req, res) => {
+  try {
+    const { student, status } = req.query;
+    const { userId } = req;
+    const sessions = await Session.findForExcel({ userId, status, student });
+    return responseHandler(res, 200, "Report created successfully", sessions);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
 exports.getBigCalender = async (req, res) => {
   try {
     const { userId } = req;

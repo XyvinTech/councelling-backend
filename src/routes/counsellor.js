@@ -33,5 +33,6 @@ counsellorRoute.get("/big-calendar", counsellorController.getBigCalender);
 counsellorRoute.get("/notifications", counsellorController.getNotifications);
 counsellorRoute.put("/notification/:id", counsellorController.markAsRead);
 counsellorRoute.post("/student-report", counsellorController.createStudentReport);
+counsellorRoute.get("/sessions-excel", counsellorController.getSessionsExcel);
 
 module.exports = counsellorRoute;
