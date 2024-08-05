@@ -302,7 +302,6 @@ class Session {
       FROM Sessions
       LEFT JOIN Users ON Sessions."user" = Users.id
       LEFT JOIN Cases ON Sessions."case_id" = Cases.id
-      WHERE Sessions."counsellor" = ${userId}
     `;
     return session;
   }
