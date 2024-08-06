@@ -286,6 +286,7 @@ class Session {
       FROM Sessions
       LEFT JOIN Users ON Sessions.user = Users.id
       LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
+      ORDER BY Sessions."createdAt" DESC
       WHERE "case_id" = ${id}
     `;
     return session;
