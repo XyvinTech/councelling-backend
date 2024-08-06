@@ -142,6 +142,7 @@ class Case {
       WHERE Sessions.counsellor = ${userId}
       ${filterCondition}
       GROUP BY Cases.id, Users.name
+      ORDER BY Cases."createdAt" DESC
       OFFSET ${offset} LIMIT ${limit}
     `;
 
