@@ -321,7 +321,7 @@ exports.addEntry = async (req, res) => {
       ],
     });
 
-    const resSession = await Session.findById(session.id);
+    const resSession = await Session.findById(newSessionRes.id);
 
     const emailData = {
       to: newSessionRes.user_email,
