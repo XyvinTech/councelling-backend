@@ -302,7 +302,7 @@ class Session {
       FROM Sessions
       LEFT JOIN Users ON Sessions."user" = Users.id
       LEFT JOIN Cases ON Sessions."case_id" = Cases.id
-      WHERE "counsellor"=${userId}
+      WHERE "counsellor" = ${userId}
     `;
     return session;
   }
@@ -326,10 +326,12 @@ class Session {
         Sessions.*,
         Users.name as user_name,
         Users.mobile as user_mobile,
+        Users.designation as user_designation,
         Counsellors.name as counsellor_name,
         Counsellors.mobile as counsellor_mobile,
         Users.email as user_email,
         Counsellors.email as counsellor_email,
+        Counsellors.designation as counsellor_designation,
         Cases.details as case_details,
         Cases.status as case_status,
         Cases.case_id as case_id,
