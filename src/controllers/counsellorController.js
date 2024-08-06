@@ -259,7 +259,7 @@ exports.addEntry = async (req, res) => {
       if (!session) return responseHandler(res, 400, "Session creation failed");
 
       const caseId = await Case.create({
-        user: req.userId,
+        user: user_id,
         sessions: [session.id],
       });
 
