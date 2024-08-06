@@ -271,7 +271,7 @@ class Case {
 
     for (let index = 0; index < sessionIds.length; index++) {
       const sessionId = sessionIds[index];
-      const formattedSessionId = `${id}/SC_${String(index + 1).padStart(
+      const formattedSessionId = `${updatedCase.case_id}/SC_${String(index + 1).padStart(
         2,
         "0"
       )}`;
