@@ -195,7 +195,7 @@ class Case {
       LEFT JOIN Users AS Counsellors ON Sessions.counsellor = Counsellors.id
       ${filterCondition}
       GROUP BY Cases.id, Counsellors.name, Counsellors.counsellorType
-      ORDER BY Sessions."createdAt" DESC
+      ORDER BY Cases."createdAt" DESC
       OFFSET ${offset} LIMIT ${limit}
     `;
     return cases;
