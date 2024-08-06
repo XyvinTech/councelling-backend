@@ -217,68 +217,138 @@ exports.addEntry = async (req, res) => {
     const { details, close, refer, date, time, remarks, session_id, user_id } =
       req.body;
 
-    // Validate input
-    const { error } = validations.createSessionEntrySchema.validate(req.body, {
-      abortEarly: true,
-    });
-    if (error) return responseHandler(res, 400, `Invalid input: ${error}`);
+    const createSessionValidator =
+      validations.createSessionEntrySchema.validate(req.body, {
+        abortEarly: true,
+      });
+    if (createSessionValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${createSessionValidator.error}`
+      );
+    }
 
-    // Attempt to close the session
+    //? Attempt to close the session
     await Session.close(session_id);
     const checkSession = await Session.findById(session_id);
-    if (!checkSession) return responseHandler(res, 404, "Session not found");
 
-    // Handle case closure
+    //? Handle case closure
     if (close) {
       const closeCase = await Case.close(id, { details });
-      return closeCase
-        ? responseHandler(res, 200, "Case closed successfully", closeCase)
-        : responseHandler(res, 400, "Case close failed");
+      if (!closeCase) return responseHandler(res, 400, "Case close failed");
+      return responseHandler(res, 200, "Case closed successfully", closeCase);
     }
 
-    // Handle referral or default session creation
-    let sessionData = {
-      user: user_id,
-      session_date: date,
-      session_time: time,
-      type: checkSession.type,
-      description: refer ? remarks : details,
-      counsellor: refer || req.userId,
-    };
-
+    //? Handle referral
     if (refer) {
-      sessionData.name = `Referred Session by ${checkSession.counsellor_name}`;
-    } else {
-      const count = await Session.countSessionsById(user_id, req.userId);
-      sessionData.name = `${count} Session${count > 1 ? "s" : ""} for ${
-        checkSession.name
-      }`;
+      await Case.refer(id, { details });
+      if (!checkSession) return responseHandler(res, 404, "Session not found");
+
+      const data = {
+        user: user_id,
+        name: `Referred Session by ${checkSession.counsellor_name}`,
+        session_date: date,
+        session_time: time,
+        type: checkSession.type,
+        description: remarks,
+        counsellor: refer,
+      };
+
+      const session = await Session.create(data);
+      if (!session) return responseHandler(res, 400, "Session creation failed");
+
+      const caseId = await Case.create({
+        user: user_id,
+        sessions: [session.id],
+      });
+
+      const newSession = await Session.findById(session.id);
+
+      const emailData = {
+        to: session.user_email,
+        subject: "New Session Requested",
+        text: `Your session has been requested with Session ID: ${newSession.session_id} and Case ID: ${caseId.case_id}. Please wait for approval`,
+      };
+      await sendMail(emailData);
+      const notifData = {
+        user: req.userId,
+        caseId: caseId.id,
+        session: session.id,
+        details: "Your session has been requested. Please wait for approval",
+      };
+      await Notification.create(notifData);
+      const notif_data = {
+        user: session.counsellor,
+        caseId: caseId.id,
+        session: session.id,
+        details: "New session requested",
+      };
+      const counData = {
+        to: session.counsellor_email,
+        subject: "New Session Request",
+        text: `You have a new session has been requested with Session ID: ${newSession.session_id} and Case ID: ${caseId.case_id}.`,
+      };
+      await sendMail(counData);
+      await Notification.create(notif_data);
+
+      return responseHandler(res, 201, "Session created successfully", session);
     }
+
+    //? Default case: create a new session
+    const count = await Session.countSessionsById(user_id, req.userId);
+    const sessionData = {
+      user: user_id,
+      name: `${count} Session${count > 1 ? "s" : ""} for ${checkSession.name}`,
+      session_date: date,
+      type: checkSession.type,
+      session_time: time,
+      description: details,
+      counsellor: req.userId,
+    };
 
     const newSessionRes = await Session.create(sessionData);
     if (!newSessionRes)
       return responseHandler(res, 400, "Session creation failed");
 
-    // Update or create case
-    let upCase;
-    if (refer) {
-      const caseId = await Case.create({
-        user: user_id,
-        sessions: [newSessionRes.id],
-      });
-      upCase = await Case.findById(caseId.id);
-    } else {
-      const fetchCase = await Case.findById(id);
-      if (!fetchCase) return responseHandler(res, 404, "Case not found");
+    const fetchCase = await Case.findById(id);
+    if (!fetchCase) return responseHandler(res, 404, "Case not found");
 
-      upCase = await Case.update(id, {
-        sessions: [...fetchCase.sessions, newSessionRes.id],
-      });
-    }
+    const upCase = await Case.update(id, {
+      sessions: [
+        ...fetchCase.sessions.map((session) => session),
+        newSessionRes.id,
+      ],
+    });
 
-    // Send notifications and emails
-    const newSession = await Session.findById(newSessionRes.id);
-    await sendNotifications(newSession, upCase);
+    const resSession = await Session.findById(session.id);
+
+    const emailData = {
+      to: newSessionRes.user_email,
+      subject: "New Session Requested",
+      text: `Your session has been requested with Session ID: ${resSession.session_id} and Case ID: ${upCase.case_id}. Please wait for approval`,
+    };
+    await sendMail(emailData);
+    const notifData = {
+      user: req.userId,
+      caseId: upCase.id,
+      session: resSession.id,
+      details: "Your session has been requested. Please wait for approval",
+    };
+    await Notification.create(notifData);
+    const notif_data = {
+      user: newSessionRes.counsellor,
+      caseId: upCase.id,
+      session: resSession.id,
+      details: "New session requested",
+    };
+    const counData = {
+      to: newSessionRes.counsellor_email,
+      subject: "New Session Request",
+      text: `You have a new session has been requested with Session ID: ${resSession.session_id} and Case ID: ${upCase.case_id}.`,
+    };
+    await sendMail(counData);
+    await Notification.create(notif_data);
 
     return responseHandler(
       res,
@@ -290,39 +360,6 @@ exports.addEntry = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
   }
 };
-
-// Helper function to send notifications and emails
-async function sendNotifications(session, caseData) {
-  const emailData = {
-    to: session.user_email,
-    subject: "New Session Requested",
-    text: `Your session has been requested with Session ID: ${session.session_id} and Case ID: ${caseData.case_id}. Please wait for approval`,
-  };
-  await sendMail(emailData);
-
-  const notifData = {
-    user: session.user_id,
-    caseId: caseData.id,
-    session: session.id,
-    details: "Your session has been requested. Please wait for approval",
-  };
-  await Notification.create(notifData);
-
-  const counData = {
-    to: session.counsellor_email,
-    subject: "New Session Request",
-    text: `You have a new session requested with Session ID: ${session.session_id} and Case ID: ${caseData.case_id}.`,
-  };
-  await sendMail(counData);
-
-  const notif_data = {
-    user: session.counsellor,
-    caseId: caseData.id,
-    session: session.id,
-    details: "New session requested",
-  };
-  await Notification.create(notif_data);
-}
 
 exports.getAllCounsellors = async (req, res) => {
   try {
