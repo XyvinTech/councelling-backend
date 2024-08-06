@@ -194,6 +194,7 @@ class Case {
       LEFT JOIN Sessions ON Cases.id = Sessions.case_id
       LEFT JOIN Users AS Counsellors ON Sessions.counsellor = Counsellors.id
       ${filterCondition}
+      ORDER BY Sessions."createdAt" DESC
       GROUP BY Cases.id, Counsellors.name, Counsellors.counsellorType
       OFFSET ${offset} LIMIT ${limit}
     `;
@@ -271,10 +272,9 @@ class Case {
 
     for (let index = 0; index < sessionIds.length; index++) {
       const sessionId = sessionIds[index];
-      const formattedSessionId = `${updatedCase.case_id}/SC_${String(index + 1).padStart(
-        2,
-        "0"
-      )}`;
+      const formattedSessionId = `${updatedCase.case_id}/SC_${String(
+        index + 1
+      ).padStart(2, "0")}`;
 
       await sql`
         UPDATE Sessions SET
