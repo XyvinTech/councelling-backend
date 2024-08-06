@@ -12,18 +12,6 @@ class Session {
       CREATE SEQUENCE IF NOT EXISTS session_id_seq START 1;
     `;
 
-    // Create the function to generate session_id
-    await sql`
-      CREATE OR REPLACE FUNCTION generate_session_id() RETURNS TEXT AS $$
-      DECLARE
-          new_id TEXT;
-      BEGIN
-          SELECT 'SC_' || LPAD(nextval('session_id_seq')::TEXT, 3, '0') INTO new_id;
-          RETURN new_id;
-      END;
-      $$ LANGUAGE plpgsql;
-    `;
-
     // Create the Sessions table with UUID primary key and session_id
     await sql`
       CREATE TABLE IF NOT EXISTS Sessions (
@@ -42,23 +30,6 @@ class Session {
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
-    `;
-
-    // Create a trigger to automatically generate the session_id
-    await sql`
-      CREATE OR REPLACE FUNCTION set_session_id() RETURNS TRIGGER AS $$
-      BEGIN
-          NEW.session_id := generate_session_id();
-          RETURN NEW;
-      END;
-      $$ LANGUAGE plpgsql;
-    `;
-
-    await sql`
-      CREATE TRIGGER trigger_set_session_id
-      BEFORE INSERT ON Sessions
-      FOR EACH ROW
-      EXECUTE FUNCTION set_session_id();
     `;
   }
 

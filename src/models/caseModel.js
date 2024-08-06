@@ -60,23 +60,28 @@ class Case {
     const sessionIds = sessions.map((session) =>
       typeof session === "object" ? session.id : session
     );
-    const sessionIdsString = sessionIds.filter(Boolean).join(",");
 
     const [newCase] = await sql`
-              INSERT INTO Cases (
-                "user", session_ids
-              ) VALUES (
-                ${user}, ${sessionIdsString}
-              )
-              RETURNING *
-            `;
+      INSERT INTO Cases (
+        "user", session_ids
+      ) VALUES (
+        ${user}, ${sessionIds.join(",")}
+      )
+      RETURNING *
+    `;
 
-    for (const session of sessions) {
+    for (let index = 0; index < sessionIds.length; index++) {
+      const sessionId = sessionIds[index];
+      const formattedSessionId = `${newCase.case_id}/SC_${String(
+        index + 1
+      ).padStart(2, "0")}`;
+
       await sql`
-                UPDATE Sessions SET
-                  case_id = ${newCase.id}
-                WHERE id = ${session}
-              `;
+        UPDATE Sessions SET
+          session_id = ${formattedSessionId},
+          case_id = ${newCase.id}
+        WHERE id = ${sessionId}
+      `;
     }
 
     return newCase;
@@ -255,19 +260,25 @@ class Case {
     const sessionIds = sessions.map((session) =>
       typeof session === "object" ? session.id : session
     );
-    const sessionIdsString = sessionIds.filter(Boolean).join(",");
 
     const [updatedCase] = await sql`
       UPDATE Cases SET
-        session_ids = ${sessionIdsString},
+        session_ids = ${sessionIds.join(",")},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
     `;
 
-    for (const sessionId of sessionIds) {
+    for (let index = 0; index < sessionIds.length; index++) {
+      const sessionId = sessionIds[index];
+      const formattedSessionId = `${id}/SC_${String(index + 1).padStart(
+        2,
+        "0"
+      )}`;
+
       await sql`
         UPDATE Sessions SET
+          session_id = ${formattedSessionId},
           case_id = ${id}
         WHERE id = ${sessionId}
       `;
