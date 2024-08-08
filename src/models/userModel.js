@@ -17,8 +17,7 @@ class User {
         mobile VARCHAR(255) NOT NULL UNIQUE,
         designation VARCHAR(255) NOT NULL,
         userType VARCHAR(255) NOT NULL,
-        counsellorType VARCHAR(255),
-        experience INT,
+        counsellorType VARCHAR(255)[],
         parentContact VARCHAR(255),
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -35,10 +34,9 @@ class User {
     designation,
     parentContact = null,
     counsellorType = null,
-    experience = null,
   }) {
     const [user] = await sql`
-      INSERT INTO Users (name, email, password, mobile, userType, parentContact, counsellorType, experience, designation)
+      INSERT INTO Users (name, email, password, mobile, userType, parentContact, counsellorType, designation)
       VALUES (
         ${name}, 
         ${email}, 
@@ -46,8 +44,7 @@ class User {
         ${mobile}, 
         ${userType}, 
         ${parentContact}, 
-        ${counsellorType}, 
-        ${experience}, 
+        ${sql.array(counsellorType)}, 
         ${designation}
       )
       RETURNING *
@@ -63,15 +60,14 @@ class User {
       mobile: user.mobile,
       usertype: user.userType,
       parentcontact: user.parentContact || null,
-      counsellortype: user.counsellorType || null,
-      experience: user.experience || null,
+      counsellortype: sql.array(user.counsellorType || null),
       designation: user.designation,
     }));
 
     const insertedUsers = await sql`
-      INSERT INTO Users ${sql(values)}
-      RETURNING *
-    `;
+    INSERT INTO Users ${sql(values)}
+    RETURNING *
+  `;
 
     return insertedUsers;
   }
@@ -100,7 +96,7 @@ class User {
     }
 
     return await sql`
-      SELECT id, name, email, mobile, designation, parentcontact, experience
+      SELECT id, name, email, mobile, designation, parentcontact
       FROM Users
       ${filterCondition}
       OFFSET ${offset} LIMIT ${limit}
@@ -109,7 +105,7 @@ class User {
 
   static async find({ email = [], mobile = [] } = {}) {
     const users = await sql`
-      SELECT id, name, email, mobile, designation, experience
+      SELECT id, name, email, mobile, designation
       FROM Users
       WHERE email IN (${sql.array(email, "text")})
       OR mobile IN (${sql.array(mobile, "text")})
@@ -126,7 +122,7 @@ class User {
     }
 
     const counsellors = await sql`
-      SELECT id, name, email, mobile, designation, experience, counsellorType
+      SELECT id, name, email, mobile, designation, counsellorType
       FROM Users
       ${filterCondition}
     `;
@@ -155,21 +151,13 @@ class User {
 
   static async update(
     id,
-    {
-      name,
-      email,
-      mobile,
-      designation,
-      parentContact = null,
-      experience = null,
-    }
+    { name, email, mobile, designation, parentContact = null }
   ) {
     const [user] = await sql`
     UPDATE Users SET
       name = ${name},
       email = ${email},
       designation = ${designation},
-      experience = ${experience},
       parentContact = ${parentContact},
       mobile = ${mobile},
       "updatedAt" = CURRENT_TIMESTAMP

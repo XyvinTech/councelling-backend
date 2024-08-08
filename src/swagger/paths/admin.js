@@ -191,9 +191,6 @@
  *               password:
  *                 type: string
  *                 example: "password123"
- *               experience:
- *                 type: number
- *                 example: 5
  *               mobile:
  *                 type: string
  *                 example: "9876543210"
@@ -204,8 +201,10 @@
  *                 type: string
  *                 example: "counsellor"
  *               counsellorType:
- *                 type: string
- *                 example: "career, behavioral, special needs"
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["career", "behavioral", "special needs"]
  *     responses:
  *       201:
  *         description: New Counsellor created successfully
@@ -878,13 +877,11 @@
  *                 userType:
  *                   type: string
  *                   example: "counsellor"
- *                 counsellorType:
+ *               counsellorType:
+ *                 type: array
+ *                 items:
  *                   type: string
- *                   example: "academic"
- *                 experience:
- *                   type: number
- *                 designation:
- *                   type: string
+ *                 example: ["career", "behavioral", "special needs"]
  *             example:
  *               - name: "John Doe"
  *                 email: "john.doe@example.com"
@@ -892,7 +889,6 @@
  *                 mobile: "1234567890"
  *                 userType: "counsellor"
  *                 counsellorType: "academic"
- *                 experience: 5
  *                 designation: "Senior Counsellor"
  *               - name: "Jane Smith"
  *                 email: "jane.smith@example.com"
@@ -900,7 +896,6 @@
  *                 mobile: "0987654321"
  *                 userType: "counsellor"
  *                 counsellorType: "career"
- *                 experience: 3
  *                 designation: "Junior Counsellor"
  *     responses:
  *       201:

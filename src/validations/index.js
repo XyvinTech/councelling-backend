@@ -19,7 +19,6 @@ exports.createCounsellorSchema = Joi.object({
   password: Joi.string().required(),
   mobile: Joi.string().required(),
   counsellorType: Joi.string().required(),
-  experience: Joi.number().required(),
   userType: Joi.string().required(),
   designation: Joi.string().required(),
 });
@@ -30,7 +29,6 @@ exports.editCounsellorSchema = Joi.object({
   password: Joi.string(),
   mobile: Joi.string(),
   counsellorType: Joi.string(),
-  experience: Joi.number(),
   status: Joi.boolean(),
   designation: Joi.string(),
 });
@@ -41,7 +39,6 @@ exports.createTeacherSchema = Joi.object({
   password: Joi.string().required(),
   mobile: Joi.string().required(),
   designation: Joi.string().required(),
-  experience: Joi.number().required(),
   userType: Joi.string().required(),
 });
 
@@ -85,7 +82,6 @@ exports.editEventSchema = Joi.object({
 });
 
 exports.createSessionSchema = Joi.object({
-  name: Joi.string().required(),
   session_date: Joi.date().required(),
   session_time: Joi.object({
     start: Joi.string()

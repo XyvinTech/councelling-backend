@@ -79,9 +79,6 @@
  *           schema:
  *             type: object
  *             properties:
- *               name:
- *                 type: string
- *                 example: "For Career Counselling"
  *               session_date:
  *                 type: string
  *                 format: date
