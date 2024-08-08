@@ -34,6 +34,7 @@ class Case {
         concern_raised DATE,
         referer UUID REFERENCES Users(id),
         referer_remark TEXT,
+        interactions VARCHAR(255),
         status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed', 'referred')),
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -311,11 +312,12 @@ class Case {
     return session;
   }
 
-  static async close(id, { details, concern_raised }) {
+  static async close(id, { details, concern_raised, interactions }) {
     const [closeCase] = await sql`
       UPDATE Cases SET
         details = ${details},
         concern_raised = ${concern_raised},
+        interactions = ${interactions},
         status = 'completed',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
@@ -325,11 +327,12 @@ class Case {
     return closeCase;
   }
 
-  static async refer(id, { details, concern_raised }) {
+  static async refer(id, { details, concern_raised, interactions }) {
     const [closeCase] = await sql`
       UPDATE Cases SET
         details = ${details},
         concern_raised = ${concern_raised},
+        interactions = ${interactions},
         status = 'referred',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}

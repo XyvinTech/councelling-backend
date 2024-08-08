@@ -113,6 +113,7 @@ exports.createSessionEntrySchema = Joi.object({
   session_id: Joi.string().required(),
   close: Joi.boolean(),
   refer: Joi.string(),
+  interactions: Joi.string(),
   details: Joi.string(),
   grade: Joi.string(),
   remarks: Joi.string(),

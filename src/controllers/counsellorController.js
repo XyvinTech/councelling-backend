@@ -224,6 +224,7 @@ exports.addEntry = async (req, res) => {
       session_id,
       user_id,
       concern_raised,
+      interactions
     } = req.body;
 
     const createSessionValidator =
@@ -244,14 +245,14 @@ exports.addEntry = async (req, res) => {
 
     //? Handle case closure
     if (close) {
-      const closeCase = await Case.close(id, { details, concern_raised });
+      const closeCase = await Case.close(id, { details, concern_raised, interactions });
       if (!closeCase) return responseHandler(res, 400, "Case close failed");
       return responseHandler(res, 200, "Case closed successfully", closeCase);
     }
 
     //? Handle referral
     if (refer) {
-      await Case.refer(id, { details, concern_raised });
+      await Case.refer(id, { details, concern_raised, interactions });
       if (!checkSession) return responseHandler(res, 404, "Session not found");
 
       const data = {
