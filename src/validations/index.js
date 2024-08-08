@@ -18,7 +18,7 @@ exports.createCounsellorSchema = Joi.object({
   email: Joi.string().required(),
   password: Joi.string().required(),
   mobile: Joi.string().required(),
-  counsellorType: Joi.string().required(),
+  counsellorType: Joi.array().required(),
   userType: Joi.string().required(),
   designation: Joi.string().required(),
 });
