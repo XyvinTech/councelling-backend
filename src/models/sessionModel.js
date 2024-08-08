@@ -26,6 +26,8 @@ class Session {
         counsellor UUID REFERENCES Users(id),
         description TEXT,
         report TEXT,
+        reschedule_remark TEXT,
+        cancel_remark TEXT,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -325,6 +327,7 @@ class Session {
       status,
       counsellor,
       description,
+      reschedule_remark,
       report,
     }
   ) {
@@ -335,6 +338,7 @@ class Session {
         type = ${type},
         status = ${status},
         counsellor = ${counsellor},
+        reschedule_remark = ${reschedule_remark},
         description = ${description},
         report = ${report},
         "updatedAt" = CURRENT_TIMESTAMP
@@ -355,10 +359,11 @@ class Session {
     return session;
   }
 
-  static async cancel(id) {
+  static async cancel(id, { cancel_remark }) {
     const [session] = await sql`
       UPDATE Sessions SET
         status = 'cancelled',
+        cancel_remark = ${cancel_remark},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *

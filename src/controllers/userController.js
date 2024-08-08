@@ -159,7 +159,7 @@ exports.createSession = async (req, res) => {
 
 exports.rescheduleSession = async (req, res) => {
   try {
-    const { session_date, session_time } = req.body;
+    const { session_date, session_time, reschedule_remark } = req.body;
     const { id } = req.params;
     if (!session_date && !session_time)
       return responseHandler(res, 400, `Session date & time is required`);
@@ -172,6 +172,7 @@ exports.rescheduleSession = async (req, res) => {
       status: "rescheduled",
       session_date,
       session_time,
+      reschedule_remark,
     };
     const rescheduleSession = await Session.update(id, updatedSession);
     if (!rescheduleSession)
@@ -321,7 +322,8 @@ exports.getSession = async (req, res) => {
 exports.cancelSession = async (req, res) => {
   try {
     const { id } = req.params;
-    const session = await Session.cancel(id);
+    const { cancel_remark } = req.body;
+    const session = await Session.cancel(id, { cancel_remark });
     await Case.cancel(session.case_id);
     if (session) {
       return responseHandler(res, 200, "Session cancelled successfully");
