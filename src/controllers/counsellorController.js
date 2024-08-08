@@ -256,11 +256,10 @@ exports.addEntry = async (req, res) => {
 
       const data = {
         user: user_id,
-        name: `Referred Session by ${checkSession.counsellor_name}`,
         session_date: date,
         session_time: time,
         type: checkSession.type,
-        description: remarks,
+        description: checkSession.description,
         counsellor: refer,
       };
 
@@ -270,6 +269,8 @@ exports.addEntry = async (req, res) => {
       const caseId = await Case.create({
         user: user_id,
         sessions: [session.id],
+        referer: req.userId,
+        referer_remark: remarks,
       });
 
       const newSession = await Session.findById(session.id);
@@ -305,10 +306,8 @@ exports.addEntry = async (req, res) => {
     }
 
     //? Default case: create a new session
-    const count = await Session.countSessionsById(user_id, req.userId);
     const sessionData = {
       user: user_id,
-      name: `${count} Session${count > 1 ? "s" : ""} for ${checkSession.name}`,
       session_date: date,
       type: checkSession.type,
       session_time: time,

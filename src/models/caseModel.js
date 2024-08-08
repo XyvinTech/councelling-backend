@@ -32,6 +32,8 @@ class Case {
         "user" UUID REFERENCES Users(id),
         details TEXT,
         concern_raised DATE,
+        referer UUID REFERENCES Users(id),
+        referer_remark TEXT,
         status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed', 'referred')),
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -57,16 +59,24 @@ class Case {
     `;
   }
 
-  static async create({ user, sessions, concern_raised }) {
+  static async create({
+    user,
+    sessions,
+    concern_raised = null,
+    referer = null,
+    referer_remark = null,
+  }) {
     const sessionIds = sessions.map((session) =>
       typeof session === "object" ? session.id : session
     );
 
     const [newCase] = await sql`
       INSERT INTO Cases (
-        "user", session_ids, concern_raised
+        "user", session_ids, concern_raised, referer, referer_remark
       ) VALUES (
-        ${user}, ${concern_raised}, ${sessionIds.join(",")}
+        ${user}, ${concern_raised}, ${referer}, ${referer_remark}, ${sessionIds.join(
+      ","
+    )}
       )
       RETURNING *
     `;
@@ -259,7 +269,7 @@ class Case {
     return result[0].count;
   }
 
-  static async update(id, { sessions, concern_raised }) {
+  static async update(id, { sessions, concern_raised = null }) {
     const sessionIds = sessions.map((session) =>
       typeof session === "object" ? session.id : session
     );
