@@ -7,6 +7,8 @@ const { comparePasswords, hashPassword } = require("../utils/bcrypt");
 const { generateToken } = require("../utils/generateToken");
 const validations = require("../validations");
 const Case = require("../models/caseModel");
+const times = require("../utils/times");
+const Time = require("../models/timeModel");
 
 exports.loginAdmin = async (req, res) => {
   try {
@@ -184,6 +186,15 @@ exports.createCounsellor = async (req, res) => {
     const hashedPassword = await hashPassword(req.body.password);
     req.body.password = hashedPassword;
     const user = await User.create(req.body);
+    const day = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+    for (let i = 0; i < day.length; i++) {
+      await Time.create({
+        userId: user.id,
+        day: day[i],
+        times: times,
+      });
+    }
     return responseHandler(res, 201, "Counsellor created", user);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
