@@ -123,8 +123,8 @@ exports.createSession = async (req, res) => {
     session.case_id = caseId.id;
     const emailData = {
       to: session.user_email,
-      subject: "Session Requested",
-      text: `Your session has been requested with Session ID: ${newSession.session_id} and Case ID: ${caseId.case_id}. Please wait for approval`,
+      subject: `Your session requested with Session ID: ${newSession.session_id} and Case ID: ${caseId.case_id} for ${session.counsellor_name}`,
+      text: `Dear ${session.user_name},\n\nYour appointment request for ${session.counsellor_name} for ${session.session_date} at ${session.session_time} has been sent to the Counselor for approval. We will inform you through an email once your request has been approved by the Counselor.`,
     };
     await sendMail(emailData);
     const data = {
@@ -142,8 +142,8 @@ exports.createSession = async (req, res) => {
     };
     const counData = {
       to: session.counsellor_email,
-      subject: "New Session Request",
-      text: `You have a new session has been requested with Session ID: ${newSession.session_id} and Case ID: ${caseId.case_id}.`,
+      subject: `You have a new session requested with Session ID: ${newSession.session_id} and Case ID: ${caseId.case_id} from ${session.user_name}`,
+      text: `Dear ${session.counsellor_name},\n\nYou have received an appointment request from ${session.user_name} for ${session.session_date} at ${session.session_time}. The request has been sent to you for approval. We will notify you via email once the request has been approved.`,
     };
     await sendMail(counData);
     await Notification.create(notif_data);

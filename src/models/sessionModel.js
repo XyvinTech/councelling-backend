@@ -61,7 +61,9 @@ class Session {
     counsellor,
     report,
     (SELECT email FROM Users WHERE id = "user") AS user_email,
-    (SELECT email FROM Users WHERE id = counsellor) AS counsellor_email
+    (SELECT name FROM Users WHERE id = "user") AS user_name,
+    (SELECT email FROM Users WHERE id = counsellor) AS counsellor_email,
+    (SELECT name FROM Users WHERE id = counsellor) AS counsellor_name
 `;
     return session;
   }
