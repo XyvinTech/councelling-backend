@@ -31,6 +31,7 @@ class Case {
         case_id TEXT UNIQUE,
         "user" UUID REFERENCES Users(id),
         details TEXT,
+        concern_raised DATE,
         status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed', 'referred')),
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -56,16 +57,16 @@ class Case {
     `;
   }
 
-  static async create({ user, sessions }) {
+  static async create({ user, sessions, concern_raised }) {
     const sessionIds = sessions.map((session) =>
       typeof session === "object" ? session.id : session
     );
 
     const [newCase] = await sql`
       INSERT INTO Cases (
-        "user", session_ids
+        "user", session_ids, concern_raised
       ) VALUES (
-        ${user}, ${sessionIds.join(",")}
+        ${user}, ${concern_raised}, ${sessionIds.join(",")}
       )
       RETURNING *
     `;
@@ -258,7 +259,7 @@ class Case {
     return result[0].count;
   }
 
-  static async update(id, { sessions }) {
+  static async update(id, { sessions, concern_raised }) {
     const sessionIds = sessions.map((session) =>
       typeof session === "object" ? session.id : session
     );
@@ -266,6 +267,7 @@ class Case {
     const [updatedCase] = await sql`
       UPDATE Cases SET
         session_ids = ${sessionIds.join(",")},
+        concern_raised = ${concern_raised},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
@@ -299,10 +301,11 @@ class Case {
     return session;
   }
 
-  static async close(id, { details }) {
+  static async close(id, { details, concern_raised }) {
     const [closeCase] = await sql`
       UPDATE Cases SET
         details = ${details},
+        concern_raised = ${concern_raised},
         status = 'completed',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
@@ -312,10 +315,11 @@ class Case {
     return closeCase;
   }
 
-  static async refer(id, { details }) {
+  static async refer(id, { details, concern_raised }) {
     const [closeCase] = await sql`
       UPDATE Cases SET
         details = ${details},
+        concern_raised = ${concern_raised},
         status = 'referred',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}

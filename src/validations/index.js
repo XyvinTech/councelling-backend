@@ -104,6 +104,7 @@ exports.addTimeSchema = Joi.object({
 
 exports.createSessionEntrySchema = Joi.object({
   date: Joi.date(),
+  concern_raised: Joi.date(),
   time: Joi.object({
     start: Joi.string().regex(/^([0-9]{2}):([0-9]{2})$/),
     end: Joi.string().regex(/^([0-9]{2}):([0-9]{2})$/),

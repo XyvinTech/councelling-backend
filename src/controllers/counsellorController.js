@@ -214,8 +214,17 @@ exports.acceptSession = async (req, res) => {
 exports.addEntry = async (req, res) => {
   try {
     const { id } = req.params;
-    const { details, close, refer, date, time, remarks, session_id, user_id } =
-      req.body;
+    const {
+      details,
+      close,
+      refer,
+      date,
+      time,
+      remarks,
+      session_id,
+      user_id,
+      concern_raised,
+    } = req.body;
 
     const createSessionValidator =
       validations.createSessionEntrySchema.validate(req.body, {
@@ -235,14 +244,14 @@ exports.addEntry = async (req, res) => {
 
     //? Handle case closure
     if (close) {
-      const closeCase = await Case.close(id, { details });
+      const closeCase = await Case.close(id, { details, concern_raised });
       if (!closeCase) return responseHandler(res, 400, "Case close failed");
       return responseHandler(res, 200, "Case closed successfully", closeCase);
     }
 
     //? Handle referral
     if (refer) {
-      await Case.refer(id, { details });
+      await Case.refer(id, { details, concern_raised });
       if (!checkSession) return responseHandler(res, 404, "Session not found");
 
       const data = {
@@ -319,6 +328,7 @@ exports.addEntry = async (req, res) => {
         ...fetchCase.sessions.map((session) => session),
         newSessionRes.id,
       ],
+      concern_raised: concern_raised,
     });
 
     const resSession = await Session.findById(newSessionRes.id);
