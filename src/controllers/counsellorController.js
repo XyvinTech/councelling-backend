@@ -356,9 +356,16 @@ exports.addEntry = async (req, res) => {
 
     const emailData = {
       to: newSessionRes.user_email,
-      subject: "New Session Requested",
-      text: `Your session has been requested with Session ID: ${resSession.session_id} and Case ID: ${upCase.case_id}. Please wait for approval`,
+      subject: `Your session requested with Session ID: ${resSession.session_id} and Case ID: ${upCase.case_id} for ${newSessionRes.counsellor_name}`,
+      text: `Dear ${newSessionRes.user_name},\n\nYour appointment request for ${
+        newSessionRes.counsellor_name
+      } for ${moment(newSessionRes.session_date).format("DD-MM-YYYY")} at ${
+        newSessionRes.session_time.start
+      }-${
+        newSessionRes.session_time.end
+      } has been sent to the Counselor for approval. We will inform you through an email once your request has been approved by the Counselor.`,
     };
+
     await sendMail(emailData);
     const notifData = {
       user: req.userId,
@@ -373,11 +380,21 @@ exports.addEntry = async (req, res) => {
       session: resSession.id,
       details: "New session requested",
     };
+
     const counData = {
       to: newSessionRes.counsellor_email,
-      subject: "New Session Request",
-      text: `You have a new session has been requested with Session ID: ${resSession.session_id} and Case ID: ${upCase.case_id}.`,
+      subject: `You have a new session requested with Session ID: ${resSession.session_id} and Case ID: ${upCase.case_id} from ${newSessionRes.user_name}`,
+      text: `Dear ${
+        newSessionRes.counsellor_name
+      },\n\nYou have received an appointment request from ${
+        newSessionRes.user_name
+      } for ${moment(newSessionRes.session_date).format("DD-MM-YYYY")} at ${
+        newSessionRes.session_time.start
+      }-${
+        newSessionRes.session_time.end
+      }. The request has been sent to you for approval. We will notify you via email once the request has been approved.`,
     };
+
     await sendMail(counData);
     await Notification.create(notif_data);
 
