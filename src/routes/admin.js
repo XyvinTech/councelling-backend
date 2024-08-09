@@ -54,5 +54,10 @@ adminRoute
 adminRoute.post("/event/delete-many", adminController.deleteManyEvent);
 adminRoute.get("/sessions/:caseId/case", adminController.getCaseSessions);
 adminRoute.get("/session/:id", adminController.getSession);
+adminRoute.post("/counselling-type", adminController.createCounsellingType);
+adminRoute
+  .route("/counselling-type/:id")
+  .put(adminController.updateCounsellingType)
+  .delete(adminController.deleteCounsellingType);
 
 module.exports = adminRoute;

@@ -10,6 +10,7 @@ const validations = require("../validations");
 const sendMail = require("../utils/sendMail");
 const Event = require("../models/eventModel");
 const moment = require("moment-timezone");
+const Type = require("../models/typeModel");
 
 exports.loginUser = async (req, res) => {
   try {
@@ -263,6 +264,19 @@ exports.listController = async (req, res) => {
         return responseHandler(res, 200, "Events found", event, totalCount);
       }
       return responseHandler(res, 404, "No Events found");
+    } else if (type === "counselling-type") {
+      const types = await Type.findAll();
+      if (types.length > 0) {
+        const totalCount = types.length;
+        return responseHandler(
+          res,
+          200,
+          "Counselling types found",
+          types,
+          totalCount
+        );
+      }
+      return responseHandler(res, 404, "No Counselling types found");
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }

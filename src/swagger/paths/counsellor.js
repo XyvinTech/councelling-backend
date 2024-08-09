@@ -146,7 +146,7 @@
  *         required: true
  *         schema:
  *           type: string
- *           enum: [sessions, cases, events]
+ *           enum: [sessions, cases, events, counselling-type]
  *         description: Type of data to list (currently only supports "sessions", "cases", "events")
  *       - name: page
  *         in: query

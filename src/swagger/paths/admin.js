@@ -9,6 +9,8 @@
  *     description: Dashboard related endpoints
  *   - name: Event
  *     description: Event related endpoints
+ *   - name: CounsellingType
+ *     description: CounsellingType related endpoints
  */
 
 /**
@@ -399,7 +401,7 @@
  *         required: true
  *         schema:
  *           type: string
- *           enum: [students, counsellers, events, sessions, cases]
+ *           enum: [students, counsellers, events, sessions, cases, counselling-type]
  *       - name: page
  *         in: query
  *         schema:
@@ -952,6 +954,88 @@
  *         description: Students created successfully
  *       400:
  *         description: Invalid input or creation failed
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /admin/counselling-type:
+ *   post:
+ *     summary: Create a new counselling type
+ *     description: This endpoint allows the creation of a new counselling type by providing the type name.
+ *     tags:
+ *       - CounsellingType
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Career Counselling"
+ *                 description: Name of the counselling type
+ *     responses:
+ *       201:
+ *         description: Counselling type created successfully
+ *       400:
+ *         description: Counselling type name is required or creation failed
+ *       500:
+ *         description: Internal Server Error
+ *
+ * /admin/counselling-type/{id}:
+ *   put:
+ *     summary: Update an existing counselling type
+ *     description: This endpoint allows updating an existing counselling type by providing the type ID and the new name.
+ *     tags:
+ *       - CounsellingType
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the counselling type to be updated
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Updated Counselling Type"
+ *                 description: New name for the counselling type
+ *     responses:
+ *       200:
+ *         description: Counselling type updated successfully
+ *       400:
+ *         description: Counselling type name or ID is required, or update failed
+ *       500:
+ *         description: Internal Server Error
+ *
+ *   delete:
+ *     summary: Delete an existing counselling type
+ *     description: This endpoint allows deleting a counselling type by providing the type ID.
+ *     tags:
+ *       - CounsellingType
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the counselling type to be deleted
+ *     responses:
+ *       200:
+ *         description: Counselling type deleted successfully
+ *       400:
+ *         description: Counselling type ID is required
  *       500:
  *         description: Internal Server Error
  */

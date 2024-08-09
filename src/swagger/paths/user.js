@@ -133,7 +133,7 @@
  *         required: true
  *         schema:
  *           type: string
- *           enum: [sessions, cases, events]
+ *           enum: [sessions, cases, events, counselling-type]
  *       - name: page
  *         in: query
  *         schema:

@@ -9,8 +9,7 @@ const validations = require("../validations");
 const Case = require("../models/caseModel");
 const times = require("../utils/times");
 const Time = require("../models/timeModel");
-
-
+const Type = require("../models/typeModel");
 
 exports.loginAdmin = async (req, res) => {
   try {
@@ -549,6 +548,19 @@ exports.listController = async (req, res) => {
         return responseHandler(res, 200, "Reports found", sessions, totalCount);
       }
       return responseHandler(res, 404, "No reports found");
+    } else if (type === "counselling-type") {
+      const types = await Type.findAll();
+      if (types.length > 0) {
+        const totalCount = types.length;
+        return responseHandler(
+          res,
+          200,
+          "Counselling types found",
+          types,
+          totalCount
+        );
+      }
+      return responseHandler(res, 404, "No Counselling types found");
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }
@@ -861,6 +873,71 @@ exports.deleteManyEvent = async (req, res) => {
       return responseHandler(res, 200, "Event deleted successfully!");
     } else {
       return responseHandler(res, 400, "Some Event deletions failed.");
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
+  }
+};
+
+exports.createCounsellingType = async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name) {
+      return responseHandler(res, 400, "Counselling type name is required");
+    }
+
+    const type = await Type.create({ name });
+    if (type) {
+      return responseHandler(
+        res,
+        201,
+        "Counselling type created successfully",
+        type
+      );
+    }
+
+    return responseHandler(res, 400, "Counselling type creation failed");
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
+  }
+};
+
+exports.updateCounsellingType = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return responseHandler(res, 400, "Counselling type ID is required");
+    }
+    const { name } = req.body;
+    if (!name) {
+      return responseHandler(res, 400, "Counselling type name is required");
+    }
+
+    const type = await Type.update(id, { name });
+    if (type) {
+      return responseHandler(
+        res,
+        200,
+        "Counselling type updated successfully",
+        type
+      );
+    }
+
+    return responseHandler(res, 400, "Counselling type update failed");
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
+  }
+};
+
+exports.deleteCounsellingType = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return responseHandler(res, 400, "Counselling type ID is required");
+    }
+    const type = await Type.delete(id);
+    if (type) {
+      return responseHandler(res, 200, "Counselling type deleted successfully");
     }
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
