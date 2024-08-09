@@ -75,9 +75,9 @@ class Case {
       INSERT INTO Cases (
         "user", session_ids, concern_raised, referer, referer_remark
       ) VALUES (
-        ${user}, ${concern_raised}, ${referer}, ${referer_remark}, ${sessionIds.join(
+        ${user}, ${sessionIds.join(
       ","
-    )}
+    )}, ${concern_raised}, ${referer}, ${referer_remark}
       )
       RETURNING *
     `;
