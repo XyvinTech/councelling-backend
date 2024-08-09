@@ -48,6 +48,7 @@ exports.createStudentSchema = Joi.object({
   password: Joi.string().required(),
   mobile: Joi.string().required(),
   designation: Joi.string().required(),
+  division: Joi.string().required(),
   userType: Joi.string().required(),
   parentContact: Joi.string().required(),
 });
@@ -58,6 +59,7 @@ exports.editStudentSchema = Joi.object({
   password: Joi.string(),
   mobile: Joi.string(),
   designation: Joi.string(),
+  division: Joi.string(),
   parentContact: Joi.string(),
   status: Joi.boolean(),
 });
