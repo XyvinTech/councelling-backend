@@ -587,3 +587,133 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counsellor/event:
+ *   post:
+ *     summary: Create a new event
+ *     description: This endpoint creates a new event with the provided details.
+ *     tags:
+ *       - Event
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2023-06-28"
+ *               time:
+ *                 type: string
+ *                 format: time
+ *                 example: "15:30:00"
+ *               venue:
+ *                 type: string
+ *               remainder:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               details:
+ *                 type: string
+ *               guest:
+ *                 type: string
+ *               requisition_description:
+ *                 type: string
+ *               requisition_image:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: New Event created successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /counsellor/event/{id}:
+ *   put:
+ *     summary: Edit an event
+ *     description: This endpoint allows you to edit an existing event by providing the event ID and updated data.
+ *     tags:
+ *       - Event
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the event to be edited
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               time:
+ *                 type: string
+ *                 format: time
+ *               event_image:
+ *                 type: string
+ *               status:
+ *                 type: boolean
+ *             example:
+ *               title: "Annual Meeting"
+ *               description: "A meeting to discuss the annual targets and achievements."
+ *               date: "2024-07-20"
+ *               time: "14:00:00"
+ *               event_image: "https://example.com/image.png"
+ *               status: true
+ *     responses:
+ *       200:
+ *         description: Event updated successfully
+ *       400:
+ *         description: Invalid input or Event update failed
+ *       404:
+ *         description: Event not found
+ *       500:
+ *         description: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /counsellor/event/{id}:
+ *   delete:
+ *     summary: Delete an event
+ *     description: This endpoint deletes an event by its ID.
+ *     tags:
+ *       - Event
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the event to be deleted
+ *     responses:
+ *       200:
+ *         description: Event deleted successfully
+ *       400:
+ *         description: Event deletion failed
+ *       404:
+ *         description: Event not found
+ *       500:
+ *         description: Internal Server Error
+ */

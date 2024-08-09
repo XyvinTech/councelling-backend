@@ -693,3 +693,95 @@ exports.markAsRead = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }
 };
+
+exports.createEvent = async (req, res) => {
+  try {
+    const createEventValidator = validations.createEventSchema.validate(
+      req.body,
+      {
+        abortEarly: true,
+      }
+    );
+    if (createEventValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${createEventValidator.error}`
+      );
+    }
+    const newEvent = await Event.create(req.body);
+
+    if (newEvent) {
+      return responseHandler(
+        res,
+        201,
+        `New Event created successfull..!`,
+        newEvent
+      );
+    } else {
+      return responseHandler(res, 400, `Event creation failed...!`);
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.editEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const createEventValidator = validations.editEventSchema.validate(
+      req.body,
+      {
+        abortEarly: true,
+      }
+    );
+    if (createEventValidator.error) {
+      return responseHandler(
+        res,
+        400,
+        `Invalid input: ${createEventValidator.error}`
+      );
+    }
+    const findEvent = await Event.findById(id);
+    if (!findEvent) {
+      return responseHandler(res, 404, "Event not found");
+    }
+
+    const updateEvent = await Event.update(id, req.body);
+    if (updateEvent) {
+      return responseHandler(
+        res,
+        200,
+        `Event updated successfully..!`,
+        updateEvent
+      );
+    } else {
+      return responseHandler(res, 400, `Event update failed...!`);
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
+exports.deleteEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return responseHandler(res, 400, "Event ID is required");
+    }
+
+    const findEvent = await Event.findById(id);
+    if (!findEvent) {
+      return responseHandler(res, 404, "Event not found");
+    }
+
+    const deleteEvent = await Event.delete(id);
+    if (deleteEvent) {
+      return responseHandler(res, 200, `Event deleted successfully..!`);
+    } else {
+      return responseHandler(res, 400, `Event deletion failed...!`);
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};

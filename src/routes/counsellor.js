@@ -34,5 +34,10 @@ counsellorRoute.get("/notifications", counsellorController.getNotifications);
 counsellorRoute.put("/notification/:id", counsellorController.markAsRead);
 counsellorRoute.post("/student-report", counsellorController.createStudentReport);
 counsellorRoute.get("/sessions-excel", counsellorController.getSessionsExcel);
+counsellorRoute.post("/event", counsellorController.createEvent);
+counsellorRoute
+  .route("/event/:id")
+  .put(counsellorController.editEvent)
+  .delete(counsellorController.deleteEvent);
 
 module.exports = counsellorRoute;
