@@ -60,5 +60,9 @@ adminRoute
   .route("/counselling-type/:id")
   .put(adminController.updateCounsellingType)
   .delete(adminController.deleteCounsellingType);
+adminRoute.post(
+  "/counselling-type/delete-many",
+  adminController.deleteManyCounsellingType
+);
 
 module.exports = adminRoute;

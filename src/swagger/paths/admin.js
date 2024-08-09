@@ -1064,3 +1064,35 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /admin/counselling-type/delete-many:
+ *   post:
+ *     summary: Delete multiple type
+ *     description: This endpoint deletes multiple type based on the provided array of type IDs.
+ *     tags:
+ *       - CounsellingType
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ids:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: uuid
+ *                 example: ["id", "id"]
+ *             required:
+ *               - ids
+ *     responses:
+ *       200:
+ *         description: Type deleted successfully
+ *       400:
+ *         description: Bad Request
+ *       500:
+ *         description: Internal Server Error
+ */

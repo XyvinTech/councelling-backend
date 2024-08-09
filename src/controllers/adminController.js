@@ -879,6 +879,40 @@ exports.deleteManyEvent = async (req, res) => {
   }
 };
 
+exports.deleteManyCounsellingType = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return responseHandler(
+        res,
+        400,
+        "A non-empty array of Counselling Type IDs is required"
+      );
+    }
+    const deletionResults = await Promise.all(
+      ids.map(async (id) => {
+        return await Type.delete(id);
+      })
+    );
+
+    if (deletionResults) {
+      return responseHandler(
+        res,
+        200,
+        "Counselling type deleted successfully!"
+      );
+    } else {
+      return responseHandler(
+        res,
+        400,
+        "Some Counselling type deletions failed."
+      );
+    }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
+  }
+};
+
 exports.createCounsellingType = async (req, res) => {
   try {
     const { name } = req.body;
