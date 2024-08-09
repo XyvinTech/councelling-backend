@@ -161,20 +161,25 @@ class Session {
     }
 
     const query = sql`
-      SELECT 
-        Sessions.*,
-        Users.name as user_name,
-        Counsellors.name as counsellor_name,
-        Cases.case_id as caseid
-      FROM Sessions
-      LEFT JOIN Users ON Sessions."user" = Users.id
-      LEFT JOIN Cases ON Sessions."case_id" = Cases.id
-      LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
-      ${filterCondition}
-      ORDER BY Sessions."createdAt" DESC
-      OFFSET ${offset} LIMIT ${limit}
-    `;
-
+    SELECT 
+      Sessions.*,
+      Users.name as user_name,
+      Users.grade as grade,
+      Users.division as division,
+      Counsellors.name as counsellor_name,
+      Cases.case_id as caseid,
+      Referers.name as referer_name,
+      Cases.referer_remark as referer_remark,
+      Cases.interactions as interactions
+    FROM Sessions
+    LEFT JOIN Users ON Sessions."user" = Users.id
+    LEFT JOIN Cases ON Sessions."case_id" = Cases.id
+    LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
+    LEFT JOIN Users as Referers ON Cases.referer = Referers.id
+    ${filterCondition}
+    ORDER BY Sessions."createdAt" DESC
+    OFFSET ${offset} LIMIT ${limit}
+  `;
     return await query;
   }
 
