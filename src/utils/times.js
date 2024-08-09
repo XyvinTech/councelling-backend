@@ -1,4 +1,4 @@
-export const times = [
+exports.times = [
   {
     start: "07:00",
     end: "07:30",

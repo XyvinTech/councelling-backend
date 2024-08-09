@@ -255,7 +255,7 @@
  *               date:
  *                 type: string
  *                 format: date
- *               concern_raised
+ *               concern_raised:
  *                 type: string
  *                 format: date
  *               time:
