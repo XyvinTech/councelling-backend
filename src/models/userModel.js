@@ -120,19 +120,19 @@ class User {
 
   static async findAllCounsellors({ counsellorType }) {
     let filterCondition = sql`WHERE userType = 'counsellor'`;
-  
+
     if (counsellorType) {
-      filterCondition = sql`${filterCondition} AND ${counsellorType}::varchar[] && counsellortype`;
+      filterCondition = sql`${filterCondition} AND ${counsellorType} = ANY(counsellortype)`;
     }
-  
+
     const counsellors = await sql`
       SELECT id, name, email, mobile, designation, counsellorType
       FROM Users
       ${filterCondition}
     `;
-  
+
     return counsellors;
-  }  
+  }
 
   static async findById(id) {
     const [user] = await sql`
