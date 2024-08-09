@@ -19,6 +19,7 @@ class User {
         userType VARCHAR(255) NOT NULL,
         counsellorType VARCHAR(255)[],
         parentContact VARCHAR(255),
+        division VARCHAR(255),
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -32,11 +33,12 @@ class User {
     mobile,
     userType,
     designation,
+    division = null,
     parentContact = null,
     counsellorType = null,
   }) {
     const [user] = await sql`
-      INSERT INTO Users (name, email, password, mobile, userType, parentContact, counsellorType, designation)
+      INSERT INTO Users (name, email, password, mobile, userType, division, parentContact, counsellorType, designation)
       VALUES (
         ${name}, 
         ${email}, 
@@ -44,6 +46,7 @@ class User {
         ${mobile}, 
         ${userType}, 
         ${parentContact}, 
+        ${division},
         ${sql.array(counsellorType)}, 
         ${designation}
       )
@@ -59,6 +62,7 @@ class User {
       password: user.password,
       mobile: user.mobile,
       usertype: user.userType,
+      division: user.division || null,
       parentcontact: user.parentContact || null,
       counsellortype: sql.array(user.counsellorType || null),
       designation: user.designation,
