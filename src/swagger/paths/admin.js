@@ -622,8 +622,6 @@
  *     description: This endpoint creates a new event with the provided details.
  *     tags:
  *       - Event
- *     security:
- *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -641,9 +639,19 @@
  *                 type: string
  *                 format: time
  *                 example: "15:30:00"
- *               description:
+ *               venue:
  *                 type: string
- *               event_image:
+ *               remainder:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               details:
+ *                 type: string
+ *               guest:
+ *                 type: string
+ *               requisition_description:
+ *                 type: string
+ *               requisition_image:
  *                 type: string
  *     responses:
  *       201:
