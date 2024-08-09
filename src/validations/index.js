@@ -123,6 +123,7 @@ exports.createSessionEntrySchema = Joi.object({
   close: Joi.boolean(),
   refer: Joi.string(),
   interactions: Joi.string(),
+  reason_for_closing: Joi.string(),
   details: Joi.string(),
   grade: Joi.string(),
   remarks: Joi.string(),

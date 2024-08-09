@@ -239,6 +239,7 @@ exports.addEntry = async (req, res) => {
       user_id,
       concern_raised,
       interactions,
+      reason_for_closing,
     } = req.body;
 
     const createSessionValidator =
@@ -263,6 +264,7 @@ exports.addEntry = async (req, res) => {
         details,
         concern_raised,
         interactions,
+        reason_for_closing,
       });
       if (!closeCase) return responseHandler(res, 400, "Case close failed");
       return responseHandler(res, 200, "Case closed successfully", closeCase);
