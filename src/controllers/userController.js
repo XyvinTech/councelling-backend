@@ -9,6 +9,7 @@ const { generateToken } = require("../utils/generateToken");
 const validations = require("../validations");
 const sendMail = require("../utils/sendMail");
 const Event = require("../models/eventModel");
+const moment = require("moment-timezone");
 
 exports.loginUser = async (req, res) => {
   try {
@@ -124,7 +125,13 @@ exports.createSession = async (req, res) => {
     const emailData = {
       to: session.user_email,
       subject: `Your session requested with Session ID: ${newSession.session_id} and Case ID: ${caseId.case_id} for ${session.counsellor_name}`,
-      text: `Dear ${session.user_name},\n\nYour appointment request for ${session.counsellor_name} for ${session.session_date} at ${session.session_time.start}-${session.session_time.end} has been sent to the Counselor for approval. We will inform you through an email once your request has been approved by the Counselor.`,
+      text: `Dear ${session.user_name},\n\nYour appointment request for ${
+        session.counsellor_name
+      } for ${moment(session.session_date).format("DD-MM-YYYY")} at ${
+        session.session_time.start
+      }-${
+        session.session_time.end
+      } has been sent to the Counselor for approval. We will inform you through an email once your request has been approved by the Counselor.`,
     };
     await sendMail(emailData);
     const data = {
@@ -143,7 +150,15 @@ exports.createSession = async (req, res) => {
     const counData = {
       to: session.counsellor_email,
       subject: `You have a new session requested with Session ID: ${newSession.session_id} and Case ID: ${caseId.case_id} from ${session.user_name}`,
-      text: `Dear ${session.counsellor_name},\n\nYou have received an appointment request from ${session.user_name} for ${session.session_date} at ${session.session_time.start}-${session.session_time.end}. The request has been sent to you for approval. We will notify you via email once the request has been approved.`,
+      text: `Dear ${
+        session.counsellor_name
+      },\n\nYou have received an appointment request from ${
+        session.user_name
+      } for ${moment(session.session_date).format("DD-MM-YYYY")} at ${
+        session.session_time.start
+      }-${
+        session.session_time.end
+      }. The request has been sent to you for approval. We will notify you via email once the request has been approved.`,
     };
     await sendMail(counData);
     await Notification.create(notif_data);
