@@ -11,13 +11,13 @@ const {
 
 async function initializeTables() {
   try {
-    // await createAdminTable();
-    // await createUserTable();
-    // await createCaseTable();
-    // await createSessionTable();
-    // await createTimeTable();
-    // await createEventTable();
-    // await createNotificationTable();
+    await createAdminTable();
+    await createUserTable();
+    await createCaseTable();
+    await createSessionTable();
+    await createTimeTable();
+    await createEventTable();
+    await createNotificationTable();
     await createTypeTable();
   } catch (error) {
     console.error("Error creating tables:", error);
