@@ -190,7 +190,7 @@ exports.createCounsellor = async (req, res) => {
 
     for (let i = 0; i < day.length; i++) {
       await Time.create({
-        userId: user.id,
+        user: user.id,
         day: day[i],
         times: times,
       });
