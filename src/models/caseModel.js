@@ -270,7 +270,10 @@ class Case {
     return result[0].count;
   }
 
-  static async update(id, { sessions, concern_raised = null }) {
+  static async update(
+    id,
+    { sessions, concern_raised = null, details, interactions }
+  ) {
     const sessionIds = sessions.map((session) =>
       typeof session === "object" ? session.id : session
     );
@@ -279,6 +282,8 @@ class Case {
       UPDATE Cases SET
         session_ids = ${sessionIds.join(",")},
         concern_raised = ${concern_raised},
+        interactions = ${interactions},
+        details = ${details},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *

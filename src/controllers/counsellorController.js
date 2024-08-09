@@ -312,7 +312,7 @@ exports.addEntry = async (req, res) => {
       session_date: date,
       type: checkSession.type,
       session_time: time,
-      description: details,
+      description: checkSession.description,
       counsellor: req.userId,
     };
 
@@ -329,6 +329,8 @@ exports.addEntry = async (req, res) => {
         newSessionRes.id,
       ],
       concern_raised: concern_raised,
+      interactions: interactions,
+      details: details
     });
 
     const resSession = await Session.findById(newSessionRes.id);
