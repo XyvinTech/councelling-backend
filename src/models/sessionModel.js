@@ -170,6 +170,7 @@ class Session {
       Cases.case_id as caseid,
       Referers.name as referer_name,
       Cases.referer_remark as referer_remark,
+      Cases.details as case_details,
       Cases.interactions as interactions
     FROM Sessions
     LEFT JOIN Users ON Sessions."user" = Users.id
