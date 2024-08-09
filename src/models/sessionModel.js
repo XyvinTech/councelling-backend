@@ -164,7 +164,7 @@ class Session {
     SELECT 
       Sessions.*,
       Users.name as user_name,
-      Users.grade as grade,
+      Users.designation as grade,
       Users.division as division,
       Counsellors.name as counsellor_name,
       Cases.case_id as caseid,
