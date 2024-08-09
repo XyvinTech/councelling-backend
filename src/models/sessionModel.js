@@ -300,6 +300,7 @@ class Session {
         Users.name as user_name,
         Users.mobile as user_mobile,
         Users.designation as user_designation,
+        Users.division as user_division,
         Counsellors.name as counsellor_name,
         Counsellors.mobile as counsellor_mobile,
         Users.email as user_email,
