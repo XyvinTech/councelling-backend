@@ -611,19 +611,18 @@ exports.getSessionsExcel = async (req, res) => {
 
 exports.getBigCalender = async (req, res) => {
   try {
-    const { userId } = req;
-    const sessions = await Session.findAllByCounsellerId(userId);
-    if (sessions.length > 0) {
-      const mappedData = sessions.map((session) => {
+    const events = await Event.findAllForCalender();
+    if (events.length > 0) {
+      const mappedData = events.map((event) => {
         return {
-          title: session.name,
-          start: session.session_date,
-          end: session.session_date,
+          title: event.title,
+          start: event.date,
+          end: event.date,
         };
       });
-      return responseHandler(res, 200, "Sessions found", mappedData);
+      return responseHandler(res, 200, "Events found", mappedData);
     }
-    return responseHandler(res, 404, "No sessions found");
+    return responseHandler(res, 404, "No Events found");
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
   }

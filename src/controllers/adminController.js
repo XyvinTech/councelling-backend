@@ -943,3 +943,22 @@ exports.deleteCounsellingType = async (req, res) => {
     return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
   }
 };
+
+exports.getBigCalender = async (req, res) => {
+  try {
+    const events = await Event.findAllForCalender();
+    if (events.length > 0) {
+      const mappedData = events.map((event) => {
+        return {
+          title: event.title,
+          start: event.date,
+          end: event.date,
+        };
+      });
+      return responseHandler(res, 200, "Events found", mappedData);
+    }
+    return responseHandler(res, 404, "No Events found");
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};

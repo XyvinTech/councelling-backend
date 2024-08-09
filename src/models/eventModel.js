@@ -50,6 +50,13 @@ class Event {
     return event;
   }
 
+  static async findAllForCalender() {
+    return await sql`
+      SELECT id, title, date
+      FROM Events
+    `;
+  }
+
   static async findAll({ page = 1, limit = 10, searchQuery = "" } = {}) {
     const offset = (page - 1) * limit;
     let filterCondition = sql``;

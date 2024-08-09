@@ -52,6 +52,7 @@ adminRoute
   .put(adminController.editEvent)
   .delete(adminController.deleteEvent);
 adminRoute.post("/event/delete-many", adminController.deleteManyEvent);
+adminRoute.get("/big-calendar", adminController.getBigCalender);
 adminRoute.get("/sessions/:caseId/case", adminController.getCaseSessions);
 adminRoute.get("/session/:id", adminController.getSession);
 adminRoute.post("/counselling-type", adminController.createCounsellingType);

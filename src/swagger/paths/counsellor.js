@@ -5,6 +5,8 @@
  *     description: Counsellor related endpoints
  *   - name: Report
  *     description: Report related endpoints
+ *   - name: Calender
+ *     description: Calender related endpoints
  */
 
 /**
@@ -64,15 +66,15 @@
  * @swagger
  * /counsellor/big-calendar:
  *   get:
- *     summary: Get Counsellor details
- *     description: API endpoint for getting counsellor calendar
+ *     summary: Get Calender details
+ *     description: API endpoint for getting event calendar
  *     tags:
- *       - Counsellor
+ *       - Calender
  *     responses:
  *       200:
  *         description: Counsellor calendar
  *       404:
- *         description: Counsellor not found
+ *         description: Counsellor calendar not found
  *       500:
  *         description: Internal Server Error
  */

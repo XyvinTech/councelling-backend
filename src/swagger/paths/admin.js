@@ -1047,3 +1047,20 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /admin/big-calendar:
+ *   get:
+ *     summary: Get Calender details
+ *     description: API endpoint for getting event calendar
+ *     tags:
+ *       - Calender
+ *     responses:
+ *       200:
+ *         description: Admin calendar
+ *       404:
+ *         description: Admin calendar not found
+ *       500:
+ *         description: Internal Server Error
+ */
