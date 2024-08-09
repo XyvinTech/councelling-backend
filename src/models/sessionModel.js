@@ -316,7 +316,7 @@ class Session {
         Cases.case_id as case_id,
         Cases.id as caseid,
         Referers.name as referer_name,
-        Cases.referer_remark as referer_remark,
+        Cases.referer_remark as referer_remark
       FROM Sessions
       LEFT JOIN Users ON Sessions.user = Users.id
       LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
