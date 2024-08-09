@@ -29,6 +29,21 @@ class Time {
     return timeEntry;
   }
 
+  static async createMany(entries) {
+    const values = entries.map((entry) => ({
+      user: entry.user,
+      day: entry.day,
+      times: sql.json(entry.times),
+    }));
+
+    const insertedEntries = await sql`
+      INSERT INTO Times ${sql(values)}
+      RETURNING *
+    `;
+
+    return insertedEntries;
+  }
+
   static async findByUserId(userId) {
     const timeEntries = await sql`
       SELECT Times.*, 

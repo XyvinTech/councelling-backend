@@ -10,6 +10,8 @@ const Case = require("../models/caseModel");
 const times = require("../utils/times");
 const Time = require("../models/timeModel");
 
+
+
 exports.loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -192,7 +194,7 @@ exports.createCounsellor = async (req, res) => {
       await Time.create({
         user: user.id,
         day: day[i],
-        times: times,
+        times: times.times,
       });
     }
     return responseHandler(res, 201, "Counsellor created", user);
@@ -223,17 +225,37 @@ exports.createCounsellorBulk = async (req, res) => {
       });
     }
 
+    // Hash passwords
     const hashedUsers = await Promise.all(
       counseller.map(async (user) => {
         const hashedPassword = await hashPassword(user.password);
         return {
-          ...user, // Spread the user object to retain other properties
-          password: hashedPassword, // Replace the plain password with the hashed password
+          ...user,
+          password: hashedPassword,
         };
       })
     );
 
+    // Create counsellors
     const users = await User.createMany(hashedUsers);
+
+    // Create time entries for each newly created counsellor
+    const day = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const timeEntries = [];
+
+    for (const user of users) {
+      for (let i = 0; i < day.length; i++) {
+        timeEntries.push({
+          user: user.id,
+          day: day[i],
+          times: times.times,
+        });
+      }
+    }
+
+    // Bulk create Time entries
+    await Time.createMany(timeEntries);
+
     return responseHandler(res, 201, "Counsellors created", users);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
