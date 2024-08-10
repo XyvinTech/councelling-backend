@@ -248,7 +248,7 @@ exports.listController = async (req, res) => {
       }
       return responseHandler(res, 404, "No reports found");
     } else if (type === "cases") {
-      const cases = await Case.findByUser({ userId, page, searchQuery });
+      const cases = await Case.findByUser({ userId, page, searchQuery, status });
       if (cases.length > 0) {
         const totalCount = await Case.user_count({ id: userId });
         return responseHandler(res, 200, "Cases found", cases, totalCount);

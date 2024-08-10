@@ -194,6 +194,7 @@ class Case {
     page = 1,
     limit = 10,
     searchQuery = "",
+    status,
   } = {}) {
     const offset = (page - 1) * limit;
     let filterCondition = sql`WHERE Cases."user" = ${userId}`;
@@ -203,6 +204,9 @@ class Case {
         ${filterCondition} AND Counsellors.name ILIKE ${"%" + searchQuery + "%"}
       `;
     }
+
+    if (status)
+      filterCondition = sql` ${filterCondition} AND Cases.status = ${status}`;
 
     const cases = await sql`
       SELECT Cases.*, 
@@ -224,6 +228,7 @@ class Case {
     page = 1,
     limit = 10,
     searchQuery = "",
+    status,
   } = {}) {
     const offset = (page - 1) * limit;
     let filterCondition = sql`WHERE Sessions.counsellor = ${userId}`;
@@ -233,6 +238,9 @@ class Case {
         ${filterCondition} AND Cases.status ILIKE ${"%" + searchQuery + "%"}
       `;
     }
+
+    if (status)
+      filterCondition = sql` ${filterCondition} AND Cases.status = ${status}`;
 
     const query = sql`
       SELECT 
