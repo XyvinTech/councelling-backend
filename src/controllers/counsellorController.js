@@ -132,6 +132,7 @@ exports.listController = async (req, res) => {
         userId,
         page,
         searchQuery,
+        status,
       });
       if (cases.length > 0) {
         const mappedData = cases.map((item) => {
@@ -146,7 +147,7 @@ exports.listController = async (req, res) => {
             session_count: item.sessions.length,
           };
         });
-        const totalCount = await Case.counsellor_count({ id: userId });
+        const totalCount = await Case.counsellor_count({ id: userId, status });
         return responseHandler(res, 200, "Cases found", mappedData, totalCount);
       }
       return responseHandler(res, 404, "No cases found");
@@ -349,6 +350,7 @@ exports.addEntry = async (req, res) => {
       session_time: time,
       description: checkSession.description,
       counsellor: req.userId,
+      status: "accepted",
     };
 
     const newSessionRes = await Session.create(sessionData);

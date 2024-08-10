@@ -133,6 +133,7 @@ class Case {
     userId,
     page = 1,
     searchQuery = "",
+    status,
     limit = 10,
   } = {}) {
     const offset = (page - 1) * limit;
@@ -143,6 +144,9 @@ class Case {
         ${filterCondition} AND Users.name ILIKE ${"%" + searchQuery + "%"}
       `;
     }
+
+    if (status)
+      filterCondition = sql` ${filterCondition} AND Cases.status = ${status}`;
 
     const cases = await sql`
       SELECT 
@@ -247,7 +251,7 @@ class Case {
     return await query;
   }
 
-  static async counsellor_count({ id }) {
+  static async counsellor_count({ id, status }) {
     const result = await sql`
       SELECT COUNT(*) AS count 
       FROM Cases 
@@ -255,6 +259,7 @@ class Case {
         SELECT case_id 
         FROM Sessions 
         WHERE counsellor = ${id}
+        ${status ? sql`AND status = ${status}` : sql``}
       )
     `;
 
@@ -318,7 +323,10 @@ class Case {
     return session;
   }
 
-  static async close(id, { details, concern_raised, interactions, reason_for_closing }) {
+  static async close(
+    id,
+    { details, concern_raised, interactions, reason_for_closing }
+  ) {
     const [closeCase] = await sql`
       UPDATE Cases SET
         details = ${details},
