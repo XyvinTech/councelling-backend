@@ -45,8 +45,8 @@ class User {
         ${password}, 
         ${mobile}, 
         ${userType}, 
-        ${parentContact}, 
         ${division},
+        ${parentContact}, 
         ${sql.array(counsellorType)}, 
         ${designation}
       )
