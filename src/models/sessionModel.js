@@ -22,12 +22,15 @@ class Session {
         session_date DATE,
         session_time JSONB,
         type VARCHAR(255),
-        status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed', 'rescheduled')),
+        status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'progress', 'cancelled', 'completed', 'rescheduled')),
         counsellor UUID REFERENCES Users(id),
         description TEXT,
         report TEXT,
+        case_details TEXT,
         reschedule_remark TEXT,
         cancel_remark TEXT,
+        c_reschedule_remark TEXT,
+        c_cancel_remark TEXT,
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -358,6 +361,23 @@ class Session {
     return session;
   }
 
+  static async c_reschedule(
+    id,
+    { session_date, session_time, c_reschedule_remark }
+  ) {
+    const [session] = await sql`
+      UPDATE Sessions SET
+        session_date = ${session_date},
+        session_time = ${session_time},
+        c_reschedule_remark = ${c_reschedule_remark},
+        status = 'accepted',
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return session;
+  }
+
   static async close(id) {
     const [session] = await sql`
       UPDATE Sessions SET
@@ -374,6 +394,18 @@ class Session {
       UPDATE Sessions SET
         status = 'cancelled',
         cancel_remark = ${cancel_remark},
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return session;
+  }
+
+  static async c_cancel(id, { c_cancel_remark }) {
+    const [session] = await sql`
+      UPDATE Sessions SET
+        status = 'cancelled',
+        c_cancel_remark = ${c_cancel_remark},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *

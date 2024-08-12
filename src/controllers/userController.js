@@ -207,19 +207,44 @@ exports.rescheduleSession = async (req, res) => {
       session: updatedSession.id,
       details: "Session reschedule requested",
     };
-    const emailData = {
+    const userEmailData = {
       to: session.user_email,
-      subject: "Session Reschedule has been Requested",
-      text: `Your session reschedule has been requested with Session ID: ${session.session_id}. Please wait for approval`,
+      subject: `Your session with Session ID: ${session.session_id} and Case ID: ${session.case_id} has been rescheduled`,
+      text: `Dear ${
+        session.user_name
+      },\n\nWe have received your request to reschedule your session with ${
+        session.counsellor_name
+      }. The session, originally scheduled for ${moment(
+        session.session_date
+      ).format("DD-MM-YYYY")} at ${session.session_time.start}-${
+        session.session_time.end
+      }, is now requested to be rescheduled to ${moment(session_date).format(
+        "DD-MM-YYYY"
+      )} at ${session_time.start}-${
+        session_time.end
+      }.\n\nPlease note that this reschedule request is pending approval by the counselor. You will receive an email notification once the counselor has reviewed and approved your request.`,
     };
-    await sendMail(emailData);
+
+    await sendMail(userEmailData);
     await Notification.create(notif_data);
-    const counData = {
+    const counsellorEmailData = {
       to: session.counsellor_email,
-      subject: "Session Reschedule Request",
-      text: `Session reschedule has been requested with Session ID: ${session.session_id}.`,
+      subject: `Session Rescheduled: Session ID: ${session.session_id} and Case ID: ${session.case_id}`,
+      text: `Dear ${
+        session.counsellor_name
+      },\n\nPlease be informed that the session with ${
+        session.user_name
+      }, originally scheduled for ${moment(session.session_date).format(
+        "DD-MM-YYYY"
+      )} at ${session.session_time.start}-${
+        session.session_time.end
+      }, has been rescheduled by the user.\n\nThe new session is now scheduled for ${moment(
+        session_date
+      ).format("DD-MM-YYYY")} at ${session_time.start}-${
+        session_time.end
+      }.\n\n`,
     };
-    await sendMail(counData);
+    await sendMail(counsellorEmailData);
     return responseHandler(
       res,
       200,
@@ -248,7 +273,12 @@ exports.listController = async (req, res) => {
       }
       return responseHandler(res, 404, "No reports found");
     } else if (type === "cases") {
-      const cases = await Case.findByUser({ userId, page, searchQuery, status });
+      const cases = await Case.findByUser({
+        userId,
+        page,
+        searchQuery,
+        status,
+      });
       if (cases.length > 0) {
         const totalCount = await Case.user_count({ id: userId });
         return responseHandler(res, 200, "Cases found", cases, totalCount);
@@ -353,6 +383,21 @@ exports.cancelSession = async (req, res) => {
     const { id } = req.params;
     const { cancel_remark } = req.body;
     const session = await Session.cancel(id, { cancel_remark });
+    const get_session = await Session.findById(id);
+    const counsellorEmailData = {
+      to: session.counsellor_email,
+      subject: `Session Canceled: Session ID: ${get_session.session_id} and Case ID: ${get_session.case_id}`,
+      text: `Dear ${
+        get_session.counsellor_name
+      },\n\nWe wanted to inform you that the session with ${
+        get_session.user_name
+      }, scheduled for ${moment(get_session.session_date).format(
+        "DD-MM-YYYY"
+      )} at ${get_session.session_time.start}-${
+        get_session.session_time.end
+      }, has been canceled by the student for the following reason: ${cancel_remark}.`,
+    };
+    await sendMail(counsellorEmailData);
     await Case.cancel(session.case_id);
     if (session) {
       return responseHandler(res, 200, "Session cancelled successfully");

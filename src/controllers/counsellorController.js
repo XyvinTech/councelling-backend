@@ -476,7 +476,7 @@ exports.getSession = async (req, res) => {
 
 exports.rescheduleSession = async (req, res) => {
   try {
-    const { session_date, session_time, reschedule_remark } = req.body;
+    const { session_date, session_time, c_reschedule_remark } = req.body;
     const { id } = req.params;
     if (!session_date && !session_time)
       return responseHandler(res, 400, `Session date & time is required`);
@@ -485,33 +485,45 @@ exports.rescheduleSession = async (req, res) => {
     if (session.status !== "pending" && session.status !== "rescheduled")
       return responseHandler(res, 400, "You can't reschedule this session");
     const updatedSession = {
-      ...session,
-      status: "accepted",
       session_date,
-      reschedule_remark,
       session_time,
+      c_reschedule_remark,
     };
-    const rescheduleSession = await Session.update(id, updatedSession);
+    const rescheduleSession = await Session.c_reschedule(id, updatedSession);
     if (!rescheduleSession)
       return responseHandler(res, 400, "Session reschedule failed");
     const data = {
       user: req.userId,
-      caseId: updatedSession.caseid,
-      session: updatedSession.id,
+      caseId: session.caseid,
+      session: session.id,
       details: "Your session is rescheduled.",
     };
     await Notification.create(data);
     const notif_data = {
-      user: updatedSession.user,
-      caseId: updatedSession.caseid,
-      session: updatedSession.id,
+      user: session.user,
+      caseId: session.caseid,
+      session: session.id,
       details: "Session rescheduled.",
     };
+
     const emailData = {
       to: session.user_email,
-      subject: "Your Session Rescheduled",
-      text: `Your session is rescheduled with Session ID: ${session.session_id}.`,
+      subject: `Your session with Session ID: ${session.session_id} and Case ID: ${session.case_id} has been rescheduled by ${session.counsellor_name}`,
+      text: `Dear ${
+        session.user_name
+      },\n\nWe wanted to inform you that your appointment with ${
+        session.counsellor_name
+      }, originally scheduled for ${moment(session.session_date).format(
+        "DD-MM-YYYY"
+      )} at ${session.session_time.start}-${
+        session.session_time.end
+      }, has been rescheduled.\n\nThe new session is now set for ${moment(
+        session_date
+      ).format("DD-MM-YYYY")} at ${session_time.start}-${
+        session_time.end
+      }.\n\nWe apologize for any inconvenience this may cause. Please feel free to reach out if you have any questions or need further assistance.\n\nThank you for your understanding.`,
     };
+
     await sendMail(emailData);
     await Notification.create(notif_data);
     const counData = {
@@ -550,9 +562,24 @@ exports.getAvailableTimes = async (req, res) => {
 exports.cancelSession = async (req, res) => {
   try {
     const { id } = req.params;
-    const { cancel_remark } = req.body;
-    const session = await Session.cancel(id, { cancel_remark });
+    const { c_cancel_remark } = req.body;
+    const session = await Session.c_cancel(id, { c_cancel_remark });
     await Case.cancel(session.case_id);
+    const get_session = await Session.findById(id);
+    const emailData = {
+      to: session.user_email,
+      subject: `Your session with Session ID: ${get_session.session_id} and Case ID: ${get_session.case_id} has been canceled by ${get_session.counsellor_name}`,
+      text: `Dear ${
+        get_session.user_name
+      },\n\nWe regret to inform you that your appointment with ${
+        get_session.counsellor_name
+      }, originally scheduled for ${moment(get_session.session_date).format(
+        "DD-MM-YYYY"
+      )} at ${get_session.session_time.start}-${
+        get_session.session_time.end
+      }, has been canceled by the counselor for the following reason: ${c_cancel_remark}.`,
+    };
+    await sendMail(emailData);
     if (session) {
       return responseHandler(res, 200, "Session cancelled successfully");
     }
