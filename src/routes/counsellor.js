@@ -47,4 +47,9 @@ counsellorRoute.post(
   counsellorController.deleteManyCounsellingType
 );
 
+counsellorRoute.put(
+  "/case/referee-remark/:id",
+  counsellorController.refereeRemark
+);
+
 module.exports = counsellorRoute;

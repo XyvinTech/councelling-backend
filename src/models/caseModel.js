@@ -30,13 +30,12 @@ class Case {
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         case_id TEXT UNIQUE,
         "user" UUID REFERENCES Users(id),
-        details TEXT,
         concern_raised DATE,
-        referer UUID REFERENCES Users(id),
-        referer_remark TEXT,
+        referer JSONB,
+        referer_remark JSONB,
         interactions VARCHAR(255),
         reason_for_closing TEXT,
-        status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled', 'completed', 'referred')),
+        status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'progress', 'cancelled', 'completed', 'referred')),
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         session_ids VARCHAR -- Comma-separated session IDs
@@ -66,7 +65,6 @@ class Case {
     sessions,
     concern_raised = null,
     referer = null,
-    referer_remark = null,
   }) {
     const sessionIds = sessions.map((session) =>
       typeof session === "object" ? session.id : session
@@ -76,9 +74,9 @@ class Case {
       INSERT INTO Cases (
         "user", session_ids, concern_raised, referer, referer_remark
       ) VALUES (
-        ${user}, ${sessionIds.join(
-      ","
-    )}, ${concern_raised}, ${referer}, ${referer_remark}
+        ${user}, ${sessionIds.join(",")}, ${concern_raised}, ${
+      referer ? sql.json(referer) : null
+    }
       )
       RETURNING *
     `;
@@ -184,7 +182,7 @@ class Case {
     const session = await sql`
       SELECT * FROM Cases 
       WHERE "user" = ${id} 
-      AND status IN ('pending', 'accepted')
+      AND status IN ('pending', 'progress')
     `;
     return session;
   }
@@ -284,10 +282,7 @@ class Case {
     return result[0].count;
   }
 
-  static async update(
-    id,
-    { sessions, concern_raised = null, details, interactions }
-  ) {
+  static async update(id, { sessions, concern_raised = null, interactions }) {
     const sessionIds = sessions.map((session) =>
       typeof session === "object" ? session.id : session
     );
@@ -297,7 +292,6 @@ class Case {
         session_ids = ${sessionIds.join(",")},
         concern_raised = ${concern_raised},
         interactions = ${interactions},
-        details = ${details},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
@@ -323,7 +317,7 @@ class Case {
   static async accept(id) {
     const [session] = await sql`
       UPDATE Cases SET
-        status = 'accepted',
+        status = 'progress',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
@@ -350,10 +344,9 @@ class Case {
     return closeCase;
   }
 
-  static async refer(id, { details, concern_raised, interactions }) {
+  static async refer(id, { concern_raised, interactions }) {
     const [closeCase] = await sql`
       UPDATE Cases SET
-        details = ${details},
         concern_raised = ${concern_raised},
         interactions = ${interactions},
         status = 'referred',
@@ -363,6 +356,31 @@ class Case {
     `;
 
     return closeCase;
+  }
+
+  static async referer(id, { referer, concern_raised, interactions }) {
+    const [rerferCase] = await sql`
+      UPDATE Cases SET
+        referer = ${JSON.stringify(referer)}, 
+        concern_raised = ${concern_raised},
+        interactions = ${interactions},
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    return rerferCase;
+  }
+
+  static async remark(id, { remark }) {
+    const [remarks] = await sql`
+      UPDATE Cases SET
+        referer_remark = ${sql.array(remark)},
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return remarks;
   }
 
   static async cancel(id) {

@@ -751,3 +751,38 @@
  *       500:
  *         description: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /counsellor/case/referee-remark/{id}:
+ *   put:
+ *     summary: Add a referee remark to a case
+ *     description: This endpoint allows a counsellor to add their remark to an existing case. The counsellor's name and the remark are added to the case's list of remarks.
+ *     tags:
+ *       - Case
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: ID of the case to update with a new referee remark
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               remark:
+ *                 type: string
+ *                 example: "Provided additional insights on the case."
+ *     responses:
+ *       200:
+ *         description: Remark updated successfully
+ *       400:
+ *         description: Remark update failed
+ *       500:
+ *         description: Internal Server Error
+ */

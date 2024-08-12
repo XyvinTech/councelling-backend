@@ -171,15 +171,15 @@ class Session {
       Users.division as division,
       Counsellors.name as counsellor_name,
       Cases.case_id as caseid,
+      Cases.referer as case_referer,
       Referers.name as referer_name,
       Cases.referer_remark as referer_remark,
-      Cases.details as case_details,
       Cases.interactions as interactions
     FROM Sessions
     LEFT JOIN Users ON Sessions."user" = Users.id
     LEFT JOIN Cases ON Sessions."case_id" = Cases.id
     LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
-    LEFT JOIN Users as Referers ON Cases.referer = Referers.id
+    LEFT JOIN Users as Referers ON (Cases.referer->>'id')::UUID = Referers.id
     ${filterCondition}
     ORDER BY Sessions."createdAt" DESC
     OFFSET ${offset} LIMIT ${limit}
@@ -250,7 +250,7 @@ class Session {
     const session = await sql`
       SELECT * FROM Sessions 
       WHERE "user" = ${id} 
-      AND status IN ('pending', 'accepted')
+      AND status IN ('pending', 'progress')
     `;
     return session;
   }
@@ -260,7 +260,7 @@ class Session {
       SELECT * FROM Sessions 
       WHERE "counsellor" = ${id} 
       AND session_date = ${date} 
-      AND status IN ('pending', 'accepted')
+      AND status IN ('pending', 'progress')
     `;
     return session;
   }
@@ -315,17 +315,17 @@ class Session {
         Users.email as user_email,
         Counsellors.email as counsellor_email,
         Counsellors.designation as counsellor_designation,
-        Cases.details as case_details,
         Cases.status as case_status,
         Cases.case_id as case_id,
         Cases.id as caseid,
+        Cases.referer as case_referer,
         Referers.name as referer_name,
         Cases.referer_remark as referer_remark
       FROM Sessions
       LEFT JOIN Users ON Sessions.user = Users.id
       LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
       LEFT JOIN Cases ON Sessions.case_id = Cases.id
-      LEFT JOIN Users as Referers ON Cases.referer = Referers.id
+      LEFT JOIN Users as Referers ON (Cases.referer->>'id')::UUID = Referers.id
       WHERE Sessions.id = ${id}
     `;
     return session;
@@ -370,7 +370,7 @@ class Session {
         session_date = ${session_date},
         session_time = ${session_time},
         c_reschedule_remark = ${c_reschedule_remark},
-        status = 'accepted',
+        status = 'progress',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
@@ -378,10 +378,11 @@ class Session {
     return session;
   }
 
-  static async close(id) {
+  static async close(id, { case_details }) {
     const [session] = await sql`
       UPDATE Sessions SET
         status = 'completed',
+        case_details = ${case_details},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
@@ -413,10 +414,21 @@ class Session {
     return session;
   }
 
+  static async add_details(id, { details }) {
+    const [session] = await sql`
+      UPDATE Sessions SET
+        case_details = ${details},
+        "updatedAt" = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return session;
+  }
+
   static async accept(id) {
     const [session] = await sql`
       UPDATE Sessions SET
-        status = 'accepted',
+        status = 'progress',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *,

@@ -127,4 +127,5 @@ exports.createSessionEntrySchema = Joi.object({
   details: Joi.string(),
   grade: Joi.string(),
   remarks: Joi.string(),
+  with_session: Joi.boolean(),
 });

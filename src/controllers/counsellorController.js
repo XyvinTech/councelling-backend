@@ -186,6 +186,7 @@ exports.acceptSession = async (req, res) => {
   try {
     const { id } = req.params;
     const updatedSession = await Session.accept(id);
+    const session = await Session.findById(id);
     await Case.accept(updatedSession.case_id);
     const data = {
       user: req.userId,
@@ -200,19 +201,51 @@ exports.acceptSession = async (req, res) => {
       session: updatedSession.id,
       details: `Your session with ${updatedSession.session_id} is accepted`,
     };
-    const emailData = {
-      to: updatedSession.user_email,
-      subject: "Your Session Accepted",
-      text: `Your session with ${updatedSession.session_id} is accepted, Session date on ${updatedSession.session_date}`,
+    const emailDataForUserAccepted = {
+      to: session.user_email,
+      subject: `Your session with Session ID: ${session.session_id} has been accepted`,
+      text: `Dear ${session.user_name},
+    
+    Your appointment request for ${session.counsellor_name} on ${moment(
+        session.session_date
+      ).format("DD-MM-YYYY")} at ${session.session_time.start}-${
+        session.session_time.end
+      } has been accepted by the Counselor. 
+    
+    Here are the details of your session:
+    - **Session ID**: ${session.session_id}
+    - **Case ID**: ${session.case_id}
+    - **Date**: ${moment(session.session_date).format("DD-MM-YYYY")}
+    - **Time**: ${session.session_time.start}-${session.session_time.end}
+    
+    We look forward to seeing you at the scheduled time.
+    
+    Thank you`,
     };
-    await sendMail(emailData);
+
+    await sendMail(emailDataForUserAccepted);
     await Notification.create(notif_data);
-    const counData = {
-      to: updatedSession.counsellor_email,
-      subject: "Session Accepted",
-      text: `Session with ${updatedSession.session_id} is accepted, Session date on ${updatedSession.session_date}`,
+    const emailDataForCounselorAccepted = {
+      to: session.counsellor_email,
+      subject: `Session with Session ID: ${session.session_id} has been accepted`,
+      text: `Dear ${session.counsellor_name},
+    
+    The session request from ${session.user_name} has been accepted. 
+    
+    Here are the details of the session:
+    - **Session ID**: ${session.session_id}
+    - **Case ID**: ${session.case_id}
+    - **Date**: ${moment(session.session_date).format("DD-MM-YYYY")}
+    - **Time**: ${session.session_time.start}-${session.session_time.end}
+    - **User**: ${session.user_name}
+    - **User Email**: ${session.user_email}
+    
+    Please prepare for the session accordingly.
+    
+    Thank you`,
     };
-    await sendMail(counData);
+
+    await sendMail(emailDataForCounselorAccepted);
     if (!updatedSession)
       return responseHandler(res, 400, "Session Accepted failed");
     return responseHandler(
@@ -235,12 +268,12 @@ exports.addEntry = async (req, res) => {
       refer,
       date,
       time,
-      remarks,
       session_id,
       user_id,
       concern_raised,
       interactions,
       reason_for_closing,
+      with_session,
     } = req.body;
 
     const createSessionValidator =
@@ -255,25 +288,25 @@ exports.addEntry = async (req, res) => {
       );
     }
 
-    //? Attempt to close the session
-    await Session.close(session_id);
     const checkSession = await Session.findById(session_id);
 
     //? Handle case closure
     if (close) {
       const closeCase = await Case.close(id, {
-        details,
         concern_raised,
         interactions,
         reason_for_closing,
       });
+      //? Attempt to close the session
+      await Session.close(session_id, { case_details: details });
       if (!closeCase) return responseHandler(res, 400, "Case close failed");
       return responseHandler(res, 200, "Case closed successfully", closeCase);
     }
 
-    //? Handle referral
-    if (refer) {
-      await Case.refer(id, { details, concern_raised, interactions });
+    //? Handle referral with session
+    if (refer && with_session) {
+      await Case.refer(id, { concern_raised, interactions });
+      await Session.close(session_id, { case_details: details });
       if (!checkSession) return responseHandler(res, 404, "Session not found");
 
       const data = {
@@ -288,18 +321,19 @@ exports.addEntry = async (req, res) => {
       const session = await Session.create(data);
       if (!session) return responseHandler(res, 400, "Session creation failed");
 
-      const caseId = await Case.create({
-        user: user_id,
-        sessions: [session.id],
-        referer: req.userId,
-        referer_remark: remarks,
+      const fetchCase = await Case.findById(id);
+
+      const upCase = await Case.update(id, {
+        sessions: [...fetchCase.sessions.map((session) => session), session.id],
+        concern_raised: concern_raised,
+        interactions: interactions,
       });
 
       const newSession = await Session.findById(session.id);
 
       const emailData = {
         to: session.user_email,
-        subject: `Your session requested with Session ID: ${newSession.session_id} and Case ID: ${caseId.case_id} for ${session.counsellor_name}`,
+        subject: `Your session requested with Session ID: ${newSession.session_id} and Case ID: ${upCase.case_id} for ${session.counsellor_name}`,
         text: `Dear ${session.user_name},\n\nYour appointment request for ${
           session.counsellor_name
         } for ${moment(session.session_date).format("DD-MM-YYYY")} at ${
@@ -312,20 +346,20 @@ exports.addEntry = async (req, res) => {
       await sendMail(emailData);
       const notifData = {
         user: req.userId,
-        caseId: caseId.id,
+        caseId: upCase.id,
         session: session.id,
         details: "Your session has been requested. Please wait for approval",
       };
       await Notification.create(notifData);
       const notif_data = {
         user: session.counsellor,
-        caseId: caseId.id,
+        caseId: upCase.id,
         session: session.id,
         details: "New session requested",
       };
       const counData = {
         to: session.counsellor_email,
-        subject: `You have a new session requested with Session ID: ${newSession.session_id} and Case ID: ${caseId.case_id} from ${session.user_name}`,
+        subject: `You have a new session requested with Session ID: ${newSession.session_id} and Case ID: ${upCase.case_id} from ${session.user_name}`,
         text: `Dear ${
           session.counsellor_name
         },\n\nYou have received an appointment request from ${
@@ -340,8 +374,23 @@ exports.addEntry = async (req, res) => {
       await Notification.create(notif_data);
 
       return responseHandler(res, 201, "Session created successfully", session);
+    } else if (refer) {
+      const fetchCase = await Case.findById(id);
+      let updated_refer = [];
+      if (fetchCase.referer === null) {
+        updated_refer.push(refer);
+      } else {
+        updated_refer = [...fetchCase.referer, refer];
+      }
+      await Case.referer(id, {
+        referer: updated_refer,
+        concern_raised,
+        interactions,
+      });
+      await Session.add_details(session_id, { details });
+      return responseHandler(res, 200, "Case refered successfully");
     }
-
+    await Session.close(session_id, { case_details: details });
     //? Default case: create a new session
     const sessionData = {
       user: user_id,
@@ -350,7 +399,7 @@ exports.addEntry = async (req, res) => {
       session_time: time,
       description: checkSession.description,
       counsellor: req.userId,
-      status: "accepted",
+      status: "progress",
     };
 
     const newSessionRes = await Session.create(sessionData);
@@ -367,7 +416,6 @@ exports.addEntry = async (req, res) => {
       ],
       concern_raised: concern_raised,
       interactions: interactions,
-      details: details,
     });
 
     const resSession = await Session.findById(newSessionRes.id);
@@ -845,6 +893,27 @@ exports.deleteManyCounsellingType = async (req, res) => {
         "Some Counselling type deletions failed."
       );
     }
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
+  }
+};
+
+exports.refereeRemark = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { remark } = req.body;
+
+    const findCase = await Case.findById(id);
+    const remarks = findCase.remarks;
+    const counsellor = await User.findById(req.userId);
+    const referee_remark = {
+      name: counsellor.name,
+      remark: remark,
+    };
+    const updatedRemarks = [...remarks, referee_remark];
+    const updateRemark = await Case.remark(id, { remark: updatedRemarks });
+    if (!updateRemark) return responseHandler(res, 400, "Remark update failed");
+    return responseHandler(res, 200, "Remark updated successfully");
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
   }
