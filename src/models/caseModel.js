@@ -333,13 +333,9 @@ class Case {
     return session;
   }
 
-  static async close(
-    id,
-    { details, concern_raised, interactions, reason_for_closing }
-  ) {
+  static async close(id, { concern_raised, interactions, reason_for_closing }) {
     const [closeCase] = await sql`
       UPDATE Cases SET
-        details = ${details},
         concern_raised = ${concern_raised},
         interactions = ${interactions},
         reason_for_closing = ${reason_for_closing},
