@@ -288,27 +288,35 @@ class Case {
     );
 
     const [updatedCase] = await sql`
-      UPDATE Cases SET
-        session_ids = ${sessionIds.join(",")},
-        concern_raised = ${concern_raised},
-        interactions = ${interactions},
-        "updatedAt" = CURRENT_TIMESTAMP
-      WHERE id = ${id}
-      RETURNING *
-    `;
+  UPDATE Cases SET
+    session_ids = ${sessionIds.join(",")},
+    concern_raised = ${concern_raised},
+    interactions = ${interactions},
+    "updatedAt" = CURRENT_TIMESTAMP
+  WHERE id = ${id}
+  RETURNING *
+`;
 
     for (let index = 0; index < sessionIds.length; index++) {
       const sessionId = sessionIds[index];
-      const formattedSessionId = `${updatedCase.case_id}/SC_${String(
-        index + 1
-      ).padStart(2, "0")}`;
 
-      await sql`
-        UPDATE Sessions SET
-          session_id = ${formattedSessionId},
-          case_id = ${id}
-        WHERE id = ${sessionId}
-      `;
+      // Check if session_id is empty
+      const [session] = await sql`
+    SELECT session_id FROM Sessions WHERE id = ${sessionId}
+  `;
+
+      if (!session.session_id) {
+        const formattedSessionId = `${updatedCase.case_id}/SC_${String(
+          index + 1
+        ).padStart(2, "0")}`;
+
+        await sql`
+      UPDATE Sessions SET
+        session_id = ${formattedSessionId},
+        case_id = ${id}
+      WHERE id = ${sessionId}
+    `;
+      }
     }
 
     return updatedCase;
