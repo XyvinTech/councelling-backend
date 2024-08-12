@@ -33,7 +33,6 @@ class Case {
         concern_raised DATE,
         referer JSONB,
         referer_remark JSONB,
-        interactions VARCHAR(255),
         reason_for_closing TEXT,
         status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'progress', 'cancelled', 'completed', 'referred')),
         "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -164,6 +163,59 @@ class Case {
     return cases;
   }
 
+  static async findAllRemarks({
+    userId,
+    page = 1,
+    searchQuery = "",
+    status,
+    limit = 10,
+  } = {}) {
+    const offset = (page - 1) * limit;
+    const userIdJsonb = JSON.stringify([userId]);
+
+    let filterCondition = sql`WHERE Cases.referer @> ${userIdJsonb}::jsonb`;
+
+    if (searchQuery) {
+      filterCondition = sql`
+        ${filterCondition} AND Users.name ILIKE ${"%" + searchQuery + "%"}
+      `;
+    }
+
+    if (status)
+      filterCondition = sql` ${filterCondition} AND Cases.status = ${status}`;
+
+    const cases = await sql`
+      SELECT 
+        Cases.*,
+        Users.name AS user_name,
+        json_agg(Sessions.*) AS sessions
+      FROM Cases
+      LEFT JOIN Users ON Cases."user" = Users.id
+      LEFT JOIN Sessions ON Sessions.case_id = Cases.id
+      ${filterCondition}
+      GROUP BY Cases.id, Users.name
+      ORDER BY Cases."createdAt" DESC
+      OFFSET ${offset} LIMIT ${limit}
+    `;
+
+    return cases;
+  }
+
+  static async remarkCount({ userId } = {}) {
+    const userIdJsonb = JSON.stringify([userId]);
+
+    const filterCondition = sql`WHERE Cases.referer @> ${userIdJsonb}::jsonb`;
+
+    // Query to count the number of cases
+    const [{ count }] = await sql`
+      SELECT COUNT(*) AS count
+      FROM Cases
+      ${filterCondition}
+    `;
+
+    return count;
+  }
+
   static async findById(id) {
     const [caseRow] = await sql`
       SELECT 
@@ -282,7 +334,7 @@ class Case {
     return result[0].count;
   }
 
-  static async update(id, { sessions, concern_raised = null, interactions }) {
+  static async update(id, { sessions, concern_raised = null }) {
     const sessionIds = sessions.map((session) =>
       typeof session === "object" ? session.id : session
     );
@@ -291,7 +343,6 @@ class Case {
   UPDATE Cases SET
     session_ids = ${sessionIds.join(",")},
     concern_raised = ${concern_raised},
-    interactions = ${interactions},
     "updatedAt" = CURRENT_TIMESTAMP
   WHERE id = ${id}
   RETURNING *
@@ -333,11 +384,10 @@ class Case {
     return session;
   }
 
-  static async close(id, { concern_raised, interactions, reason_for_closing }) {
+  static async close(id, { concern_raised, reason_for_closing }) {
     const [closeCase] = await sql`
       UPDATE Cases SET
         concern_raised = ${concern_raised},
-        interactions = ${interactions},
         reason_for_closing = ${reason_for_closing},
         status = 'completed',
         "updatedAt" = CURRENT_TIMESTAMP
@@ -348,11 +398,10 @@ class Case {
     return closeCase;
   }
 
-  static async refer(id, { concern_raised, interactions }) {
+  static async refer(id, { concern_raised }) {
     const [closeCase] = await sql`
       UPDATE Cases SET
         concern_raised = ${concern_raised},
-        interactions = ${interactions},
         status = 'referred',
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
@@ -362,12 +411,11 @@ class Case {
     return closeCase;
   }
 
-  static async referer(id, { referer, concern_raised, interactions }) {
+  static async referer(id, { referer, concern_raised }) {
     const [rerferCase] = await sql`
       UPDATE Cases SET
         referer = ${JSON.stringify(referer)}, 
         concern_raised = ${concern_raised},
-        interactions = ${interactions},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *

@@ -21,6 +21,7 @@ class Session {
         case_id UUID REFERENCES Cases(id),
         session_date DATE,
         session_time JSONB,
+        interactions VARCHAR(255),
         type VARCHAR(255),
         status VARCHAR(255) DEFAULT 'pending' CHECK (status IN ('pending', 'progress', 'cancelled', 'completed', 'rescheduled')),
         counsellor UUID REFERENCES Users(id),
@@ -173,7 +174,6 @@ class Session {
       Counsellors.name as counsellor_name,
       Cases.case_id as caseid,
       Cases.referer as case_referer,
-      Referers.name as referer_name,
       Cases.referer_remark as referer_remark,
       Cases.interactions as interactions,
       (
@@ -185,10 +185,61 @@ class Session {
     LEFT JOIN Users ON Sessions."user" = Users.id
     LEFT JOIN Cases ON Sessions."case_id" = Cases.id
     LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
-    LEFT JOIN Users as Referers ON (Cases.referer->>'id')::UUID = Referers.id
     ${filterCondition}
     ORDER BY Sessions."createdAt" DESC
     OFFSET ${offset} LIMIT ${limit}
+    `;
+
+    return await query;
+  }
+
+  static async findRemarksByCounsellorId({
+    userId,
+    page = 1,
+    limit = 10,
+    searchQuery = "",
+    status = null,
+  } = {}) {
+    const offset = (page - 1) * limit;
+
+    // Construct JSONB value directly
+    const userIdJsonb = JSON.stringify([userId]);
+
+    let filterCondition = sql`WHERE Cases.referer @> ${userIdJsonb}::jsonb`;
+
+    if (status) {
+      filterCondition = sql`${filterCondition} AND Sessions.status = ${status}`;
+    }
+
+    if (searchQuery) {
+      filterCondition = sql`${filterCondition} AND Users.name ILIKE ${
+        "%" + searchQuery + "%"
+      }`;
+    }
+
+    const query = sql`
+      SELECT 
+        Sessions.*,
+        Users.name as user_name,
+        Users.designation as grade,
+        Users.division as division,
+        Counsellors.name as counsellor_name,
+        Cases.case_id as caseid,
+        Cases.referer as case_referer,
+        Cases.referer_remark as referer_remark,
+        Cases.interactions as interactions,
+        (
+          SELECT json_agg(sub_sessions.case_details)
+          FROM Sessions as sub_sessions
+          WHERE sub_sessions.case_id = Sessions.case_id
+        ) as case_details_array
+      FROM Sessions
+      LEFT JOIN Users ON Sessions."user" = Users.id
+      LEFT JOIN Cases ON Sessions."case_id" = Cases.id
+      LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
+      ${filterCondition}
+      ORDER BY Sessions."createdAt" DESC
+      OFFSET ${offset} LIMIT ${limit}
     `;
 
     return await query;
@@ -385,11 +436,12 @@ class Session {
     return session;
   }
 
-  static async close(id, { case_details }) {
+  static async close(id, { case_details, interactions }) {
     const [session] = await sql`
       UPDATE Sessions SET
         status = 'completed',
         case_details = ${case_details},
+        interactions = ${interactions},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
@@ -421,10 +473,11 @@ class Session {
     return session;
   }
 
-  static async add_details(id, { details }) {
+  static async add_details(id, { details, interactions }) {
     const [session] = await sql`
       UPDATE Sessions SET
         case_details = ${details},
+        interactions = ${interactions},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *

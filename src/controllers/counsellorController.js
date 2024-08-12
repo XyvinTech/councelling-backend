@@ -174,6 +174,20 @@ exports.listController = async (req, res) => {
         );
       }
       return responseHandler(res, 404, "No Counselling types found");
+    } else if (type === "remarks") {
+      const sessions = await Case.findAllRemarks({
+        userId,
+        page,
+        searchQuery,
+        status,
+      });
+      if (sessions.length > 0) {
+        const totalCount = await Case.remarkCount({
+          userId,
+        });
+        return responseHandler(res, 200, "Reports found", sessions, totalCount);
+      }
+      return responseHandler(res, 404, "No reports found");
     } else {
       return responseHandler(res, 404, "Invalid type..!");
     }
@@ -294,19 +308,18 @@ exports.addEntry = async (req, res) => {
     if (close) {
       const closeCase = await Case.close(id, {
         concern_raised,
-        interactions,
         reason_for_closing,
       });
       //? Attempt to close the session
-      await Session.close(session_id, { case_details: details });
+      await Session.close(session_id, { case_details: details, interactions });
       if (!closeCase) return responseHandler(res, 400, "Case close failed");
       return responseHandler(res, 200, "Case closed successfully", closeCase);
     }
 
     //? Handle referral with session
     if (refer && with_session) {
-      await Case.refer(id, { concern_raised, interactions });
-      await Session.close(session_id, { case_details: details });
+      await Case.refer(id, { concern_raised });
+      await Session.close(session_id, { case_details: details, interactions });
       if (!checkSession) return responseHandler(res, 404, "Session not found");
 
       const data = {
@@ -326,7 +339,6 @@ exports.addEntry = async (req, res) => {
       const upCase = await Case.update(id, {
         sessions: [...fetchCase.sessions.map((session) => session), session.id],
         concern_raised: concern_raised,
-        interactions: interactions,
       });
 
       const newSession = await Session.findById(session.id);
@@ -385,12 +397,11 @@ exports.addEntry = async (req, res) => {
       await Case.referer(id, {
         referer: updated_refer,
         concern_raised,
-        interactions,
       });
-      await Session.add_details(session_id, { details });
+      await Session.add_details(session_id, { details, interactions });
       return responseHandler(res, 200, "Case refered successfully");
     }
-    await Session.close(session_id, { case_details: details });
+    await Session.close(session_id, { case_details: details, interactions });
     //? Default case: create a new session
     const sessionData = {
       user: user_id,
@@ -415,7 +426,6 @@ exports.addEntry = async (req, res) => {
         newSessionRes.id,
       ],
       concern_raised: concern_raised,
-      interactions: interactions,
     });
 
     const resSession = await Session.findById(newSessionRes.id);
