@@ -154,8 +154,9 @@ class Session {
     const offset = (page - 1) * limit;
     let filterCondition = sql` WHERE Sessions.counsellor = ${userId} `;
 
-    if (status)
-      filterCondition = sql` ${filterCondition} AND Sessions.status = ${status}`;
+    if (status) {
+      filterCondition = sql`${filterCondition} AND Sessions.status = ${status}`;
+    }
 
     if (searchQuery) {
       filterCondition = sql`
@@ -174,7 +175,12 @@ class Session {
       Cases.referer as case_referer,
       Referers.name as referer_name,
       Cases.referer_remark as referer_remark,
-      Cases.interactions as interactions
+      Cases.interactions as interactions,
+      (
+        SELECT json_agg(sub_sessions.case_details)
+        FROM Sessions as sub_sessions
+        WHERE sub_sessions.case_id = Sessions.case_id
+      ) as case_details_array
     FROM Sessions
     LEFT JOIN Users ON Sessions."user" = Users.id
     LEFT JOIN Cases ON Sessions."case_id" = Cases.id
@@ -183,7 +189,8 @@ class Session {
     ${filterCondition}
     ORDER BY Sessions."createdAt" DESC
     OFFSET ${offset} LIMIT ${limit}
-  `;
+    `;
+
     return await query;
   }
 
