@@ -175,7 +175,6 @@ class Session {
       Cases.case_id as caseid,
       Cases.referer as case_referer,
       Cases.referer_remark as referer_remark,
-      Cases.interactions as interactions,
       (
         SELECT json_agg(sub_sessions.case_details)
         FROM Sessions as sub_sessions
@@ -227,7 +226,6 @@ class Session {
         Cases.case_id as caseid,
         Cases.referer as case_referer,
         Cases.referer_remark as referer_remark,
-        Cases.interactions as interactions,
         (
           SELECT json_agg(sub_sessions.case_details)
           FROM Sessions as sub_sessions
