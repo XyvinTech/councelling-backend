@@ -72,7 +72,7 @@ class Case {
 
     const [newCase] = await sql`
       INSERT INTO Cases (
-        "user", session_ids, concern_raised, referer, referer_remark
+        "user", session_ids, concern_raised, referer
       ) VALUES (
         ${user}, ${sessionIds.join(",")}, ${concern_raised}, ${
       referer ? sql.json(referer) : null
