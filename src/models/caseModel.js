@@ -427,7 +427,7 @@ class Case {
   static async remark(id, { remark }) {
     const [remarks] = await sql`
       UPDATE Cases SET
-        referer_remark = ${sql.array(remark)},
+        referer_remark = ${remark},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *

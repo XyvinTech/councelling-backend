@@ -914,16 +914,26 @@ exports.refereeRemark = async (req, res) => {
     const { remark } = req.body;
 
     const findCase = await Case.findById(id);
-    const remarks = findCase.remarks;
+    const remarks = findCase.referer_remark;
     const counsellor = await User.findById(req.userId);
     const referee_remark = {
       name: counsellor.name,
       remark: remark,
     };
-    const updatedRemarks = [...remarks, referee_remark];
+    let updatedRemarks = [];
+    if (remarks === null) {
+      updatedRemarks.push(referee_remark);
+    } else {
+      updatedRemarks = [...remarks, referee_remark];
+    }
     const updateRemark = await Case.remark(id, { remark: updatedRemarks });
     if (!updateRemark) return responseHandler(res, 400, "Remark update failed");
-    return responseHandler(res, 200, "Remark updated successfully");
+    return responseHandler(
+      res,
+      200,
+      "Remark updated successfully",
+      updateRemark
+    );
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error: ${error.message}`);
   }
