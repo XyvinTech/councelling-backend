@@ -387,6 +387,7 @@ exports.addEntry = async (req, res) => {
 
       return responseHandler(res, 201, "Session created successfully", session);
     } else if (refer) {
+      const counsellor = await User.findById(refer);
       const fetchCase = await Case.findById(id);
       let updated_refer = [];
       if (fetchCase.referer === null) {
@@ -399,6 +400,35 @@ exports.addEntry = async (req, res) => {
         concern_raised,
       });
       await Session.add_details(session_id, { details, interactions });
+      const mailData = {
+        to: counsellor.email,
+        subject: `Feedback requested for Session ID: ${checkSession.session_id} and Case ID: ${checkSession.case_id}`,
+        text: `Dear ${counsellor.name},
+      
+      A session request has been made by ${
+        checkSession.user_name
+      } with the following details:
+      
+      - **Session ID**: ${checkSession.session_id}
+      - **Case ID**: ${checkSession.case_id}
+      - **Requested Date**: ${moment(checkSession.session_date).format(
+        "DD-MM-YYYY"
+      )}
+      - **Time**: ${checkSession.session_time.start} - ${
+          checkSession.session_time.end
+        }
+      
+      Although this session is not directly scheduled with you, your feedback or input is requested to help with the case. Please review the session details and provide your feedback at your earliest convenience.`,
+      };
+      await sendMail(mailData);
+      const notifData = {
+        user: refer,
+        caseId: checkSession.caseid,
+        session: checkSession.id,
+        details: "Session feedback requested",
+      };
+      await Notification.create(notifData);
+
       return responseHandler(res, 200, "Case refered successfully");
     }
     await Session.close(session_id, { case_details: details, interactions });
