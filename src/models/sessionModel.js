@@ -359,6 +359,7 @@ class Session {
   }
 
   static async findById(id) {
+    // Get the session details
     const [session] = await sql`
       SELECT 
         Sessions.*,
@@ -384,6 +385,23 @@ class Session {
       LEFT JOIN Users as Referers ON (Cases.referer->>'id')::UUID = Referers.id
       WHERE Sessions.id = ${id}
     `;
+
+    // If the case status is referred, get the last session's counsellor name
+    if (session.case_status === "referred") {
+      const [lastSession] = await sql`
+        SELECT Counsellors.name as last_counsellor_name
+        FROM Sessions
+        LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
+        WHERE Sessions.case_id = ${session.caseid}
+        ORDER BY Sessions.createdAt DESC
+        LIMIT 1
+      `;
+
+      session.last_counsellor_name = lastSession
+        ? lastSession.last_counsellor_name
+        : null;
+    }
+
     return session;
   }
 
