@@ -386,19 +386,19 @@ class Session {
       WHERE Sessions.id = ${id}
     `;
 
-    // If the case status is referred, get the last session's counsellor name
-    if (session.case_status === "referred") {
-      const [lastSession] = await sql`
-        SELECT Counsellors.name as last_counsellor_name
-        FROM Sessions
+    // If the session exists, get all counsellor names
+    if (session) {
+      const counsellors = await sql`
+        SELECT DISTINCT Counsellors.name as counsellor_name
+        FROM Cases
+        JOIN UNNEST(string_to_array(Cases.session_ids, ',')) as session_id
+        ON TRUE
+        JOIN Sessions ON Sessions.session_id = session_id
         LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
-        WHERE Sessions.case_id = ${session.caseid}
-        LIMIT 1
+        WHERE Cases.id = ${session.caseid}
       `;
 
-      session.last_counsellor_name = lastSession
-        ? lastSession.last_counsellor_name
-        : null;
+      session.counsellors = counsellors.map((c) => c.counsellor_name);
     }
 
     return session;
