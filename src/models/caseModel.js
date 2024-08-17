@@ -188,7 +188,7 @@ class Case {
       SELECT 
         Cases.*,
         Users.name AS user_name,
-        COALESCE(array_agg(DISTINCT Sessions.type) FILTER (WHERE Sessions.type IS NOT NULL), ARRAY[]::TEXT[]) AS counselling_types,
+        COALESCE(MIN(Sessions.type), 'No type') AS counselling_type,
         json_agg(Sessions.*) AS sessions
       FROM Cases
       LEFT JOIN Users ON Cases."user" = Users.id
