@@ -393,7 +393,6 @@ class Session {
         FROM Sessions
         LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
         WHERE Sessions.case_id = ${session.caseid}
-        ORDER BY Sessions.createdAt DESC
         LIMIT 1
       `;
 
