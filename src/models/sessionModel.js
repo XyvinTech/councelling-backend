@@ -359,7 +359,6 @@ class Session {
   }
 
   static async findById(id) {
-    // Get the session details
     const [session] = await sql`
       SELECT 
         Sessions.*,
@@ -385,22 +384,6 @@ class Session {
       LEFT JOIN Users as Referers ON (Cases.referer->>'id')::UUID = Referers.id
       WHERE Sessions.id = ${id}
     `;
-
-    // If the session exists, get all counsellor names
-    if (session) {
-      const counsellors = await sql`
-        SELECT DISTINCT Counsellors.name as counsellor_name
-        FROM Cases
-        JOIN UNNEST(string_to_array(Cases.session_ids, ',')) as session_id
-        ON TRUE
-        JOIN Sessions ON Sessions.session_id = session_id
-        LEFT JOIN Users as Counsellors ON Sessions.counsellor = Counsellors.id
-        WHERE Cases.id = ${session.caseid}
-      `;
-
-      session.counsellors = counsellors.map((c) => c.counsellor_name);
-    }
-
     return session;
   }
 
