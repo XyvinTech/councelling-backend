@@ -18,7 +18,7 @@ const app = express();
 app.use(volleyball);
 const initializeConnection = require("./src/helpers/connection");
 
-const NODE_ENV = process.env.NODE_ENV;
+const NODE_ENV = "dev";
 
 //* Function to start the server
 const startServer = async () => {
@@ -27,7 +27,8 @@ const startServer = async () => {
       await loadSecrets();
     }
     //* Define the PORT & API version based on environment variable
-    const { PORT, API_VERSION } = process.env;
+    const PORT = 3000;
+    const API_VERSION = "v1";
     //* Enable Cross-Origin Resource Sharing (CORS) middleware
     app.use(cors());
     //* Parse JSON request bodies
@@ -69,7 +70,6 @@ const startServer = async () => {
       );
     });
 
-    
     //! Start the server and listen on the specified port from environment variable
     app.listen(PORT, () => {
       const portMessage = clc.redBright(`✓ App is running on port: ${PORT}`);
