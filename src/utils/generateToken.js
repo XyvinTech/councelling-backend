@@ -4,5 +4,5 @@ exports.generateToken = (userId) => {
   const payload = {
     userId,
   };
-  return jwt.sign({ payload }, process.env.JWT_SECRET, {});
+  return jwt.sign({ payload }, "5D2B1349ABQWMTF", {});
 };
