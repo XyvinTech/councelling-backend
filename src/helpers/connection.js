@@ -6,11 +6,11 @@ async function initializeConnection() {
   const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
 
   const sql = postgres({
-    host: PGHOST,
-    database: PGDATABASE,
-    username: PGUSER,
-    password: PGPASSWORD,
-    port: 5432,
+    host: 'aws-0-ap-southeast-1.pooler.supabase.com',
+    database: 'postgres',
+    username: 'postgres.msobruktbtmzmynnexrh',
+    password: '8sLb6nPED@Rx@dp',
+    port: 6543,
     // ssl: "require",
     // connection: {
     //   options: `project=${ENDPOINT_ID}`,
