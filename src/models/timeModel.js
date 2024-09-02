@@ -96,9 +96,9 @@ class Time {
       throw new Error("Time entry not found");
     }
 
-    const updatedTimes = timeEntry.times.filter(
-      (time) => time !== timeToRemove
-    );
+    const updatedTimes = timeEntry.times.filter((time) => {
+      return time.start !== timeToRemove.start;
+    });
 
     const [updatedTimeEntry] = await sql`
       UPDATE Times

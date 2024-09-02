@@ -27,6 +27,7 @@ counsellorRoute.get(
   "/counsellors/:id/times",
   counsellorController.getAvailableTimes
 );
+counsellorRoute.delete("/counsellors/:id/time", counsellorController.deleteTime);
 counsellorRoute.put("/cancel-session/:id", counsellorController.cancelSession);
 counsellorRoute.post("/report", counsellorController.createReport);
 counsellorRoute.get("/big-calendar", counsellorController.getBigCalender);

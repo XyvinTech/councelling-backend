@@ -647,6 +647,19 @@ exports.getAvailableTimes = async (req, res) => {
   }
 };
 
+exports.deleteTime = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (req.body.times == []) {
+      await Time.delete(id);
+    }
+    const deleteTime = await Time.deleteTime(id, req.body.times);
+    return responseHandler(res, 200, "Time deleted successfully", deleteTime);
+  } catch (error) {
+    return responseHandler(res, 500, `Internal Server Error ${error.message}`);
+  }
+};
+
 exports.cancelSession = async (req, res) => {
   try {
     const { id } = req.params;
