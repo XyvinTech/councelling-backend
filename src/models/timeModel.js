@@ -23,7 +23,7 @@ class Time {
   static async create({ user, day, times }) {
     const [timeEntry] = await sql`
       INSERT INTO Times ("user", day, times)
-      VALUES (${user}, ${day}, ${sql.json(times)})
+      VALUES (${user}, ${day}, ${times})
       RETURNING *
     `;
     return timeEntry;
