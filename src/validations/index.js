@@ -75,7 +75,7 @@ exports.createEventSchema = Joi.object({
   requisition_image: Joi.string(),
   remainder: Joi.array().required(),
   details: Joi.string().required(),
-  requisition_description: Joi.string().required(),
+  requisition_description: Joi.string(),
 });
 
 exports.editEventSchema = Joi.object({

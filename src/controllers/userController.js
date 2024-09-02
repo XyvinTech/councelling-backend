@@ -321,10 +321,10 @@ exports.getAvailableTimes = async (req, res) => {
     const { day, date } = req.query;
     const session = await Session.findByCounseller(id, date);
     const times = await Time.findTimes({ userId: id, day });
+    if (!times) return responseHandler(res, 404, "No times found");
     const availableTimes = times.times.filter(
       (time) => !session.some((sess) => sess.session_time == time)
     );
-    if (!times) return responseHandler(res, 404, "No times found");
     return responseHandler(res, 200, "Times found", availableTimes);
   } catch (error) {
     return responseHandler(res, 500, `Internal Server Error ${error.message}`);
