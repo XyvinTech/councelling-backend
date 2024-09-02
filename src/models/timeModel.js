@@ -23,7 +23,7 @@ class Time {
   static async create({ user, day, times }) {
     const [timeEntry] = await sql`
       INSERT INTO Times ("user", day, times)
-      VALUES (${user}, ${day}, ${times})
+      VALUES (${user}, ${day}, ${sql.json(times)})
       RETURNING *
     `;
     return timeEntry;
@@ -72,7 +72,7 @@ class Time {
       UPDATE Times
       SET 
         day = ${day}, 
-        times = ${times},  -- Ensure times are stored as JSONB
+        times = ${sql.json(times)},  -- Ensure times are stored as JSONB
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
