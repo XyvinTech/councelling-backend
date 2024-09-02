@@ -102,7 +102,7 @@ class Time {
 
     const [updatedTimeEntry] = await sql`
       UPDATE Times
-      SET times = ${sql.json(updatedTimes)}, "updatedAt" = CURRENT_TIMESTAMP
+      SET times = ${updatedTimes}, "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *
     `;
