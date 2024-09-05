@@ -72,7 +72,7 @@ class Time {
       UPDATE Times
       SET 
         day = ${day}, 
-        times = ${sql.json(times)},  -- Ensure times are stored as JSONB
+        times = ${sql.json(times)},
         "updatedAt" = CURRENT_TIMESTAMP
       WHERE id = ${id}
       RETURNING *

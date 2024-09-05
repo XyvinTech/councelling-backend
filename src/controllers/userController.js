@@ -319,11 +319,16 @@ exports.getAvailableTimes = async (req, res) => {
   try {
     const { id } = req.params;
     const { day, date } = req.query;
-    const session = await Session.findByCounseller(id, date);
+    const currentDate = new Date(date);
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(currentDate.getDate() - 1);
+    const nextDate = new Date(currentDate);
+    nextDate.setDate(currentDate.getDate() + 1);
+    const session = await Session.findByCounseller(id, previousDate, nextDate);
     const times = await Time.findTimes({ userId: id, day });
     if (!times) return responseHandler(res, 404, "No times found");
     const availableTimes = times.times.filter(
-      (time) => !session.some((sess) => sess.session_time == time)
+      (time) => !session.some((sess) => sess.session_time.start == time.start)
     );
     return responseHandler(res, 200, "Times found", availableTimes);
   } catch (error) {

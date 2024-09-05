@@ -311,11 +311,11 @@ class Session {
     return session;
   }
 
-  static async findByCounseller(id, date) {
+  static async findByCounseller(id, pre, next) {
     const session = await sql`
       SELECT * FROM Sessions 
       WHERE "counsellor" = ${id} 
-      AND session_date = ${date} 
+      AND session_date::date BETWEEN ${pre} AND ${next}
       AND status IN ('pending', 'progress')
     `;
     return session;
