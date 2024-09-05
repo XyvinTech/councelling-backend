@@ -321,6 +321,16 @@ class Session {
     return session;
   }
 
+  static async findByCounsellerDate(id, date) {
+    const session = await sql`
+      SELECT * FROM Sessions 
+      WHERE "counsellor" = ${id} 
+      AND session_date = ${date}
+      AND status IN ('pending', 'progress')
+    `;
+    return session;
+  }
+
   static async findAllByCounsellerId(id) {
     const session = await sql`
       SELECT * FROM Sessions 
