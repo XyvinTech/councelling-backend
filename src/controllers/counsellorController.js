@@ -617,7 +617,18 @@ exports.rescheduleSession = async (req, res) => {
     const counData = {
       to: session.counsellor_email,
       subject: "Session Reschedule",
-      text: `Session rescheduled for Session ID: ${session.session_id}.`,
+      text: `Session rescheduled for Session ID: ${
+        session.session_id
+      } and Case ID: ${
+        session.case_id
+      } has been originally scheduled for ${moment(session.session_date).format(
+        "DD-MM-YYYY"
+      )} at ${session.session_time.start}-${session.session_time.end}
+
+      The new session is now set for ${moment(session_date).format(
+        "DD-MM-YYYY"
+      )} at ${session_time.start}-${session_time.end}
+      )}`,
     };
     await sendMail(counData);
     return responseHandler(
