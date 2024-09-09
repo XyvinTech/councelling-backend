@@ -627,8 +627,7 @@ exports.rescheduleSession = async (req, res) => {
 
       The new session is now set for ${moment(session_date).format(
         "DD-MM-YYYY"
-      )} at ${session_time.start}-${session_time.end}
-      )}`,
+      )} at ${session_time.start}-${session_time.end}`,
     };
     await sendMail(counData);
     return responseHandler(
